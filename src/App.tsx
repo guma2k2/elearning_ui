@@ -1,76 +1,58 @@
-import React, { useState } from 'react';
-import './index.css';
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from '@ant-design/icons';
-import { Layout, Menu, Button, theme } from 'antd';
-
-const { Header, Sider, Content } = Layout;
-
-const App: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import Home from "./pages/home";
+import AdminPage from "./pages/admin";
+import Dashboard from "./pages/admin/dashboard";
+import Courses from "./pages/courses";
+import Blog from "./pages/blog";
+function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Home />,
+      children: [
+        {
+          path: "/",
+          element: <Courses />,
+        },
+        {
+          path: "/blog",
+          element: <Blog />,
+        }
+      ]
+    },
+    {
+      path: "/admin",
+      element: <AdminPage />,
+      children: [
+        {
+          path: "/admin",
+          element: <Dashboard />
+        },
+        {
+          path: "/admin/users",
+          element: <Dashboard />
+        },
+        {
+          path: "/admin/categories",
+          element: <Dashboard />
+        },
+        {
+          path: "/admin/courses",
+          element: <Dashboard />
+        },
+        {
+          path: "/admin/promotions",
+          element: <Dashboard />
+        },
+      ]
+    },
+  ]);
   return (
-    <Layout style={{ height: "100vh" }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="demo-logo-vertical" />
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          items={[
-            {
-              key: '1',
-              icon: <UserOutlined />,
-              label: 'nav 1',
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: 'nav 2',
-            },
-            {
-              key: '3',
-              icon: <UploadOutlined />,
-              label: 'nav 3',
-            },
-          ]}
-        />
-      </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: '16px',
-              width: 64,
-              height: 64,
-            }}
-          />
-        </Header>
-        <Content
-          style={{
-            margin: '24px 16px',
-            padding: 24,
-            minHeight: 280,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          Content
-        </Content>
-      </Layout>
-    </Layout>
-  );
-};
+    <RouterProvider router={router} />
+  )
+}
 
-export default App;
+export default App
