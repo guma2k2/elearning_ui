@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {
+    DesktopOutlined,
     FileOutlined,
     PieChartOutlined,
     TeamOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import { Link } from 'react-router-dom';
+import { Layout, Menu, theme } from 'antd';
+import { Outlet } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -28,37 +29,35 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-    getItem('Dashboard', '1', <Link to={"/admin"}><PieChartOutlined /></Link>),
-    getItem('User', 'sub1', <UserOutlined />, [
-        getItem('', '2', <Link to={"/admin/users"} >Users</Link>),
-        getItem('Bill', '3'),
+    getItem('Dashboard', '1', <PieChartOutlined />),
+    getItem('User', '2', <DesktopOutlined />),
+    getItem('Course', 'sub1', <UserOutlined />, [
+        getItem('Tom', '3'),
+        getItem('Bill', '4'),
+        getItem('Alex', '5'),
     ]),
-    getItem('Team', 'sub2', <TeamOutlined />, [
-        getItem('Team 1', '4'),
-        getItem('Team 2', '5')
-    ]),
-    getItem('Files', '8', <FileOutlined />),
+    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
+    getItem('Files', '9', <FileOutlined />),
 ];
 
-const AdminPage: React.FC = () => {
+const App: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
     return (
-        <Layout style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }}>
-            <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} >
-                <div className="demo-logo-vertical" />
+        <Layout style={{ minHeight: '100vh' }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+
+                <div className="demo-logo-vertical" style={{ height: "80px", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }} >
+                    F8 ADMIN
+                </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
             <Layout>
-                <Header style={{ padding: 0, background: colorBgContainer }} />
+                <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }} />
                 <Content style={{ margin: '0 16px' }}>
-                    <Breadcrumb style={{ margin: '16px 0' }}>
-                        <Breadcrumb.Item>User</Breadcrumb.Item>
-                        <Breadcrumb.Item>Bill</Breadcrumb.Item>
-                    </Breadcrumb>
                     <div
                         style={{
                             padding: 24,
@@ -67,6 +66,7 @@ const AdminPage: React.FC = () => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
+                        <Outlet />
                     </div>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>
@@ -77,4 +77,4 @@ const AdminPage: React.FC = () => {
     );
 };
 
-export default AdminPage;
+export default App;

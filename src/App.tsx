@@ -7,6 +7,7 @@ import AdminPage from "./pages/admin";
 import Dashboard from "./pages/admin/dashboard";
 import Courses from "./pages/courses";
 import Blog from "./pages/blog";
+import User from "./pages/admin/user";
 function App() {
   const router = createBrowserRouter([
     {
@@ -28,12 +29,12 @@ function App() {
       element: <AdminPage />,
       children: [
         {
-          path: "/admin",
+          index: true,
           element: <Dashboard />
         },
         {
           path: "/admin/users",
-          element: <Dashboard />
+          element: <User />
         },
         {
           path: "/admin/categories",
