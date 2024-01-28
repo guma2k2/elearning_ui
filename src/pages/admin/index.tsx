@@ -10,7 +10,7 @@ import type { MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -55,13 +55,13 @@ const App: React.FC = () => {
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
-            <Layout>
+            <Layout >
                 <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }} />
                 <Content style={{ margin: '0 16px' }}>
                     <div
                         style={{
                             padding: 24,
-                            minHeight: 360,
+                            minHeight: 500,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
                         }}
@@ -69,9 +69,6 @@ const App: React.FC = () => {
                         <Outlet />
                     </div>
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>
-                    Ant Design ©{new Date().getFullYear()} Created by Ant UED
-                </Footer>
             </Layout>
         </Layout>
     );
