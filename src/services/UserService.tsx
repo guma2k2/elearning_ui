@@ -20,3 +20,10 @@ export const get = async (userId: number) => {
     const res = await instance.get(url);
     return res;
 }
+
+
+export const getWithPagination = async (current: number, pageSize: number) => {
+    const url = `/admin/users/paging?pageNum=${current}&pageSize=${pageSize}`
+    const res = await instance.get(url);
+    return res;
+}

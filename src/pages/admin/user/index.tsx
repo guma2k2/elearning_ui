@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Button, Flex, Col, Drawer, Form, Input, Row, Select, Space, Popconfirm, Upload, message, Switch, InputNumber } from 'antd';
 import type { PaginationProps, GetProp, UploadProps, TableColumnsType } from 'antd';
 import UserPhoto from "../../../assets/userPhoto.png"
@@ -6,7 +6,7 @@ import "./User.style.scss"
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { uploadFile } from '../../../services/MediaService';
 import { UserGetDetailType, UserType } from './UserType';
-import { get, save, update } from '../../../services/UserService';
+import { get, getWithPagination, save, update } from '../../../services/UserService';
 
 
 
@@ -71,9 +71,29 @@ function User() {
     const [loading, setLoading] = useState(false);
     const [pending, setPending] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
+    const [current, setCurrent] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(1);
+    const [totalElements, setTotalElements] = useState<number>(1);
     const [form] = Form.useForm();
-
     const [currentUser, setCurrentUser] = useState<UserGetDetailType>();
+    const [userList, setUserList] = useState<UserType[]>([]);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const res = await getWithPagination(current - 1, pageSize);
+
+            if (res && res.status === 200) {
+                console.log(res);
+                setUserList(res.data.content);
+                setCurrent(res.data.pageNum + 1);
+                setPageSize(res.data.pageSize)
+                setTotalElements(res.data.totalElements)
+            }
+        }
+        fetchUsers()
+    }, [current, pageSize])
+
+
     const columns: TableColumnsType<UserType> = [
         {
             title: 'Id',
@@ -84,10 +104,10 @@ function User() {
             dataIndex: 'photo',
             width: 150,
             render: (text, record) => {
-                if (record.photoId === "") {
-                    return <img src={UserPhoto} alt='User photo' />
+                if (record.photoURL === "") {
+                    return <img src={UserPhoto} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
                 }
-                return <img src={record.photoId} alt='User photo' />
+                return <img src={record.photoURL} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
             }
         },
         {
@@ -174,6 +194,7 @@ function User() {
         console.log(values);
         const type = currentUser ? "update" : "create";
         const checkIsUploadFile = values.photoId?.length ? true : false;
+        const checkIsChangePassword = values.password?.length ? true : false;
         let photoId = "";
         if (checkIsUploadFile) {
             var formData = new FormData();
@@ -194,6 +215,9 @@ function User() {
             }
         } else {
             const userId = currentUser?.id;
+            if (checkIsChangePassword === false) {
+                values = { ...values, password: "" }
+            }
             const resUpdateUser = await update(values, userId);
             if (resUpdateUser.status === 204) {
                 form.resetFields();
@@ -203,7 +227,12 @@ function User() {
         setPending(false)
     };
     const handleChangePage = (page: PaginationProps) => {
-        console.log(page?.current);
+        if (page.current && page.pageSize) {
+            console.log(page.current);
+            console.log(page.pageSize);
+            setCurrent(page.current)
+            setPageSize(page.pageSize)
+        }
     }
 
     const handleChange: UploadProps['onChange'] = (info) => {
@@ -389,7 +418,7 @@ function User() {
                     </Row>
                 </Form>
             </Drawer>
-            <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+            <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
         </div>
     )
 }

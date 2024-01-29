@@ -1,13 +1,17 @@
+import React from "react";
+
 export type UserType = {
-    key: number;
+    key: React.Key;
     id: number;
     photoId: any;
+    photoURL?: string
     email: string;
     firstName: string;
     active: boolean
     lastName: string;
     gender: string;
     role: string;
+    password?: string
 }
 
 
