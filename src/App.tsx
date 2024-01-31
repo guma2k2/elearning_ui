@@ -8,6 +8,7 @@ import Dashboard from "./pages/admin/dashboard";
 import Courses from "./pages/courses";
 import Blog from "./pages/blog";
 import User from "./pages/admin/user";
+import Category from "./pages/admin/category";
 function App() {
   const router = createBrowserRouter([
     {
@@ -38,7 +39,7 @@ function App() {
         },
         {
           path: "/admin/categories",
-          element: <Dashboard />
+          element: <Category />
         },
         {
           path: "/admin/courses",
