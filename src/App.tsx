@@ -9,6 +9,7 @@ import Courses from "./pages/courses";
 import Blog from "./pages/blog";
 import User from "./pages/admin/user";
 import Category from "./pages/admin/category";
+import Topic from "./pages/admin/topic";
 function App() {
   const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ function App() {
         {
           path: "/admin/categories",
           element: <Category />
+        },
+        {
+          path: "/admin/topics",
+          element: <Topic />
         },
         {
           path: "/admin/courses",

@@ -1,32 +1,23 @@
 import { Button, Col, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Row, Select, Space, Switch, Table, TableColumnsType } from "antd";
 import { useEffect, useState } from "react";
-import './Category.style.scss'
+import { TopicType } from "./TopicType";
+import { getCategoryParents } from "../../../services/CategoryService";
 import TextArea from "antd/es/input/TextArea";
-import { get, getCategoryParents, getWithPagination, save, update } from "../../../services/CategoryService";
+import { getTopicWithPagination } from "../../../services/TopicService";
 
-const data: CategoryType[] = [];
-for (let i = 1; i < 100; i++) {
-    data.push({
-        id: i,
-        description: "desc",
-        name: `Edward King@ ${i}.com`,
-        isPublish: true,
-        createdAt: "31/1/2024",
-        updatedAt: "31/1/2024",
-    });
-}
-function Category() {
+function Topic() {
     const [open, setOpen] = useState<boolean>(false);
     const [pending, setPending] = useState(false);
     const [categoryParents, setCategoryParents] = useState<CategoryListGetType[]>([]);
-    const [categories, setCategories] = useState<CategoryType[]>([]);
+    const [categoryChildrens, setCategoryChildrens] = useState<CategoryType[]>([]);
+    const [topics, setTopics] = useState<TopicType[]>([]);
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
     const [currentCatId, setCurrentCatId] = useState<number | undefined>();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     const [form] = Form.useForm();
-    const columns: TableColumnsType<CategoryType> = [
+    const columns: TableColumnsType<TopicType> = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -66,7 +57,7 @@ function Category() {
                     <Button type="primary" onClick={() => handleUpdateCategory(record.id)}>Edit</Button>
                     <Popconfirm
                         title="Delete this user?"
-                        description="Are you sure to delete this user?"
+                        description="Are you sure to delete this topic?"
                         okText="Yes"
                         cancelText="No"
                     >
@@ -77,18 +68,18 @@ function Category() {
         },
     ];
     const handleUpdateCategory = async (catId: number) => {
-        setOpen(true)
-        console.log(catId);
-        const res = await get(catId)
-        if (res && res.status === 200) {
-            const newCurrentCat = res.data;
-            setCurrentCatId(res.data?.id)
-            const parentId = res.data.parentId == -1 ? '' : res.data.parentId;
-            form.setFieldsValue({
-                ...newCurrentCat,
-                parentId
-            })
-        }
+        // setOpen(true)
+        // console.log(catId);
+        // const res = await get(catId)
+        // if (res && res.status === 200) {
+        //     const newCurrentCat = res.data;
+        //     setCurrentCatId(res.data?.id)
+        //     const parentId = res.data.parentId == -1 ? '' : res.data.parentId;
+        //     form.setFieldsValue({
+        //         ...newCurrentCat,
+        //         parentId
+        //     })
+        // }
     }
     const handleChangePage = (page: PaginationProps) => {
         if (page.current && page.pageSize) {
@@ -106,46 +97,56 @@ function Category() {
         form.resetFields();
     };
     const onFinish = async (values: CategoryType) => {
-        console.log(values);
-        setPending(true)
-        const type = currentCatId ? "update" : "create";
-        if (type === "create") {
-            const resSave = await save(values);
-            console.log(resSave);
-            if (resSave.status === 201) {
-                form.resetFields();
-                setOpen(false);
+        // console.log(values);
+        // setPending(true)
+        // const type = currentCatId ? "update" : "create";
+        // if (type === "create") {
+        //     const resSave = await save(values);
+        //     console.log(resSave);
+        //     if (resSave.status === 201) {
+        //         form.resetFields();
+        //         setOpen(false);
+        //     }
+        // } else {
+        //     const id = currentCatId;
+        //     const resUpdateUser = await update(values, id);
+        //     if (resUpdateUser.status === 204) {
+        //         form.resetFields();
+        //         setOpen(false)
+        //     }
+        // }
+        // setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+        // setPending(false)
+    }
+    const handleChangeCategories = (value: string) => {
+        console.log(value);
+        categoryParents.forEach((cat: CategoryListGetType) => {
+            if (cat.name === value) {
+                console.log(cat.childrens);
+                setCategoryChildrens(cat.childrens)
+                return;
             }
-        } else {
-            const id = currentCatId;
-            const resUpdateUser = await update(values, id);
-            if (resUpdateUser.status === 204) {
-                form.resetFields();
-                setOpen(false)
-            }
-        }
-        setIsDataUpdated((isDataUpdated) => !isDataUpdated)
-        setPending(false)
+        })
     }
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            const res = await getWithPagination(current - 1, pageSize);
+        const fetchTopics = async () => {
+            const res = await getTopicWithPagination(current - 1, pageSize);
             if (res && res.status === 200) {
                 console.log(res);
-                const content = res.data.content.map((cat: CategoryType) => (
+                const content = res.data.content.map((topic: TopicType) => (
                     {
-                        ...cat, key: cat.id
+                        ...topic, key: topic.id
                     }
                 ))
                 console.log(content)
-                setCategories(content);
+                setTopics(content);
                 setCurrent(res.data.pageNum + 1);
                 setPageSize(res.data.pageSize)
                 setTotalElements(res.data.totalElements)
             }
         }
-        fetchCategories()
+        fetchTopics()
     }, [current, pageSize, isDataUpdated])
 
 
@@ -158,6 +159,7 @@ function Category() {
                     key: cat.id, ...cat
                 }))
                 setCategoryParents(data);
+
             }
         }
         fetchCategoryParents()
@@ -166,8 +168,8 @@ function Category() {
     return (
         <div className="category-container">
             <div className='category-header' >
-                <span>Category</span>
-                <Button onClick={showDrawer} type="primary">Add category</Button>
+                <span>Topic</span>
+                <Button onClick={showDrawer} type="primary">Add topic</Button>
             </div>
             <Drawer
                 title="Create a new category"
@@ -222,9 +224,23 @@ function Category() {
                                 name="parentId"
                                 label="Parent"
                             >
-                                <Select  >
-                                    <Select.Option value={""}>Set parent</Select.Option>
+                                <Select onChange={handleChangeCategories}  >
                                     {categoryParents && categoryParents.map((cat) => {
+                                        return <Select.Option key={cat.id} value={cat.name}>{cat.name}</Select.Option>
+                                    })}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={24}>
+                            <Form.Item
+                                name="categories"
+                                label="Categories"
+                            >
+                                <Select mode="tags" >
+                                    {categoryChildrens && categoryChildrens.map((cat) => {
                                         return <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
                                     })}
                                 </Select>
@@ -241,8 +257,9 @@ function Category() {
                     </Row>
                 </Form>
             </Drawer>
-            <Table columns={columns} dataSource={categories} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+            <Table columns={columns} dataSource={topics} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
         </div>
     )
 }
-export default Category
+
+export default Topic

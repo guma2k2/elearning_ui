@@ -55,7 +55,6 @@ const beforeUpload = (file: FileType) => {
 const data: UserType[] = [];
 for (let i = 1; i < 100; i++) {
     data.push({
-        key: i,
         id: i,
         photoId: "",
         email: `Edward King@ ${i}.com`,
@@ -72,26 +71,32 @@ function User() {
     const [pending, setPending] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
     const [current, setCurrent] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
     const [form] = Form.useForm();
     const [currentUser, setCurrentUser] = useState<UserGetDetailType>();
     const [userList, setUserList] = useState<UserType[]>([]);
-
+    const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     useEffect(() => {
         const fetchUsers = async () => {
             const res = await getWithPagination(current - 1, pageSize);
 
             if (res && res.status === 200) {
                 console.log(res);
-                setUserList(res.data.content);
+                const content = res.data.content.map((user: UserType) => (
+                    {
+                        ...user, key: user.id
+                    }
+                ))
+                console.log(content)
+                setUserList(content);
                 setCurrent(res.data.pageNum + 1);
                 setPageSize(res.data.pageSize)
                 setTotalElements(res.data.totalElements)
             }
         }
         fetchUsers()
-    }, [current, pageSize])
+    }, [current, pageSize, isDataUpdated])
 
 
     const columns: TableColumnsType<UserType> = [
@@ -224,6 +229,7 @@ function User() {
                 setOpen(false)
             }
         }
+        setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         setPending(false)
     };
     const handleChangePage = (page: PaginationProps) => {
@@ -418,7 +424,7 @@ function User() {
                     </Row>
                 </Form>
             </Drawer>
-            <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+            <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
         </div>
     )
 }

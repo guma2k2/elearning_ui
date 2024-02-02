@@ -1,7 +1,5 @@
-import React from "react";
 
 export type UserType = {
-    key: React.Key;
     id: number;
     photoId: any;
     photoURL?: string
