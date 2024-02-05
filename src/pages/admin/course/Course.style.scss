@@ -1,0 +1,50 @@
+.course-container {
+    height: 100%;
+
+    .course-header {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        margin-bottom: 30px;
+
+        .course-title {
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .course-action {
+            display: flex;
+            justify-content: space-between;
+
+            .course-filter {
+                display: flex;
+                gap: 32px;
+
+                .search {
+                    display: flex;
+                    height: 48px;
+
+                    input {
+                        padding: 10px;
+                    }
+
+                    .icon {
+                        width: 48px;
+                        height: 48px;
+                        background-color: black;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        svg {
+                            width: 24px;
+                            height: 24px;
+                            color: white;
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}

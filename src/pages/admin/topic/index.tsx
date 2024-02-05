@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { TopicType } from "./TopicType";
 import { getCategoryParents } from "../../../services/CategoryService";
 import TextArea from "antd/es/input/TextArea";
-import { getTopicWithPagination } from "../../../services/TopicService";
+import { get, getTopicWithPagination, save, update } from "../../../services/TopicService";
+import './Topic.style.scss'
 
 function Topic() {
     const [open, setOpen] = useState<boolean>(false);
@@ -14,7 +15,7 @@ function Topic() {
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
-    const [currentCatId, setCurrentCatId] = useState<number | undefined>();
+    const [currentTopicId, setCurrentTopicId] = useState<number | undefined>();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     const [form] = Form.useForm();
     const columns: TableColumnsType<TopicType> = [
@@ -54,7 +55,7 @@ function Topic() {
             width: 300,
             render: (text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary" onClick={() => handleUpdateCategory(record.id)}>Edit</Button>
+                    <Button type="primary" onClick={() => handleUpdateTopic(record.id)}>Edit</Button>
                     <Popconfirm
                         title="Delete this user?"
                         description="Are you sure to delete this topic?"
@@ -67,19 +68,18 @@ function Topic() {
             ),
         },
     ];
-    const handleUpdateCategory = async (catId: number) => {
-        // setOpen(true)
-        // console.log(catId);
-        // const res = await get(catId)
-        // if (res && res.status === 200) {
-        //     const newCurrentCat = res.data;
-        //     setCurrentCatId(res.data?.id)
-        //     const parentId = res.data.parentId == -1 ? '' : res.data.parentId;
-        //     form.setFieldsValue({
-        //         ...newCurrentCat,
-        //         parentId
-        //     })
-        // }
+    const handleUpdateTopic = async (topicId: number) => {
+        setOpen(true)
+        console.log(topicId);
+        const res = await get(topicId)
+        if (res && res.status === 200) {
+            console.log(res.data);
+            const newCurrentTopic = res.data;
+            setCurrentTopicId(res.data?.id)
+            form.setFieldsValue({
+                ...newCurrentTopic
+            })
+        }
     }
     const handleChangePage = (page: PaginationProps) => {
         if (page.current && page.pageSize) {
@@ -96,27 +96,27 @@ function Topic() {
         setOpen(false);
         form.resetFields();
     };
-    const onFinish = async (values: CategoryType) => {
-        // console.log(values);
-        // setPending(true)
-        // const type = currentCatId ? "update" : "create";
-        // if (type === "create") {
-        //     const resSave = await save(values);
-        //     console.log(resSave);
-        //     if (resSave.status === 201) {
-        //         form.resetFields();
-        //         setOpen(false);
-        //     }
-        // } else {
-        //     const id = currentCatId;
-        //     const resUpdateUser = await update(values, id);
-        //     if (resUpdateUser.status === 204) {
-        //         form.resetFields();
-        //         setOpen(false)
-        //     }
-        // }
-        // setIsDataUpdated((isDataUpdated) => !isDataUpdated)
-        // setPending(false)
+    const onFinish = async (values: TopicType) => {
+        console.log(values);
+
+        setPending(true)
+        const type = currentTopicId ? "update" : "create";
+        if (type === "create") {
+            const resSave = await save(values);
+            console.log(resSave);
+            if (resSave.status === 201) {
+                form.resetFields();
+                setOpen(false);
+            }
+        } else {
+            const resUpdateUser = await update(values, currentTopicId);
+            if (resUpdateUser.status === 204) {
+                form.resetFields();
+                setOpen(false)
+            }
+        }
+        setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+        setPending(false)
     }
     const handleChangeCategories = (value: string) => {
         console.log(value);
@@ -166,13 +166,13 @@ function Topic() {
     }, [])
 
     return (
-        <div className="category-container">
-            <div className='category-header' >
+        <div className="topic-container">
+            <div className='topic-header' >
                 <span>Topic</span>
                 <Button onClick={showDrawer} type="primary">Add topic</Button>
             </div>
             <Drawer
-                title="Create a new category"
+                title="Create a new topic"
                 width={720}
                 onClose={onClose}
                 open={open}
@@ -239,9 +239,9 @@ function Topic() {
                                 name="categories"
                                 label="Categories"
                             >
-                                <Select mode="tags" >
+                                <Select mode="multiple" >
                                     {categoryChildrens && categoryChildrens.map((cat) => {
-                                        return <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
+                                        return <Select.Option key={cat.id} value={cat.name}>{cat.name}</Select.Option>
                                     })}
                                 </Select>
                             </Form.Item>

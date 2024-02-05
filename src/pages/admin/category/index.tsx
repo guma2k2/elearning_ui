@@ -4,17 +4,6 @@ import './Category.style.scss'
 import TextArea from "antd/es/input/TextArea";
 import { get, getCategoryParents, getWithPagination, save, update } from "../../../services/CategoryService";
 
-const data: CategoryType[] = [];
-for (let i = 1; i < 100; i++) {
-    data.push({
-        id: i,
-        description: "desc",
-        name: `Edward King@ ${i}.com`,
-        isPublish: true,
-        createdAt: "31/1/2024",
-        updatedAt: "31/1/2024",
-    });
-}
 function Category() {
     const [open, setOpen] = useState<boolean>(false);
     const [pending, setPending] = useState(false);

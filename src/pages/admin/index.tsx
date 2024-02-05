@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 const { Header, Content, Sider } = Layout;
 
@@ -30,14 +30,16 @@ function getItem(
 
 const items: MenuItem[] = [
     getItem('Dashboard', '1', <PieChartOutlined />),
-    getItem('User', '2', <DesktopOutlined />),
+    getItem('User', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>),
+    getItem('Category', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>),
+    getItem('Topic', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>),
     getItem('Course', 'sub1', <UserOutlined />, [
-        getItem('Tom', '3'),
-        getItem('Bill', '4'),
-        getItem('Alex', '5'),
+        getItem('Tom', '5'),
+        getItem('Bill', '6'),
+        getItem('Alex', '7'),
     ]),
-    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-    getItem('Files', '9', <FileOutlined />),
+    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '8'), getItem('Team 2', '9')]),
+    getItem('Files', '10', <FileOutlined />),
 ];
 
 const App: React.FC = () => {
