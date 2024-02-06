@@ -1,0 +1,95 @@
+.curriculum-insert {
+    position: relative;
+    height: 32px;
+    width: 100%;
+    cursor: pointer;
+    opacity: 0;
+
+    .curriculum-btn-insert {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        height: 32px;
+        width: 64px;
+        top: 0px;
+        left: -32px;
+        border: 1px dashed #6a6f73;
+        background-color: white;
+    }
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.curriculum-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 64px;
+    padding-right: 8px;
+
+    .curriculum-wrapper {
+        border: 1px solid #6a6f73;
+        padding: 1.1rem 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+
+        .curriculum-left {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .curriculum-action {
+                display: inline-flex;
+                gap: 10px;
+                align-items: center;
+                justify-content: space-between;
+
+                .icon-edit {
+                    width: 14px;
+                    height: 14px;
+                }
+
+                .icon-trash {
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+        }
+
+        .curriculum-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+    }
+
+    .curriculum-dropdown {
+        padding: 9px;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #6a6f73;
+        border-right: 1px solid #6a6f73;
+        border-bottom: 1px solid #6a6f73;
+        gap: 8px;
+
+        .dropdown-top {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #d1d7dc;
+
+            .lecture-form-action {
+                margin: 8px 0;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 16px;
+            }
+        }
+    }
+}

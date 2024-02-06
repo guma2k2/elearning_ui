@@ -4,11 +4,12 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import Section from '../../../../components/section'
 function CurriculumList() {
     return (
-        <div className="curriculum-container">
+        <div className="curriculumlist-container">
             <div className="header">
                 <h2>Curriculum</h2>
             </div>
             <div className="wrapper">
+                <Section />
                 <Section />
             </div>
             <div className='plus'>

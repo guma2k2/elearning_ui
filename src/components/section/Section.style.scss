@@ -1,12 +1,39 @@
+.section-insert {
+    position: relative;
+    height: 64px;
+    width: 100%;
+    cursor: pointer;
+    opacity: 0;
+
+    .section-btn-insert {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        height: 32px;
+        width: 64px;
+        top: 16px;
+        left: -32px;
+        border: 1px dashed #6a6f73;
+        background-color: white;
+    }
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
 .section-container {
     border: 1px solid #6a6f73;
-    padding: 1.9rem 0.8rem;
-    min-height: 150px;
+    display: flex;
+    flex-direction: column;
 
     .section-header {
         padding: 1.6rem 0.8rem;
         display: flex;
         align-items: center;
+        cursor: pointer;
 
         .title {
             display: flex;
@@ -21,7 +48,6 @@
         }
 
         .section-action {
-            opacity: 0;
             flex: 1;
 
             .section-action-wrapper {
@@ -40,17 +66,14 @@
                 }
 
             }
-
-            &:hover {
-                opacity: 1;
-                cursor: pointer;
-            }
         }
     }
 
     .section-wraper {
+        margin-top: 16px;
         padding-left: 64px;
         padding-right: 8px;
+        padding-bottom: 2.4rem;
         position: relative;
 
         .btn-curriculum {
@@ -60,7 +83,7 @@
         .icon-exist {
             position: absolute;
             top: -15px;
-            left: -20px;
+            left: 30px;
             cursor: pointer;
             color: black;
             width: 20px;
@@ -136,17 +159,16 @@
                 gap: 10px;
 
                 .label {
-                    width: 221px;
-                    flex: 3;
+                    min-width: 221px;
                 }
 
                 input {
-                    flex: 7;
+                    flex: 1;
                     padding: 10px 20px;
                 }
 
                 .quiz-rte {
-                    flex: 7;
+                    flex: 1;
                 }
             }
 

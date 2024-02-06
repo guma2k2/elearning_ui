@@ -1,5 +1,4 @@
 export type CurriculumType = {
-    type: "lecture" | "quiz" | ""
+    type: "lecture" | "quiz"
     title: string
-    setToggle: any
 }
