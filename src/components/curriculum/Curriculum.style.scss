@@ -91,5 +91,34 @@
                 gap: 16px;
             }
         }
+
+        .dropdown-bottom {
+            padding: 8px;
+            position: relative;
+
+            .tab-title {
+                position: absolute;
+                right: 34px;
+                bottom: calc(100% + 9px);
+                z-index: 1;
+                border: 1px solid #6a6f73;
+                border-bottom: 1px solid #fff;
+                background-color: #fff;
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                padding: 8px;
+                min-width: 140px;
+
+                .tab-title-icon {
+                    height: 22px;
+                    width: 22px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                }
+            }
+        }
     }
 }

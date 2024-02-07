@@ -1,7 +1,7 @@
 import { GrStatusGood } from "react-icons/gr"
 import { CurriculumType } from "./CurriculumType"
 import { AiOutlineFile, AiOutlinePlus, AiOutlineQuestionCircle } from "react-icons/ai"
-import { Button } from "antd"
+import { Button, Form, Input, Tabs, TabsProps } from "antd"
 import './Curriculum.style.scss'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { MdModeEdit } from "react-icons/md"
@@ -9,10 +9,16 @@ import { FaTrash } from "react-icons/fa"
 import { useRef, useState } from "react"
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css';
+import InputFile from "../inputFile"
+import { LiaTimesSolid } from "react-icons/lia"
 
 type ToggleType = {
     type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | ""
 }
+type FieldType = {
+    title?: string;
+    url?: string;
+};
 const modules = {
     toolbar: [
         ['bold', 'italic'],
@@ -24,10 +30,54 @@ const formats = [
     'bold', 'italic', 'list', 'bullet',
 ];
 function Curriculum(probs: CurriculumType) {
+
     const curriculumHeaderRef = useRef<HTMLDivElement | null>(null);
     const [toggle, setToggle] = useState<ToggleType>({ type: "" });
     const [lectureDesc, setLectureDesc] = useState<string>("");
+    const onFinish = (values: FieldType) => {
+        console.log(values);
+    }
+    const items: TabsProps['items'] = [
+        {
+            key: '1',
+            label: 'Downloadable File',
+            children: <InputFile title="Select File" />,
+        },
+        {
+            key: '2',
+            label: 'External Resource',
+            children: <Form
+                layout="vertical"
+                name="basic"
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 24 }}
+                style={{ minWidth: "100%" }}
+                onFinish={onFinish}
+            >
+                <Form.Item<FieldType>
+                    label="Title"
+                    name="title"
+                    rules={[{ required: true, message: 'Please input your username!' }]}
+                >
+                    <Input />
+                </Form.Item>
 
+                <Form.Item<FieldType>
+                    label="URL"
+                    name="url"
+                    rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item wrapperCol={{ span: 24 }} style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
+                    <Button type="primary" htmlType="submit">
+                        Add Link
+                    </Button>
+                </Form.Item>
+            </Form>,
+        }
+    ];
     const handleMouseEnter = () => {
         if (curriculumHeaderRef.current) {
             curriculumHeaderRef.current.style.opacity = "1";
@@ -59,7 +109,7 @@ function Curriculum(probs: CurriculumType) {
                         </span>
                     </div>
                     <div className="curriculum-right">
-                        <Button className='btn-curriculum' icon={<AiOutlinePlus />}>{probs.type == "lecture" ? "Content" : "Questions"}</Button>
+                        {toggle.type !== "resources" ? <Button className='btn-curriculum' icon={<AiOutlinePlus />}>{probs.type == "lecture" ? "Content" : "Questions"}</Button> : ""}
                         {probs.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
                         {probs.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
                     </div>
@@ -82,8 +132,13 @@ function Curriculum(probs: CurriculumType) {
                 </div>
                 }
                 {toggle.type == "resources" && <div className="curriculum-dropdown">
-                    <div className="dropdown-bottom"></div>
-                    <Button style={{ width: "8rem" }} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
+                    <div className="dropdown-bottom">
+                        <div className="tab-title">
+                            <span>Add Resources</span>
+                            <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
+                        </div>
+                        <Tabs defaultActiveKey="1" items={items} />
+                    </div>
                 </div>
                 }
             </div>

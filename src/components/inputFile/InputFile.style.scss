@@ -1,0 +1,32 @@
+.inputFile-container {
+    padding: 10px;
+
+    .inputFile-wrapper {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border: 1px solid #6a6f73;
+        height: 48px;
+
+        .input {
+            padding: 13px;
+            background-color: #f7f9fa;
+            border-right: 1px solid #6a6f73;
+            height: 100%;
+            width: 650px;
+        }
+
+        .btn {
+            padding: 12px;
+            cursor: pointer;
+            background-color: white;
+            color: #2d2f31;
+            font-weight: 600;
+            flex: 1;
+
+            &:hover {
+                background-color: #9da3a7;
+            }
+        }
+    }
+}
