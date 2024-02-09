@@ -12,9 +12,14 @@ import 'react-quill/dist/quill.snow.css';
 import InputFile from "../inputFile"
 import { LiaTimesSolid } from "react-icons/lia"
 import Answer from "../answer"
+import CurriculumForm from "../curriculumForm"
 
 type ToggleType = {
-    type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | "" | "content" | "questions"
+    type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | "" | "content" | "questions" | "add"
+
+}
+type ToggleFormType = {
+    type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
 }
 type FieldType = {
     title?: string;
@@ -43,6 +48,7 @@ const questionFormats = [
 ];
 function Curriculum(probs: CurriculumType) {
     const curriculumHeaderRef = useRef<HTMLDivElement | null>(null);
+    const [toggleForm, setToggleForm] = useState<ToggleFormType>({ type: "" });
     const [toggle, setToggle] = useState<ToggleType>({ type: "" });
     const [lectureDesc, setLectureDesc] = useState<string>("");
     const [questionDesc, setQuestionDesc] = useState<string>("");
@@ -103,92 +109,96 @@ function Curriculum(probs: CurriculumType) {
     }
     return (
         <>
-            <div className="curriculum-insert">
-                <button className="curriculum-btn-insert">
+            {toggleForm.type == "" && <div className="curriculum-insert">
+                <button className="curriculum-btn-insert" onClick={() => setToggleForm({ type: "select" })}>
                     <AiOutlinePlus className="section-icon-insert" />
                 </button>
-            </div>
-            <div className="curriculum-container" onMouseLeave={handlMouseLeave} onMouseEnter={handleMouseEnter}>
-                <div className="curriculum-wrapper">
-                    <div className="curriculum-left">
-                        <GrStatusGood />
-                        <span>Lecture 1:</span>
-                        {probs.type == "lecture" ? <AiOutlineFile /> : <AiOutlineQuestionCircle />}
-                        <span>{probs.title}</span>
-                        <span className="curriculum-action" ref={curriculumHeaderRef} >
-                            <MdModeEdit className="icon-edit" />
-                            <FaTrash className="icon-trash" />
-                        </span>
-                    </div>
-                    <div className="curriculum-right">
-                        {toggle.type !== "resources" && toggle.type !== "content" && probs.type == "lecture" && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
-                        {toggle.type !== "resources" && toggle.type !== "questions" && probs.type == "quiz" && <Button onClick={() => setToggle({ type: "questions" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
-                        {probs.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
-                        {probs.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
-                    </div>
-                </div>
-                {toggle.type == "dropdown" && <div className="curriculum-dropdown">
-                    <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "desc" })} className='btn-desc-curriculum' icon={<AiOutlinePlus />}>Description</Button>
-                    <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "resources" })} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
-                </div>
-                }
-                {toggle.type == "desc" && <div className="curriculum-dropdown">
-                    <div className="dropdown-top">
-                        <span>Lecture Description</span>
-                        <div className="lecture-rte"><ReactQuill modules={lectureModules} formats={lectureFormats} theme="snow" value={lectureDesc} onChange={setLectureDesc} placeholder="Add a description. Include what students will be able to do after completing the lecture." /></div>
-                        <div className="lecture-form-action">
-                            <div style={{ cursor: "pointer" }} className="cancel" onClick={() => setToggle({ type: "dropdown" })}>Cancel</div>
-                            <Button type="primary">Save</Button>
+            </div>}
+            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm toggle={toggleForm} setToggle={setToggleForm} type="" />}
+            {toggleForm.type == "updateCurriculum" && <CurriculumForm toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
+            {toggleForm.type !== "updateCurriculum" &&
+                <div className="curriculum-container" onMouseLeave={handlMouseLeave} onMouseEnter={handleMouseEnter}>
+                    <div className="curriculum-wrapper">
+                        <div className="curriculum-left">
+                            <GrStatusGood />
+                            <span>Lecture 1:</span>
+                            {probs.type == "lecture" ? <AiOutlineFile /> : <AiOutlineQuestionCircle />}
+                            <span>{probs.title}</span>
+                            <span className="curriculum-action" ref={curriculumHeaderRef} >
+                                <MdModeEdit className="icon-edit" onClick={() => setToggleForm({ type: "updateCurriculum" })} />
+                                <FaTrash className="icon-trash" />
+                            </span>
+                        </div>
+                        <div className="curriculum-right">
+                            {toggle.type !== "resources" && toggle.type !== "content" && probs.type == "lecture" && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
+                            {toggle.type !== "resources" && toggle.type !== "questions" && probs.type == "quiz" && <Button onClick={() => setToggle({ type: "questions" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
+                            {probs.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
+                            {probs.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
                         </div>
                     </div>
-                    <Button style={{ width: "8rem" }} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
-                </div>
-                }
-                {toggle.type == "resources" && <div className="curriculum-dropdown">
-                    <div className="dropdown-bottom">
-                        <div className="tab-title">
-                            <span>Add Resources</span>
-                            <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
-                        </div>
-                        <Tabs defaultActiveKey="1" items={items} />
+                    {toggle.type == "dropdown" && <div className="curriculum-dropdown">
+                        <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "desc" })} className='btn-desc-curriculum' icon={<AiOutlinePlus />}>Description</Button>
+                        <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "resources" })} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
                     </div>
-                </div>
-                }
-                {
-                    toggle.type == "content" &&
-                    <div className="curriculum-dropdown">
+                    }
+                    {toggle.type == "desc" && <div className="curriculum-dropdown">
+                        <div className="dropdown-top">
+                            <span>Lecture Description</span>
+                            <div className="lecture-rte"><ReactQuill modules={lectureModules} formats={lectureFormats} theme="snow" value={lectureDesc} onChange={setLectureDesc} placeholder="Add a description. Include what students will be able to do after completing the lecture." /></div>
+                            <div className="lecture-form-action">
+                                <div style={{ cursor: "pointer" }} className="cancel" onClick={() => setToggle({ type: "dropdown" })}>Cancel</div>
+                                <Button type="primary">Save</Button>
+                            </div>
+                        </div>
+                        <Button style={{ width: "8rem" }} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
+                    </div>
+                    }
+                    {toggle.type == "resources" && <div className="curriculum-dropdown">
                         <div className="dropdown-bottom">
                             <div className="tab-title">
-                                <span>Add Video</span>
+                                <span>Add Resources</span>
                                 <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
                             </div>
-                            <InputFile title="Select Video" />
+                            <Tabs defaultActiveKey="1" items={items} />
                         </div>
                     </div>
-                }
-                {toggle.type == "questions" &&
-                    <div className="curriculum-dropdown">
-                        <div className="dropdown-question-bottom">
-                            <div className="tab-title">
-                                <span>Add Multiple Choice</span>
-                                <span className="tab-title-icon" onClick={() => setToggle({ type: "" })}><LiaTimesSolid /></span>
+                    }
+                    {
+                        toggle.type == "content" &&
+                        <div className="curriculum-dropdown">
+                            <div className="dropdown-bottom">
+                                <div className="tab-title">
+                                    <span>Add Video</span>
+                                    <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
+                                </div>
+                                <InputFile title="Select Video" />
                             </div>
                         </div>
-                        <div className="curriculum-question">
-                            <span>Question</span>
-                            <div className="question-rte"><ReactQuill modules={questionModules} formats={questionFormats} theme="snow" value={questionDesc} onChange={setQuestionDesc} /></div>
-                        </div>
-                        <div className="curriculum-answers">
-                            <span>Answer</span>
-                            <div className="curriculum-answers-container">
-                                <Answer />
-                                <Answer />
-                                <Answer />
+                    }
+                    {toggle.type == "questions" &&
+                        <div className="curriculum-dropdown">
+                            <div className="dropdown-question-bottom">
+                                <div className="tab-title">
+                                    <span>Add Multiple Choice</span>
+                                    <span className="tab-title-icon" onClick={() => setToggle({ type: "" })}><LiaTimesSolid /></span>
+                                </div>
+                            </div>
+                            <div className="curriculum-question">
+                                <span>Question</span>
+                                <div className="question-rte"><ReactQuill modules={questionModules} formats={questionFormats} theme="snow" value={questionDesc} onChange={setQuestionDesc} /></div>
+                            </div>
+                            <div className="curriculum-answers">
+                                <span>Answer</span>
+                                <div className="curriculum-answers-container">
+                                    <Answer />
+                                    <Answer />
+                                    <Answer />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+            }
         </>
     )
 }

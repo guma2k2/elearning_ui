@@ -16,7 +16,7 @@ function Answer() {
     const [toggle, setToggle] = useState<boolean>(false)
     const [answerDesc, setAnswerDesc] = useState<string>("")
     const radioRef = useRef<HTMLInputElement | null>(null)
-    const handleChecked = (e: any) => {
+    const handleChecked = () => {
         if (radioRef.current) {
             radioRef.current.checked = true;
         }
@@ -25,7 +25,7 @@ function Answer() {
     return (
         <div className="answer-container">
             <div className="radio">
-                <input ref={radioRef} checked type="radio" name="radio" className='input-radio' />
+                <input ref={radioRef} type="radio" name="radio" className='input-radio' />
                 <span className='input-container'>
                     {toggle == false && <p className='answer-text' onClick={() => setToggle(true)}>
                         <span>Add an answer</span>

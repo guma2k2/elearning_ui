@@ -1,0 +1,112 @@
+.section-wraper {
+    margin-top: 16px;
+    padding-left: 64px;
+    padding-right: 8px;
+    // padding-bottom: 2.4rem;
+    margin-bottom: 16px;
+    position: relative;
+
+    .btn-curriculum {
+        font-size: 14px;
+    }
+
+    .icon-exist {
+        position: absolute;
+        top: -15px;
+        left: 30px;
+        cursor: pointer;
+        color: black;
+        width: 20px;
+        height: 20px;
+
+        &:hover {
+            color: #371783;
+        }
+    }
+
+    .add-item-forms {
+        padding: 0.8rem 1.6rem;
+        border: 1px dashed #6a6f73;
+        display: flex;
+        gap: 12px;
+        color: #5624d0;
+        font-size: 16px;
+
+        .item-form {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            &:hover {
+                color: #371783;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .lecture-form {
+        border: 1px solid #6a6f73;
+        display: flex;
+        gap: 0.8rem;
+        flex-direction: column;
+        padding: 0.8rem;
+        font-size: 16px;
+
+        .lecture-form-item {
+            display: flex;
+            height: 34px;
+            gap: 10px;
+
+            .label {
+                flex: 3;
+            }
+
+            input {
+                flex: 7;
+                padding: 10px 20px;
+            }
+        }
+
+        .lecture-form-action {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    }
+
+
+    .quiz-form {
+        border: 1px solid #6a6f73;
+        display: flex;
+        gap: 0.8rem;
+        flex-direction: column;
+        padding: 0.8rem;
+        font-size: 16px;
+
+        .quiz-form-item {
+            display: flex;
+            gap: 10px;
+
+            .label {
+                min-width: 221px;
+            }
+
+            input {
+                flex: 1;
+                padding: 10px 20px;
+            }
+
+            .quiz-rte {
+                flex: 1;
+            }
+        }
+
+        .quiz-form-action {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    }
+}
