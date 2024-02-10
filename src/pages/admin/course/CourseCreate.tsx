@@ -1,6 +1,6 @@
 import Tabs from "antd/es/tabs";
 import CurriculumList from "./curriculum/CurriculumList";
-import CourseLandingPage from "./CourseLandingPage";
+import CourseLandingPage from "./landingPage/CourseLandingPage";
 function CourseCreate() {
 
     return (

@@ -34,8 +34,10 @@ function Section() {
                 </button>
             </div>
             }
-            {toggle.type === "addSection" && <SectionForm label='New Section' title='' setToggle={setToggle} toggle={toggle} />
+            {toggle.type === "addSection" && <div className="section-add-form"> <SectionForm label='New Section' title='' setToggle={setToggle} toggle={toggle} /></div>
+
             }
+
             <div className="section-container">
                 <div className="section-header" onMouseEnter={handleMouseEnter} onMouseLeave={handlMouseLeave}>
                     {toggle.type !== "updateSection" &&
