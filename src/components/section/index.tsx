@@ -7,9 +7,15 @@ import 'react-quill/dist/quill.snow.css';
 import Curriculum from "../curriculum"
 import SectionForm from "../sectionForm"
 import CurriculumForm from "../curriculumForm"
+import { Section } from "../../pages/admin/course/CourseType"
 
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
+}
+
+type Probs = {
+    key: number
+    section: Section
 }
 
 function Section() {
@@ -59,8 +65,10 @@ function Section() {
                         <SectionForm label='Section 1:' title='Introduction' setToggle={setToggle} toggle={toggle} />
                     </div>}
                 </div>
+                // list curriculum
                 <Curriculum title="Lecture test" type="lecture" />
                 <Curriculum title="Lecture test" type="quiz" />
+
                 <CurriculumForm toggle={toggle} setToggle={setToggle} type="button" />
             </div>
         </>
