@@ -55,6 +55,7 @@ function Curriculum(probs: CurriculumType) {
     const onFinish = (values: FieldType) => {
         console.log(values);
     }
+    const curriculum = probs.curriculum;
     const items: TabsProps['items'] = [
         {
             key: '1',
@@ -121,19 +122,19 @@ function Curriculum(probs: CurriculumType) {
                     <div className="curriculum-wrapper">
                         <div className="curriculum-left">
                             <GrStatusGood />
-                            <span>Lecture 1:</span>
-                            {probs.type == "lecture" ? <AiOutlineFile /> : <AiOutlineQuestionCircle />}
-                            <span>{probs.title}</span>
+                            <span>{curriculum.type === "lecture" ? "Lecture" : "Quiz"} {curriculum.index}:</span>
+                            {curriculum.type == "lecture" ? <AiOutlineFile /> : <AiOutlineQuestionCircle />}
+                            <span>{curriculum.title}</span>
                             <span className="curriculum-action" ref={curriculumHeaderRef} >
                                 <MdModeEdit className="icon-edit" onClick={() => setToggleForm({ type: "updateCurriculum" })} />
                                 <FaTrash className="icon-trash" />
                             </span>
                         </div>
                         <div className="curriculum-right">
-                            {toggle.type !== "resources" && toggle.type !== "content" && probs.type == "lecture" && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
-                            {toggle.type !== "resources" && toggle.type !== "questions" && probs.type == "quiz" && <Button onClick={() => setToggle({ type: "questions" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
-                            {probs.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
-                            {probs.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
+                            {toggle.type !== "resources" && toggle.type !== "content" && curriculum.type == "lecture" && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
+                            {toggle.type !== "resources" && toggle.type !== "questions" && curriculum.type == "quiz" && <Button onClick={() => setToggle({ type: "questions" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
+                            {curriculum.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
+                            {curriculum.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
                         </div>
                     </div>
                     {toggle.type == "dropdown" && <div className="curriculum-dropdown">

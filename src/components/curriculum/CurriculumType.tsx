@@ -1,4 +1,5 @@
+import { ICurriculum } from "../../pages/admin/course/CourseType"
+
 export type CurriculumType = {
-    type: "lecture" | "quiz"
-    title: string
+    curriculum: ICurriculum
 }

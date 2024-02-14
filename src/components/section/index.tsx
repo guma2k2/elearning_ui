@@ -7,20 +7,21 @@ import 'react-quill/dist/quill.snow.css';
 import Curriculum from "../curriculum"
 import SectionForm from "../sectionForm"
 import CurriculumForm from "../curriculumForm"
-import { Section } from "../../pages/admin/course/CourseType"
+import { SectionType } from "../../pages/admin/course/CourseType"
 
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
 }
 
 type Probs = {
-    key: number
-    section: Section
+    section: SectionType
+    index: number
 }
 
-function Section() {
+function Section(props: Probs) {
     const [toggle, setToggle] = useState<ToggleType>({ type: "button" });
     const headerRef = useRef<HTMLDivElement | null>(null);
+    const section = props.section;
     const handleMouseEnter = () => {
         if (headerRef.current) {
             headerRef.current.style.display = "block";
@@ -32,6 +33,7 @@ function Section() {
             headerRef.current.style.display = "none";
         }
     }
+    console.log(props.index)
     return (
         <>
             {toggle.type !== "addSection" && <div className="section-insert">
@@ -49,9 +51,9 @@ function Section() {
                     {toggle.type !== "updateSection" &&
                         <>
                             <div className="title">
-                                <span>Section 1:</span>
+                                <span>Section {props.index + 1}:</span>
                                 <AiOutlineFile className="icon-file" />
-                                <span>Introduction</span>
+                                <span>{section.title}</span>
                             </div>
                             <div className="section-action" ref={headerRef}>
                                 <div className="section-action-wrapper">
@@ -65,9 +67,7 @@ function Section() {
                         <SectionForm label='Section 1:' title='Introduction' setToggle={setToggle} toggle={toggle} />
                     </div>}
                 </div>
-                // list curriculum
-                <Curriculum title="Lecture test" type="lecture" />
-                <Curriculum title="Lecture test" type="quiz" />
+                {section.curriculums.map((curriculum, index) => <Curriculum curriculum={curriculum} key={index} />)}
 
                 <CurriculumForm toggle={toggle} setToggle={setToggle} type="button" />
             </div>

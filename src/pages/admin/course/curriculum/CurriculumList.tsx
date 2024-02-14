@@ -4,8 +4,11 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import Section from '../../../../components/section'
 import { useState } from 'react';
 import SectionForm from '../../../../components/sectionForm';
-
-function CurriculumList() {
+import { CourseType } from '../CourseType';
+type Probs = {
+    course: CourseType | undefined
+}
+function CurriculumList(probs: Probs) {
     const [toggle, setToggle] = useState<boolean>(false);
     return (
         <div className="curriculumlist-container">
@@ -13,8 +16,7 @@ function CurriculumList() {
                 <h2>Curriculum</h2>
             </div>
             <div className="wrapper">
-                <Section />
-                <Section />
+                {probs.course?.sections.map((section, index) => <Section section={section} key={index} index={index} />)}
             </div>
             {toggle == false && <div className='plus' onClick={() => setToggle(true)}>
                 <Button className='btn-plus' icon={<AiOutlinePlus />}>Section</Button>

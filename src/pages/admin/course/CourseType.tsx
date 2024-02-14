@@ -1,6 +1,3 @@
-import Answer from "../../../components/answer"
-import Curriculum from "../../../components/curriculum"
-
 export type CourseType = {
     id?: number
     title: string
@@ -16,30 +13,31 @@ export type CourseType = {
     updatedAt?: string
     free?: boolean
     isPublish?: boolean
-    sections: Section[]
+    sections: SectionType[]
 }
 
-export type Section = {
+export type SectionType = {
     id?: number
     title: string
     number: number
     objective: string
-    curriculums: Curriculum[]
+    curriculums: ICurriculum[]
 }
 
-interface Curriculum {
+export interface ICurriculum {
     id?: number
     title: string
     number: number
+    index?: number
     type: "lecture" | "quiz"
 }
-interface Lecture extends Curriculum {
+export interface ILecture extends ICurriculum {
     videoId: string
     lectureDetails: string
     duration: number
 }
 
-interface Quiz extends Curriculum {
+export interface IQuiz extends ICurriculum {
     description: string
     questions: Question[]
 }

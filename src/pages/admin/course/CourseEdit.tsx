@@ -3,27 +3,20 @@ import CurriculumList from "./curriculum/CurriculumList";
 import CourseLandingPage from "./landingPage/CourseLandingPage";
 import Spinner from "../../../components/spinner";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { get } from "../../../services/CourseService";
-import { CourseType } from "./CourseType";
+import { useEffect, } from "react";
+import { RootState } from "../../../redux/store";
+import { fetchCourseById } from "../../../redux/slices/CourseSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 function CourseEdit() {
     const { id } = useParams();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [course, setCourse] = useState<CourseType>();
-    console.log(id);
-    console.log(typeof (id))
+    const dispatch = useAppDispatch();
+    const { currentCourse, isLoading, isDataUpdated } = useAppSelector((state: RootState) => state.courses);
+
     useEffect(() => {
-        setIsLoading(true)
-        const fetchCourseById = async () => {
-            const res = await get(id);
-            if (res.status === 200) {
-                setCourse(res.data)
-            }
-            setIsLoading(false)
-        }
-        fetchCourseById();
-    }, [])
-    console.log(course);
+        dispatch(fetchCourseById(id));
+    }, [id, isDataUpdated])
+    console.log(currentCourse);
+
     return (
         <> {isLoading == true && <Spinner />}
             {isLoading == false && <Tabs
@@ -34,7 +27,7 @@ function CourseEdit() {
                         return {
                             label: 'Curriculum',
                             key: id,
-                            children: <CurriculumList />,
+                            children: <CurriculumList course={currentCourse} />,
                         };
                     }
                     return {
