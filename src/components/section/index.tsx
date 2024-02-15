@@ -16,6 +16,8 @@ type ToggleType = {
 type Probs = {
     section: SectionType
     index: number
+    prevNum: number
+    nextNum: number
 }
 
 function Section(props: Probs) {
@@ -34,6 +36,8 @@ function Section(props: Probs) {
         }
     }
     console.log(props.index)
+    console.log(props.prevNum)
+    console.log(props.nextNum)
     return (
         <>
             {toggle.type !== "addSection" && <div className="section-insert">
@@ -42,7 +46,7 @@ function Section(props: Probs) {
                 </button>
             </div>
             }
-            {toggle.type === "addSection" && <div className="section-add-form"> <SectionForm label='New Section' title='' setToggle={setToggle} toggle={toggle} /></div>
+            {toggle.type === "addSection" && <div className="section-add-form"> <SectionForm prevNum={props.prevNum} nextNum={props.nextNum} label='New Section' setToggle={setToggle} toggle={toggle} /></div>
 
             }
 
@@ -64,7 +68,7 @@ function Section(props: Probs) {
                         </>
                     }
                     {toggle.type === "updateSection" && <div className="section-header-form">
-                        <SectionForm label='Section 1:' title='Introduction' setToggle={setToggle} toggle={toggle} />
+                        <SectionForm section={section} prevNum={section.number} nextNum={section.number} label={`Section ${props.index + 1}:`} setToggle={setToggle} toggle={toggle} />
                     </div>}
                 </div>
                 {section.curriculums.map((curriculum, index) => <Curriculum curriculum={curriculum} key={index} />)}

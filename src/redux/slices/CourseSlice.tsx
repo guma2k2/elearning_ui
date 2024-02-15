@@ -29,9 +29,9 @@ export const courseSlice = createSlice({
     name: 'courses',
     initialState,
     reducers: {
-        // increment: (state) => {
-        //     state.value += 1
-        // },
+        updateDataStatus: (state) => {
+            state.isDataUpdated = !state.isDataUpdated
+        },
         // decrement: (state) => {
         //     state.value -= 1
         // },
@@ -60,7 +60,7 @@ export const courseSlice = createSlice({
     },
 })
 
-// export const { increment, decrement, incrementByAmount } = courseSlice.actions
+export const { updateDataStatus } = courseSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.courses

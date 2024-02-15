@@ -4,6 +4,7 @@ import './CurriculumForm.style.scss'
 import { LiaTimesSolid } from "react-icons/lia";
 import ReactQuill from "react-quill";
 import { useState } from "react";
+import { ICurriculum } from "../../pages/admin/course/CourseType";
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
 }
@@ -11,6 +12,7 @@ type ProbsType = {
     toggle: ToggleType
     setToggle?: (value: ToggleType) => void
     type: "button" | ""
+    curriculum?: ICurriculum
 }
 const modules = {
     toolbar: [
@@ -23,7 +25,15 @@ const formats = [
 ];
 function CurriculumForm(probs: ProbsType) {
     const [descQuiz, setDescQuiz] = useState<string>();
+    const [lectureTitle, setLectureTitle] = useState<string>()
+    const [quizTitle, setQuizTitle] = useState<string>()
     const toggle = probs.toggle;
+    const handleCreateLecture = async () => {
+        // call api create lecture
+    }
+    const handleCreateQuiz = async () => {
+        // call api create quiz
+    }
     return (
         <div className="section-wraper">
             {(toggle.type === "button" || toggle.type == "updateSection") && probs.type == "button" && <Button onClick={() => probs.setToggle && probs.setToggle({ type: "select" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Curriculum item</Button>}
@@ -45,7 +55,7 @@ function CurriculumForm(probs: ProbsType) {
                 <div className="lecture-form">
                     <div className="lecture-form-item">
                         <div className="label">New Lecture: </div>
-                        <input type="text" placeholder="Enter a Title" />
+                        <input type="text" placeholder="Enter a Title" value={lectureTitle} onChange={(e) => setLectureTitle(e.target.value)} />
                     </div>
                     <div className="lecture-form-action">
                         <div className="cancel">Cancel</div>
@@ -57,7 +67,7 @@ function CurriculumForm(probs: ProbsType) {
                 <div className="quiz-form">
                     <div className="quiz-form-item">
                         <div className="label">New Quiz: </div>
-                        <input type="text" placeholder="Enter a Title" />
+                        <input type="text" placeholder="Enter a Title" value={quizTitle} onChange={(e) => setQuizTitle(e.target.value)} />
                     </div>
                     <div className="quiz-form-item">
                         <div className="label"></div>

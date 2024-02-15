@@ -115,8 +115,8 @@ function Curriculum(probs: CurriculumType) {
                     <AiOutlinePlus className="section-icon-insert" />
                 </button>
             </div>}
-            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm toggle={toggleForm} setToggle={setToggleForm} type="" />}
-            {toggleForm.type == "updateCurriculum" && <CurriculumForm toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
+            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm curriculum={curriculum} toggle={toggleForm} setToggle={setToggleForm} type="" />}
+            {toggleForm.type == "updateCurriculum" && <CurriculumForm curriculum={curriculum} toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
             {toggleForm.type !== "updateCurriculum" &&
                 <div className="curriculum-container" onMouseLeave={handlMouseLeave} onMouseEnter={handleMouseEnter}>
                     <div className="curriculum-wrapper">
