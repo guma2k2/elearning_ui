@@ -4,7 +4,7 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import Section from '../../../../components/section'
 import { useState } from 'react';
 import SectionForm from '../../../../components/sectionForm';
-import { CourseType } from '../CourseType';
+import { CourseType } from '../../../../types/CourseType';
 type Probs = {
     course: CourseType | undefined
 }

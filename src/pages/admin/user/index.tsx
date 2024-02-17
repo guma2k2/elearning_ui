@@ -5,7 +5,7 @@ import UserPhoto from "../../../assets/userPhoto.png"
 import "./User.style.scss"
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { uploadFile } from '../../../services/MediaService';
-import { UserGetDetailType, UserType } from './UserType';
+import { UserGetDetailType, UserType } from '../../../types/UserType';
 import { get, getWithPagination, save, update } from '../../../services/UserService';
 
 
@@ -204,6 +204,7 @@ function User() {
         if (checkIsUploadFile) {
             var formData = new FormData();
             formData.append("photo", values.photoId[0].originFileObj);
+            formData.append("type", "photo");
             const res = await uploadFile(formData);
             if (res.status === 200) {
                 photoId = res.data.id;

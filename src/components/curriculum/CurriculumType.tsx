@@ -1,5 +1,8 @@
-import { ICurriculum } from "../../pages/admin/course/CourseType"
+import { ILecture, IQuiz } from "../../types/CourseType"
 
 export type CurriculumType = {
-    curriculum: ICurriculum
+    curriculum: ILecture | IQuiz
+    sectionId: number
+    prevNum?: number
+    nextNum?: number
 }

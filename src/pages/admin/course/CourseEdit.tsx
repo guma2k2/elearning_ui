@@ -15,7 +15,6 @@ function CourseEdit() {
     useEffect(() => {
         dispatch(fetchCourseById(id));
     }, [id, isDataUpdated])
-    console.log(currentCourse);
 
     return (
         <> {isLoading == true && <Spinner />}

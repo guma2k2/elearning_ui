@@ -1,4 +1,4 @@
-import { CourseType } from "../pages/admin/course/CourseType";
+import { CourseType } from "../types/CourseType";
 import instance from "../utils/axiosCustomize";
 
 export const getCourseWithPagination = async (current: number, pageSize: number) => {

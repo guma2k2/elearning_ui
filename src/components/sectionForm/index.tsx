@@ -1,7 +1,7 @@
 import { Button, Form, Input } from 'antd'
 import './SectionForm.style.scss'
 import { LiaTimesSolid } from 'react-icons/lia'
-import { SectionType } from '../../pages/admin/course/CourseType'
+import { SectionType } from '../../types/CourseType'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { useEffect } from 'react'
 import { create, update } from '../../services/SectionService'

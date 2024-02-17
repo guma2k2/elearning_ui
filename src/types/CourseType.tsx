@@ -21,7 +21,7 @@ export type SectionType = {
     title: string
     number: number
     objective: string
-    curriculums: ICurriculum[]
+    curriculums: (ILecture | IQuiz)[]
 }
 
 export interface ICurriculum {
@@ -29,27 +29,28 @@ export interface ICurriculum {
     title: string
     number: number
     index?: number
-    type: "lecture" | "quiz"
 }
 export interface ILecture extends ICurriculum {
-    videoId: string
-    lectureDetails: string
-    duration: number
+    type: "lecture"
+    videoId?: string
+    lectureDetails?: string
+    duration?: number
 }
 
 export interface IQuiz extends ICurriculum {
+    type: "quiz"
     description: string
-    questions: Question[]
+    questions?: Question[]
 }
 
-type Question = {
+export type Question = {
     id?: number
     title: string
-    answers: Answer[]
+    answers: AnswerType[]
 }
-type Answer = {
+export type AnswerType = {
     id?: number
     answerText: string
-    reason: string
+    reason?: string
     correct: boolean
 }

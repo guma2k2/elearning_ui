@@ -1,7 +1,7 @@
 import { Button, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Select, Table, TableColumnsType, TreeSelect } from 'antd';
 import { useEffect, useState } from 'react'
 import './Course.style.scss'
-import { CourseType } from './CourseType';
+import { CourseType } from '../../../types/CourseType';
 import { createCourse, getCourseWithPagination } from '../../../services/CourseService';
 import { SearchOutlined } from '@ant-design/icons';
 import { getCategoryParents } from '../../../services/CategoryService';

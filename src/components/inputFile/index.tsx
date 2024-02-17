@@ -1,6 +1,9 @@
+import { ChangeEvent, RefObject } from 'react'
 import './InputFile.style.scss'
 type Probs = {
     title: string
+    handleFileChange: (event: ChangeEvent<HTMLInputElement>) => void
+    fileRef:RefObject<HTMLInputElement>
 }
 function InputFile(probs: Probs) {
     return (
@@ -10,7 +13,7 @@ function InputFile(probs: Probs) {
                     <div className="input">No file selected</div>
                     <div className="btn">{probs.title}</div>
                 </div>
-                <input type="file" id="inputFileId" hidden />
+                <input type="file" id="inputFileId" hidden onChange={probs.handleFileChange} />
             </label>
 
         </>

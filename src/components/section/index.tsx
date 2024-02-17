@@ -7,7 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import Curriculum from "../curriculum"
 import SectionForm from "../sectionForm"
 import CurriculumForm from "../curriculumForm"
-import { SectionType } from "../../pages/admin/course/CourseType"
+import { SectionType } from "../../types/CourseType"
 
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
@@ -35,9 +35,6 @@ function Section(props: Probs) {
             headerRef.current.style.display = "none";
         }
     }
-    console.log(props.index)
-    console.log(props.prevNum)
-    console.log(props.nextNum)
     return (
         <>
             {toggle.type !== "addSection" && <div className="section-insert">
@@ -71,9 +68,21 @@ function Section(props: Probs) {
                         <SectionForm section={section} prevNum={section.number} nextNum={section.number} label={`Section ${props.index + 1}:`} setToggle={setToggle} toggle={toggle} />
                     </div>}
                 </div>
-                {section.curriculums.map((curriculum, index) => <Curriculum curriculum={curriculum} key={index} />)}
+                {section.curriculums && section.curriculums.map((curriculum, index) => {
+                    let prevNum: number = 0;
+                    let nextNum: number = 0;
+                    if (section.curriculums) {
+                        if (index == 0) {
+                            prevNum = nextNum = section.curriculums[0].number - 1;
+                        } else {
+                            prevNum = section.curriculums[index - 1].number;
+                            nextNum = section.number
+                        }
+                    }
+                    return <Curriculum curriculum={curriculum} key={index} sectionId={section.id ? section.id : 0} prevNum={prevNum} nextNum={nextNum} />
+                })}
 
-                <CurriculumForm toggle={toggle} setToggle={setToggle} type="button" />
+                <CurriculumForm sectionId={section.id ? section.id : 0} toggle={toggle} setToggle={setToggle} type="button" />
             </div>
         </>
     )

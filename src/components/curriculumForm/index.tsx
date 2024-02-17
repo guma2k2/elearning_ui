@@ -4,7 +4,12 @@ import './CurriculumForm.style.scss'
 import { LiaTimesSolid } from "react-icons/lia";
 import ReactQuill from "react-quill";
 import { useState } from "react";
-import { ICurriculum } from "../../pages/admin/course/CourseType";
+import { ICurriculum } from "../../types/CourseType";
+import { QuizPost } from "../../types/QuizType";
+import { createQuiz } from "../../services/QuizService";
+import { createLecture } from "../../services/LectureService";
+import { useAppDispatch } from "../../redux/hooks";
+import { updateDataStatus } from "../../redux/slices/CourseSlice";
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
 }
@@ -13,6 +18,9 @@ type ProbsType = {
     setToggle?: (value: ToggleType) => void
     type: "button" | ""
     curriculum?: ICurriculum
+    sectionId: number
+    prevNum?: number
+    nextNum?: number
 }
 const modules = {
     toolbar: [
@@ -24,15 +32,55 @@ const formats = [
     'bold', 'italic'
 ];
 function CurriculumForm(probs: ProbsType) {
-    const [descQuiz, setDescQuiz] = useState<string>();
-    const [lectureTitle, setLectureTitle] = useState<string>()
-    const [quizTitle, setQuizTitle] = useState<string>()
+    const [descQuiz, setDescQuiz] = useState<string>("");
+    const [lectureTitle, setLectureTitle] = useState<string>("")
+    const [quizTitle, setQuizTitle] = useState<string>("")
     const toggle = probs.toggle;
+    const dispatch = useAppDispatch();
     const handleCreateLecture = async () => {
-        // call api create lecture
+        const type = probs.curriculum ? "update" : "create";
+        console.log(type);
+
+        const lecturePost: LecturePost = {
+            title: lectureTitle,
+            number: getNumber(),
+            sectionId: probs.sectionId
+        }
+        const res = await createLecture(lecturePost);
+        console.log(res);
+        if (res.status === 201) {
+            console.log(res.data);
+            if (probs.setToggle) probs.setToggle({ type: "" })
+            dispatch(updateDataStatus())
+        }
     }
     const handleCreateQuiz = async () => {
-        // call api create quiz
+        const type = probs.curriculum ? "update" : "create";
+        console.log(type);
+        console.log(getNumber());
+
+        const quizPost: QuizPost = {
+            title: quizTitle,
+            number: getNumber(),
+            description: descQuiz,
+            sectionId: probs.sectionId
+        }
+        const res = await createQuiz(quizPost);
+        console.log(res);
+        if (res.status === 201) {
+            console.log(res.data);
+            if (probs.setToggle) probs.setToggle({ type: "" })
+            dispatch(updateDataStatus())
+        }
+    }
+
+    const getNumber = (): number => {
+        let number = 0;
+        console.log(probs.prevNum);
+        if (probs.prevNum && probs.nextNum) {
+            number = probs.prevNum && probs.nextNum && probs.prevNum == probs.nextNum ? probs.prevNum : (probs.prevNum + probs.nextNum) / 2
+        }
+        return number;
     }
     return (
         <div className="section-wraper">
@@ -59,7 +107,7 @@ function CurriculumForm(probs: ProbsType) {
                     </div>
                     <div className="lecture-form-action">
                         <div className="cancel">Cancel</div>
-                        <Button type="primary">Add Lecture</Button>
+                        <Button type="primary" onClick={handleCreateLecture} >Add Lecture</Button>
                     </div>
                 </div>
             }
@@ -75,7 +123,7 @@ function CurriculumForm(probs: ProbsType) {
                     </div>
                     <div className="quiz-form-action">
                         <div className="cancel">Cancel</div>
-                        <Button type="primary">Add Quiz</Button>
+                        <Button type="primary" onClick={handleCreateQuiz}>Add Quiz</Button>
                     </div>
                 </div>
             }

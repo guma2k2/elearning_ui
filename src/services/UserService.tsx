@@ -1,4 +1,4 @@
-import { UserType } from "../pages/admin/user/UserType";
+import { UserType } from "../types/UserType";
 import instance from "../utils/axiosCustomize";
 
 

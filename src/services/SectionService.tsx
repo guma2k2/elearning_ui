@@ -1,4 +1,4 @@
-import { SectionType } from "../pages/admin/course/CourseType";
+import { SectionType } from "../types/CourseType";
 import instance from "../utils/axiosCustomize";
 
 export const create = async (sectionPost: SectionType) => {

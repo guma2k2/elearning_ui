@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
-import { CourseType } from '../../pages/admin/course/CourseType'
+import { CourseType } from '../../types/CourseType'
 import { get } from '../../services/CourseService'
 
 // Define a type for the slice state

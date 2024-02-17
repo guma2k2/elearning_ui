@@ -6,16 +6,20 @@ import './Curriculum.style.scss'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { MdModeEdit } from "react-icons/md"
 import { FaTrash } from "react-icons/fa"
-import { useRef, useState } from "react"
+import { ChangeEvent, useRef, useState } from "react"
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css';
 import InputFile from "../inputFile"
 import { LiaTimesSolid } from "react-icons/lia"
-import Answer from "../answer"
 import CurriculumForm from "../curriculumForm"
+import { uploadFile } from "../../services/MediaService"
+import { update } from "../../services/LectureService"
+import { AnswerType } from "../../types/CourseType"
+import Answer from "../answer"
+import { QuestionPost } from "../../types/Question"
 
 type ToggleType = {
-    type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | "" | "content" | "questions" | "add"
+    type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | "" | "content" | "questions" | "add" | "dropdownQuestion"
 
 }
 type ToggleFormType = {
@@ -46,21 +50,73 @@ const questionModules = {
 const questionFormats = [
     'bold', 'italic', 'code-block', "image"
 ];
+const answersClone: AnswerType[] = [
+    {
+        id: 1,
+        answerText: "hello world",
+        reason: "the author like",
+        correct: true
+    },
+    {
+        id: 1,
+        answerText: "hello world2",
+        reason: "the author like",
+        correct: false
+    },
+]
+const answerClone: AnswerType = {
+    answerText: "",
+    reason: "",
+    correct: false
+}
 function Curriculum(probs: CurriculumType) {
     const curriculumHeaderRef = useRef<HTMLDivElement | null>(null);
+    const questionHeaderRef = useRef<HTMLDivElement | null>(null);
     const [toggleForm, setToggleForm] = useState<ToggleFormType>({ type: "" });
     const [toggle, setToggle] = useState<ToggleType>({ type: "" });
     const [lectureDesc, setLectureDesc] = useState<string>("");
     const [questionDesc, setQuestionDesc] = useState<string>("");
+    const [answers, setAnswers] = useState<AnswerType[]>(answersClone);
+    const [indexAnswerActive, setIndexAnswerActive] = useState<number>(-1);
+    const fileRef = useRef<HTMLInputElement>(null);
     const onFinish = (values: FieldType) => {
         console.log(values);
     }
     const curriculum = probs.curriculum;
+    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        console.log(curriculum);
+
+        if (files && files.length > 0) {
+            const selected = files[0];
+            console.log(selected);
+            var formData = new FormData();
+            formData.append("file", selected);
+            formData.append("type", "video");
+            const res = await uploadFile(formData);
+            if (res.status === 200) {
+                const videoId = res.data.id;
+                const duration = res.data.duration;
+                const lecturePost: LecturePost = {
+                    ...curriculum, sectionId: probs.sectionId, videoId: videoId, duration: duration
+                }
+                console.log(lecturePost);
+                const resOfUploadVideoLecture = await update(lecturePost, curriculum.id);
+                if (resOfUploadVideoLecture.status === 200) {
+                    console.log((resOfUploadVideoLecture).data);
+                    setToggle({ type: "" })
+                    if (fileRef.current) {
+                        fileRef.current.value = '';
+                    }
+                }
+            }
+        }
+    };
     const items: TabsProps['items'] = [
         {
             key: '1',
             label: 'Downloadable File',
-            children: <InputFile title="Select File" />,
+            children: <InputFile title="Select File" handleFileChange={handleFileChange} fileRef={fileRef} />,
         },
         {
             key: '2',
@@ -108,6 +164,25 @@ function Curriculum(probs: CurriculumType) {
             curriculumHeaderRef.current.style.opacity = "0";
         }
     }
+
+    const handleAddAnswer = () => {
+        setAnswers((prev) => [...prev, answerClone]);
+    }
+
+    const handleRemoveAnswer = (answerIndex: number) => {
+        setAnswers((prev) => prev.filter((answer, index) => index !== answerIndex))
+    }
+
+    const handleSaveQuestion = () => {
+        if (curriculum) {
+            const questionPost: QuestionPost = {
+                title: questionDesc,
+                quizId: curriculum.id,
+                answers
+            }
+            console.log(questionPost);
+        }
+    }
     return (
         <>
             {toggleForm.type == "" && <div className="curriculum-insert">
@@ -115,8 +190,8 @@ function Curriculum(probs: CurriculumType) {
                     <AiOutlinePlus className="section-icon-insert" />
                 </button>
             </div>}
-            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm curriculum={curriculum} toggle={toggleForm} setToggle={setToggleForm} type="" />}
-            {toggleForm.type == "updateCurriculum" && <CurriculumForm curriculum={curriculum} toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
+            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm sectionId={probs.sectionId} prevNum={probs.prevNum} nextNum={probs.nextNum} curriculum={curriculum} toggle={toggleForm} setToggle={setToggleForm} type="" />}
+            {toggleForm.type == "updateCurriculum" && <CurriculumForm sectionId={probs.sectionId} curriculum={curriculum} toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
             {toggleForm.type !== "updateCurriculum" &&
                 <div className="curriculum-container" onMouseLeave={handlMouseLeave} onMouseEnter={handleMouseEnter}>
                     <div className="curriculum-wrapper">
@@ -132,9 +207,11 @@ function Curriculum(probs: CurriculumType) {
                         </div>
                         <div className="curriculum-right">
                             {toggle.type !== "resources" && toggle.type !== "content" && curriculum.type == "lecture" && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
-                            {toggle.type !== "resources" && toggle.type !== "questions" && curriculum.type == "quiz" && <Button onClick={() => setToggle({ type: "questions" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
+                            {toggle.type !== "resources" && toggle.type !== "questions" && curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length === 0 && <Button onClick={() => setToggle({ type: "questions" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
                             {curriculum.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
                             {curriculum.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
+                            {curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length > 0 && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdownQuestion" })} />}
+                            {curriculum.type == "quiz" && toggle.type == "dropdownQuestion" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
                         </div>
                     </div>
                     {toggle.type == "dropdown" && <div className="curriculum-dropdown">
@@ -142,6 +219,33 @@ function Curriculum(probs: CurriculumType) {
                         <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "resources" })} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
                     </div>
                     }
+                    {
+                        toggle.type == "dropdownQuestion" && <div className="curriculum-dropdown">
+                            <div className="dropdown-questions-top">
+                                <div className="left">
+                                    <span>Questions</span>
+                                    <Button onClick={() => setToggle({ type: "questions" })} >New Question</Button>
+                                </div>
+                                <div className="right">
+                                    <Button>Preview</Button>
+                                </div>
+                            </div>
+                            <div className="dropdown-questions-list">
+                                {curriculum.type == "quiz" && curriculum.questions?.map((question, index) =>
+                                    <div key={index} className="dropdown-questions-item" >
+                                        <div className="left">
+                                            <span>{index + 1}. {question.title} </span>
+                                        </div>
+                                        <span className="right" ref={questionHeaderRef} >
+                                            <MdModeEdit className="icon-edit" onClick={() => setToggle({ type: "questions" })} />
+                                            <FaTrash className="icon-trash" />
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    }
+
                     {toggle.type == "desc" && <div className="curriculum-dropdown">
                         <div className="dropdown-top">
                             <span>Lecture Description</span>
@@ -172,7 +276,7 @@ function Curriculum(probs: CurriculumType) {
                                     <span>Add Video</span>
                                     <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
                                 </div>
-                                <InputFile title="Select Video" />
+                                <InputFile fileRef={fileRef} title="Select Video" handleFileChange={handleFileChange} />
                             </div>
                         </div>
                     }
@@ -191,9 +295,13 @@ function Curriculum(probs: CurriculumType) {
                             <div className="curriculum-answers">
                                 <span>Answer</span>
                                 <div className="curriculum-answers-container">
-                                    <Answer />
-                                    <Answer />
-                                    <Answer />
+                                    {answers && answers.map((answer, index) => {
+                                        return <Answer answer={answer} key={index} handleAddAnswer={handleAddAnswer} handleRemoveAnswer={handleRemoveAnswer} index={index} setAnswers={setAnswers} answers={answers} setIndexAnswerActive={setIndexAnswerActive} indexAnswerActive={indexAnswerActive} />
+                                    }
+                                    )}
+                                </div>
+                                <div className="answer-action">
+                                    <Button onClick={handleSaveQuestion} className="btn-question-save" >Save</Button>
                                 </div>
                             </div>
                         </div>
