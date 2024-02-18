@@ -15,8 +15,9 @@ import CurriculumForm from "../curriculumForm"
 import { uploadFile } from "../../services/MediaService"
 import { update } from "../../services/LectureService"
 import { AnswerType } from "../../types/CourseType"
-import Answer from "../answer"
 import { QuestionPost } from "../../types/Question"
+import { createQuestion } from "../../services/QuestionService"
+import QuestionForm from "../questionForm"
 
 type ToggleType = {
     type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | "" | "content" | "questions" | "add" | "dropdownQuestion"
@@ -40,27 +41,15 @@ const lectureFormats = [
     'bold', 'italic', 'list', 'bullet',
 ];
 
-const questionModules = {
-    toolbar: [
-        ['bold', 'italic'],
-        ['code-block'], ['image']
-    ],
-};
-
-const questionFormats = [
-    'bold', 'italic', 'code-block', "image"
-];
 const answersClone: AnswerType[] = [
     {
-        id: 1,
-        answerText: "hello world",
-        reason: "the author like",
-        correct: true
+        answerText: "",
+        reason: "",
+        correct: false
     },
     {
-        id: 1,
-        answerText: "hello world2",
-        reason: "the author like",
+        answerText: "",
+        reason: "",
         correct: false
     },
 ]
@@ -170,17 +159,33 @@ function Curriculum(probs: CurriculumType) {
     }
 
     const handleRemoveAnswer = (answerIndex: number) => {
+
         setAnswers((prev) => prev.filter((answer, index) => index !== answerIndex))
     }
 
-    const handleSaveQuestion = () => {
+    const handleViewQuestion = (questionId: number | undefined) => {
+        console.log(questionId);
+        if (curriculum.type == "quiz") {
+            curriculum.questions?.forEach((question) => {
+                if (question.id == questionId) {
+                    setQuestionDesc(question.title)
+                    setAnswers(question.answers)
+                }
+            })
+        }
+    }
+    const handleSaveQuestion = async () => {
         if (curriculum) {
             const questionPost: QuestionPost = {
                 title: questionDesc,
                 quizId: curriculum.id,
                 answers
             }
-            console.log(questionPost);
+            const res = await createQuestion(questionPost);
+            if (res.status === 201) {
+                console.log(res.data);
+                setToggle({ type: "dropdownQuestion" })
+            }
         }
     }
     return (
@@ -234,10 +239,15 @@ function Curriculum(probs: CurriculumType) {
                                 {curriculum.type == "quiz" && curriculum.questions?.map((question, index) =>
                                     <div key={index} className="dropdown-questions-item" >
                                         <div className="left">
-                                            <span>{index + 1}. {question.title} </span>
+                                            <span>{index + 1}.  </span>
+                                            <div dangerouslySetInnerHTML={{ __html: question.title }}></div>
                                         </div>
                                         <span className="right" ref={questionHeaderRef} >
-                                            <MdModeEdit className="icon-edit" onClick={() => setToggle({ type: "questions" })} />
+                                            <MdModeEdit className="icon-edit"
+                                                onClick={() => {
+                                                    setToggle({ type: "questions" });
+                                                    handleViewQuestion(question.id)
+                                                }} />
                                             <FaTrash className="icon-trash" />
                                         </span>
                                     </div>
@@ -262,7 +272,10 @@ function Curriculum(probs: CurriculumType) {
                         <div className="dropdown-bottom">
                             <div className="tab-title">
                                 <span>Add Resources</span>
-                                <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
+                                <span className="tab-title-icon"
+                                    onClick={() => setToggle({ type: "dropdown" })}>
+                                    <LiaTimesSolid />
+                                </span>
                             </div>
                             <Tabs defaultActiveKey="1" items={items} />
                         </div>
@@ -276,7 +289,8 @@ function Curriculum(probs: CurriculumType) {
                                     <span>Add Video</span>
                                     <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
                                 </div>
-                                <InputFile fileRef={fileRef} title="Select Video" handleFileChange={handleFileChange} />
+                                <InputFile fileRef={fileRef} title="Select Video"
+                                    handleFileChange={handleFileChange} />
                             </div>
                         </div>
                     }
@@ -285,25 +299,22 @@ function Curriculum(probs: CurriculumType) {
                             <div className="dropdown-question-bottom">
                                 <div className="tab-title">
                                     <span>Add Multiple Choice</span>
-                                    <span className="tab-title-icon" onClick={() => setToggle({ type: "" })}><LiaTimesSolid /></span>
+                                    <span className="tab-title-icon"
+                                        onClick={() => setToggle({ type: "" })}>
+                                        <LiaTimesSolid />
+                                    </span>
                                 </div>
                             </div>
-                            <div className="curriculum-question">
-                                <span>Question</span>
-                                <div className="question-rte"><ReactQuill modules={questionModules} formats={questionFormats} theme="snow" value={questionDesc} onChange={setQuestionDesc} /></div>
-                            </div>
-                            <div className="curriculum-answers">
-                                <span>Answer</span>
-                                <div className="curriculum-answers-container">
-                                    {answers && answers.map((answer, index) => {
-                                        return <Answer answer={answer} key={index} handleAddAnswer={handleAddAnswer} handleRemoveAnswer={handleRemoveAnswer} index={index} setAnswers={setAnswers} answers={answers} setIndexAnswerActive={setIndexAnswerActive} indexAnswerActive={indexAnswerActive} />
-                                    }
-                                    )}
-                                </div>
-                                <div className="answer-action">
-                                    <Button onClick={handleSaveQuestion} className="btn-question-save" >Save</Button>
-                                </div>
-                            </div>
+                            <QuestionForm questionDesc={questionDesc}
+                                setQuestionDesc={setQuestionDesc}
+                                answers={answers}
+                                handleAddAnswer={handleAddAnswer}
+                                handleRemoveAnswer={handleRemoveAnswer}
+                                setAnswers={setAnswers}
+                                setIndexAnswerActive={setIndexAnswerActive}
+                                indexAnswerActive={indexAnswerActive}
+                                handleSaveQuestion={handleSaveQuestion}
+                            />
                         </div>
                     }
                 </div>

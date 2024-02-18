@@ -115,6 +115,12 @@
                 align-items: center;
                 justify-content: space-between;
 
+                .left {
+                    display: flex;
+                    gap: 5px;
+                    align-items: center;
+                }
+
                 .right {
                     display: flex;
                     align-items: center;

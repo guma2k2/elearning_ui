@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef } from 'react';
 import './Answer.style.scss'
 import { FaTrash } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
@@ -26,79 +26,81 @@ type Probs = {
 function Answer(probs: Probs) {
     const radioRef = useRef<HTMLInputElement | null>(null)
     const quillRef = useRef<ReactQuill>(null);
+    const { answer, answers, handleAddAnswer, handleRemoveAnswer, index, indexAnswerActive, setAnswers, setIndexAnswerActive } = probs;
     const handleChecked = () => {
         if (radioRef.current) {
             radioRef.current.checked = true;
-            const newAnswers = [...probs.answers];
+            const newAnswers = [...answers];
             newAnswers.forEach((answer, index) => {
-                if (index === probs.index) {
+                if (index === index) {
                     answer.correct = true;
                 } else {
                     answer.correct = false;
                 }
             })
-            probs.setAnswers(newAnswers);
+            setAnswers(newAnswers);
         }
     };
     const handleChangeDesc = (value: string) => {
-        const newAnswers = [...probs.answers];
+        const newAnswers = [...answers];
         newAnswers.forEach((answer, index) => {
-            if (index === probs.index) {
+            if (index === index) {
                 answer.answerText = value;
             }
         })
-        probs.setAnswers(newAnswers);
+        setAnswers(newAnswers);
     }
 
     const handleChangeReason = (event: ChangeEvent<HTMLInputElement>) => {
         const newReason = event.target.value;
-        const newAnswers = [...probs.answers];
+        const newAnswers = [...answers];
         newAnswers.forEach((answer, index) => {
-            if (index === probs.index) {
+            if (index === index) {
                 answer.reason = newReason;
             }
         })
-        probs.setAnswers(newAnswers);
+        setAnswers(newAnswers);
     }
 
     useEffect(() => {
-        if (radioRef.current && probs.answer.correct === true) {
+        if (radioRef.current && answer.correct === true) {
             radioRef.current.checked = true;
         }
 
-    }, [probs.answers])
+    }, [answers])
     useEffect(() => {
-        console.log(probs.index);
-        console.log(probs.indexAnswerActive);
+        console.log(index);
+        console.log(indexAnswerActive);
 
-        if (probs.index === probs.indexAnswerActive && quillRef.current) {
+        if (index === indexAnswerActive && quillRef.current) {
             quillRef.current.focus();
         }
-    }, [probs.indexAnswerActive])
+    }, [indexAnswerActive])
 
     return (
         <div className="answer-container">
+
             <div className="radio">
                 <input ref={radioRef} type="radio" name="radio" className='input-radio' />
                 <span className='input-container'>
-                    {probs.index !== probs.indexAnswerActive && probs.index === probs.answers.length - 1 && <p className='answer-text' onClick={() => {
-                        probs.setIndexAnswerActive(probs.index), probs.handleAddAnswer();
+                    {index !== indexAnswerActive && index === answers.length - 1 && <p className='answer-text' onClick={() => {
+                        setIndexAnswerActive(index), handleAddAnswer();
                     }}>
-                        <span>Add an answer</span>
+                        <span dangerouslySetInnerHTML={{ __html: answer.answerText === "" ? "<p>Add an answer</p>" : answer.answerText }}></span>
                     </p>}
-                    {probs.index !== probs.indexAnswerActive && probs.index !== probs.answers.length - 1 && <p className='answer-text' onClick={() => {
-                        probs.setIndexAnswerActive(probs.index);
+                    {index !== indexAnswerActive && index !== answers.length - 1 && <p className='answer-text' onClick={() => {
+                        setIndexAnswerActive(index);
 
                     }}>
-                        <span>Add an answer</span>
+                        <span dangerouslySetInnerHTML={{ __html: answer.answerText === "" ? "<p>Add an answer</p>" : answer.answerText }}></span>
                     </p>}
-                    {probs.index === probs.indexAnswerActive && <div className="question-rte" ><ReactQuill ref={quillRef} modules={answerodules} formats={answerFormats} theme="snow" value={probs.answer.answerText} onChange={(value: string) => handleChangeDesc(value)} /></div>}
-                    <input type="text" className='answer-explain' placeholder="Explain Why this is or isn't the best answer" onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeReason(e)} value={probs.answer.reason} />
+                    {index === indexAnswerActive && <div className="question-rte" ><ReactQuill ref={quillRef} modules={answerodules} formats={answerFormats} theme="snow" value={answer.answerText} onChange={(value: string) => handleChangeDesc(value)} /></div>}
+                    <input type="text" className='answer-explain' placeholder="Explain Why this is or isn't the best answer" onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeReason(e)} value={answer.reason} />
                 </span>
                 <span onClick={handleChecked} className="checkmark"></span>
             </div>
             <div className="answer-icon">
-                <FaTrash className="icon-trash" onClick={() => probs.handleRemoveAnswer(probs.index)} />
+                <FaTrash className="icon-trash" onClick={() => handleRemoveAnswer(index)} />
             </div>
         </div>
     )
