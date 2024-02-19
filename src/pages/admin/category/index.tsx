@@ -81,8 +81,6 @@ function Category() {
     }
     const handleChangePage = (page: PaginationProps) => {
         if (page.current && page.pageSize) {
-            console.log(page.current);
-            console.log(page.pageSize);
             setCurrent(page.current)
             setPageSize(page.pageSize)
         }
