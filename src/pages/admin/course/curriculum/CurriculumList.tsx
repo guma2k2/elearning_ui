@@ -29,7 +29,6 @@ function CurriculumList(probs: Probs) {
                             nextNum = section.number
                         }
                     }
-                    console.log(prevNum, ", ", nextNum);
                     return <Section section={section} key={index} index={index} prevNum={prevNum} nextNum={nextNum} />
                 })}
             </div>
