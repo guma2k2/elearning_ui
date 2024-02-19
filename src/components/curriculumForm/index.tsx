@@ -4,12 +4,12 @@ import './CurriculumForm.style.scss'
 import { LiaTimesSolid } from "react-icons/lia";
 import ReactQuill from "react-quill";
 import { useState } from "react";
-import { ICurriculum } from "../../types/CourseType";
-import { QuizPost } from "../../types/QuizType";
-import { createQuiz } from "../../services/QuizService";
+import { ICurriculum, ILecture, IQuiz } from "../../types/CourseType";
 import { createLecture } from "../../services/LectureService";
 import { useAppDispatch } from "../../redux/hooks";
-import { updateDataStatus } from "../../redux/slices/CourseSlice";
+import { CurriculumPost, addCurriculum } from "../../redux/slices/CourseSlice";
+import { QuizPost } from "../../types/QuizType";
+import { createQuiz } from "../../services/QuizService";
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
 }
@@ -35,27 +35,42 @@ function CurriculumForm(probs: ProbsType) {
     const [descQuiz, setDescQuiz] = useState<string>("");
     const [lectureTitle, setLectureTitle] = useState<string>("")
     const [quizTitle, setQuizTitle] = useState<string>("")
-    const toggle = probs.toggle;
+    const { sectionId, toggle, type, curriculum, nextNum, prevNum, setToggle } = probs;
     const dispatch = useAppDispatch();
     const handleCreateLecture = async () => {
-        const type = probs.curriculum ? "update" : "create";
+        const type = curriculum ? "update" : "create";
         console.log(type);
 
         const lecturePost: LecturePost = {
             title: lectureTitle,
             number: getNumber(),
-            sectionId: probs.sectionId
+            sectionId: sectionId
         }
         const res = await createLecture(lecturePost);
         console.log(res);
         if (res.status === 201) {
             console.log(res.data);
-            if (probs.setToggle) probs.setToggle({ type: "" })
-            dispatch(updateDataStatus())
+
+            const data = res.data as ILecture;
+            const curriculumPost: CurriculumPost = {
+                curriculum: data,
+                sectionId
+            }
+            dispatch(addCurriculum(curriculumPost))
+            handleToggle()
+        }
+    }
+    const handleToggle = () => {
+        if (setToggle) {
+            if (probs.type == "") {
+                setToggle({ type: "" })
+            } else if (probs.type == "button") {
+                setToggle({ type: "button" })
+            }
         }
     }
     const handleCreateQuiz = async () => {
-        const type = probs.curriculum ? "update" : "create";
+        const type = curriculum ? "update" : "create";
         console.log(type);
         console.log(getNumber());
 
@@ -63,37 +78,42 @@ function CurriculumForm(probs: ProbsType) {
             title: quizTitle,
             number: getNumber(),
             description: descQuiz,
-            sectionId: probs.sectionId
+            sectionId: sectionId
         }
         const res = await createQuiz(quizPost);
         console.log(res);
         if (res.status === 201) {
             console.log(res.data);
-            if (probs.setToggle) probs.setToggle({ type: "" })
-            dispatch(updateDataStatus())
+            const data = res.data as IQuiz;
+            const curriculumPost: CurriculumPost = {
+                curriculum: data,
+                sectionId
+            }
+            dispatch(addCurriculum(curriculumPost))
+            handleToggle()
         }
     }
 
     const getNumber = (): number => {
         let number = 0;
-        console.log(probs.prevNum);
-        if (probs.prevNum && probs.nextNum) {
-            number = probs.prevNum && probs.nextNum && probs.prevNum == probs.nextNum ? probs.prevNum : (probs.prevNum + probs.nextNum) / 2
+        console.log(prevNum);
+        if (prevNum && nextNum) {
+            number = prevNum && nextNum && prevNum == nextNum ? prevNum : (prevNum + nextNum) / 2
         }
         return number;
     }
     return (
         <div className="section-wraper">
-            {(toggle.type === "button" || toggle.type == "updateSection") && probs.type == "button" && <Button onClick={() => probs.setToggle && probs.setToggle({ type: "select" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Curriculum item</Button>}
-            {toggle.type !== "button" && probs.type == "button" && toggle.type !== "updateSection" && toggle.type !== "addSection" && <LiaTimesSolid className="icon-exist" onClick={() => probs.setToggle && probs.setToggle({ type: "button" })} />}
-            {toggle.type !== "" && probs.type == "" && toggle.type !== "updateSection" && toggle.type !== "addSection" && <LiaTimesSolid className="icon-exist" onClick={() => probs.setToggle && probs.setToggle({ type: "" })} />}
+            {(toggle.type === "button" || toggle.type == "updateSection") && type == "button" && <Button onClick={() => setToggle && setToggle({ type: "select" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Curriculum item</Button>}
+            {toggle.type !== "button" && type == "button" && toggle.type !== "updateSection" && toggle.type !== "addSection" && <LiaTimesSolid className="icon-exist" onClick={() => setToggle && setToggle({ type: "button" })} />}
+            {toggle.type !== "" && type == "" && toggle.type !== "updateSection" && toggle.type !== "addSection" && <LiaTimesSolid className="icon-exist" onClick={() => setToggle && setToggle({ type: "" })} />}
 
             {toggle.type === "select" && <div className="add-item-forms">
-                <div className="item-form" onClick={() => probs.setToggle && probs.setToggle({ type: "lecture" })}>
+                <div className="item-form" onClick={() => setToggle && setToggle({ type: "lecture" })}>
                     <AiOutlinePlus />
                     <span>Lecture</span>
                 </div>
-                <div className="item-form" onClick={() => probs.setToggle && probs.setToggle({ type: "quiz" })}>
+                <div className="item-form" onClick={() => setToggle && setToggle({ type: "quiz" })}>
                     <AiOutlinePlus />
                     <span>Quiz</span>
                 </div>

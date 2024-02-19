@@ -31,8 +31,8 @@ function Answer(probs: Probs) {
         if (radioRef.current) {
             radioRef.current.checked = true;
             const newAnswers = [...answers];
-            newAnswers.forEach((answer, index) => {
-                if (index === index) {
+            newAnswers.forEach((answer, id) => {
+                if (id === index) {
                     answer.correct = true;
                 } else {
                     answer.correct = false;
@@ -43,19 +43,20 @@ function Answer(probs: Probs) {
     };
     const handleChangeDesc = (value: string) => {
         const newAnswers = [...answers];
-        newAnswers.forEach((answer, index) => {
-            if (index === index) {
+        newAnswers.forEach((answer, id) => {
+            if (id === index) {
                 answer.answerText = value;
             }
         })
+        console.log(value);
         setAnswers(newAnswers);
     }
 
     const handleChangeReason = (event: ChangeEvent<HTMLInputElement>) => {
         const newReason = event.target.value;
         const newAnswers = [...answers];
-        newAnswers.forEach((answer, index) => {
-            if (index === index) {
+        newAnswers.forEach((answer, id) => {
+            if (id === index) {
                 answer.reason = newReason;
             }
         })
@@ -69,9 +70,6 @@ function Answer(probs: Probs) {
 
     }, [answers])
     useEffect(() => {
-        console.log(index);
-        console.log(indexAnswerActive);
-
         if (index === indexAnswerActive && quillRef.current) {
             quillRef.current.focus();
         }

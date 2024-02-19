@@ -10,7 +10,9 @@ type Probs = {
 }
 function CurriculumList(probs: Probs) {
     const [toggle, setToggle] = useState<boolean>(false);
-    const sections = probs.course?.sections;
+    const { course } = probs;
+    const sections = course?.sections;
+
     return (
         <div className="curriculumlist-container">
             <div className="header">

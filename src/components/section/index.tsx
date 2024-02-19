@@ -23,7 +23,8 @@ type Probs = {
 function Section(props: Probs) {
     const [toggle, setToggle] = useState<ToggleType>({ type: "button" });
     const headerRef = useRef<HTMLDivElement | null>(null);
-    const section = props.section;
+    const { index, nextNum, prevNum, section } = props;
+
     const handleMouseEnter = () => {
         if (headerRef.current) {
             headerRef.current.style.display = "block";
@@ -35,6 +36,13 @@ function Section(props: Probs) {
             headerRef.current.style.display = "none";
         }
     }
+    const getLastNumberOfCurriculumList = (): number => {
+        const lengthOfCurriculumList = section.curriculums.length;
+        if (section.curriculums[lengthOfCurriculumList - 1]) {
+            return section.curriculums[lengthOfCurriculumList - 1].number + 1;
+        }
+        return -1;
+    }
     return (
         <>
             {toggle.type !== "addSection" && <div className="section-insert">
@@ -43,29 +51,44 @@ function Section(props: Probs) {
                 </button>
             </div>
             }
-            {toggle.type === "addSection" && <div className="section-add-form"> <SectionForm prevNum={props.prevNum} nextNum={props.nextNum} label='New Section' setToggle={setToggle} toggle={toggle} /></div>
-
+            {toggle.type === "addSection" &&
+                <div className="section-add-form">
+                    <SectionForm
+                        prevNum={prevNum}
+                        nextNum={nextNum}
+                        label='New Section'
+                        setToggle={setToggle}
+                        toggle={toggle} />
+                </div>
             }
-
             <div className="section-container">
-                <div className="section-header" onMouseEnter={handleMouseEnter} onMouseLeave={handlMouseLeave}>
+                <div className="section-header"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handlMouseLeave}>
                     {toggle.type !== "updateSection" &&
                         <>
                             <div className="title">
-                                <span>Section {props.index + 1}:</span>
+                                <span>Section {index + 1}:</span>
                                 <AiOutlineFile className="icon-file" />
                                 <span>{section.title}</span>
                             </div>
                             <div className="section-action" ref={headerRef}>
                                 <div className="section-action-wrapper">
-                                    <MdModeEdit className="icon-edit" onClick={() => setToggle({ type: "updateSection" })} />
+                                    <MdModeEdit className="icon-edit"
+                                        onClick={() => setToggle({ type: "updateSection" })} />
                                     <FaTrash className="icon-trash" />
                                 </div>
                             </div>
                         </>
                     }
                     {toggle.type === "updateSection" && <div className="section-header-form">
-                        <SectionForm section={section} prevNum={section.number} nextNum={section.number} label={`Section ${props.index + 1}:`} setToggle={setToggle} toggle={toggle} />
+                        <SectionForm
+                            section={section}
+                            prevNum={section.number}
+                            nextNum={section.number}
+                            label={`Section ${index + 1}:`}
+                            setToggle={setToggle}
+                            toggle={toggle} />
                     </div>}
                 </div>
                 {section.curriculums && section.curriculums.map((curriculum, index) => {
@@ -79,10 +102,21 @@ function Section(props: Probs) {
                             nextNum = section.number
                         }
                     }
-                    return <Curriculum curriculum={curriculum} key={index} sectionId={section.id ? section.id : 0} prevNum={prevNum} nextNum={nextNum} />
+                    return <Curriculum
+                        curriculum={curriculum}
+                        key={index}
+                        sectionId={section.id ? section.id : 0}
+                        prevNum={prevNum}
+                        nextNum={nextNum} />
                 })}
 
-                <CurriculumForm sectionId={section.id ? section.id : 0} toggle={toggle} setToggle={setToggle} type="button" />
+                <CurriculumForm
+                    prevNum={getLastNumberOfCurriculumList()}
+                    nextNum={getLastNumberOfCurriculumList()}
+                    sectionId={section.id ? section.id : 0}
+                    toggle={toggle}
+                    setToggle={setToggle}
+                    type="button" />
             </div>
         </>
     )

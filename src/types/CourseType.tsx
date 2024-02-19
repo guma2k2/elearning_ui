@@ -40,10 +40,10 @@ export interface ILecture extends ICurriculum {
 export interface IQuiz extends ICurriculum {
     type: "quiz"
     description: string
-    questions?: Question[]
+    questions?: QuestionType[]
 }
 
-export type Question = {
+export type QuestionType = {
     id?: number
     title: string
     answers: AnswerType[]

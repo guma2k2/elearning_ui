@@ -6,7 +6,7 @@ import './Curriculum.style.scss'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { MdModeEdit } from "react-icons/md"
 import { FaTrash } from "react-icons/fa"
-import { ChangeEvent, useRef, useState } from "react"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css';
 import InputFile from "../inputFile"
@@ -14,10 +14,12 @@ import { LiaTimesSolid } from "react-icons/lia"
 import CurriculumForm from "../curriculumForm"
 import { uploadFile } from "../../services/MediaService"
 import { update } from "../../services/LectureService"
-import { AnswerType } from "../../types/CourseType"
+import { AnswerType, QuestionType } from "../../types/CourseType"
 import { QuestionPost } from "../../types/Question"
-import { createQuestion } from "../../services/QuestionService"
+import { createQuestion, updateQuestion } from "../../services/QuestionService"
 import QuestionForm from "../questionForm"
+import { useAppDispatch } from "../../redux/hooks"
+import { QuestionsPost, addQuestion } from "../../redux/slices/CourseSlice"
 
 type ToggleType = {
     type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | "" | "content" | "questions" | "add" | "dropdownQuestion"
@@ -59,6 +61,7 @@ const answerClone: AnswerType = {
     correct: false
 }
 function Curriculum(probs: CurriculumType) {
+    const { curriculum, sectionId, nextNum, prevNum } = probs;
     const curriculumHeaderRef = useRef<HTMLDivElement | null>(null);
     const questionHeaderRef = useRef<HTMLDivElement | null>(null);
     const [toggleForm, setToggleForm] = useState<ToggleFormType>({ type: "" });
@@ -67,15 +70,14 @@ function Curriculum(probs: CurriculumType) {
     const [questionDesc, setQuestionDesc] = useState<string>("");
     const [answers, setAnswers] = useState<AnswerType[]>(answersClone);
     const [indexAnswerActive, setIndexAnswerActive] = useState<number>(-1);
+    const [questionId, setQuestionId] = useState<number | undefined>(-1);
     const fileRef = useRef<HTMLInputElement>(null);
+    const dispatch = useAppDispatch();
     const onFinish = (values: FieldType) => {
         console.log(values);
     }
-    const curriculum = probs.curriculum;
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
-        console.log(curriculum);
-
         if (files && files.length > 0) {
             const selected = files[0];
             console.log(selected);
@@ -87,7 +89,7 @@ function Curriculum(probs: CurriculumType) {
                 const videoId = res.data.id;
                 const duration = res.data.duration;
                 const lecturePost: LecturePost = {
-                    ...curriculum, sectionId: probs.sectionId, videoId: videoId, duration: duration
+                    ...curriculum, sectionId: sectionId, videoId: videoId, duration: duration
                 }
                 console.log(lecturePost);
                 const resOfUploadVideoLecture = await update(lecturePost, curriculum.id);
@@ -176,15 +178,40 @@ function Curriculum(probs: CurriculumType) {
     }
     const handleSaveQuestion = async () => {
         if (curriculum) {
-            const questionPost: QuestionPost = {
-                title: questionDesc,
-                quizId: curriculum.id,
-                answers
-            }
-            const res = await createQuestion(questionPost);
-            if (res.status === 201) {
-                console.log(res.data);
-                setToggle({ type: "dropdownQuestion" })
+            const type = questionId && questionId < 0 ? "create" : "update";
+            if (type == "create") {
+                const questionPost: QuestionPost = {
+                    title: questionDesc,
+                    quizId: curriculum.id,
+                    answers
+                }
+                const res = await createQuestion(questionPost);
+                if (res.status === 201) {
+                    console.log(res.data);
+                    setToggle({ type: "dropdownQuestion" })
+                    const data = res.data as QuestionType;
+                    let quizId: number = 0;
+                    if (curriculum.id) {
+                        quizId = curriculum.id;
+                    }
+                    const request: QuestionsPost = {
+                        quizId,
+                        question: data
+                    }
+                    dispatch(addQuestion(request));
+                }
+            } else {
+                const questionPost: QuestionPost = {
+                    id: questionId,
+                    title: questionDesc,
+                    quizId: curriculum.id,
+                    answers
+                }
+                const res = await updateQuestion(questionPost, questionId);
+                if (res.status === 200) {
+                    console.log(res.data);
+                    setToggle({ type: "dropdownQuestion" })
+                }
             }
         }
     }
@@ -195,8 +222,8 @@ function Curriculum(probs: CurriculumType) {
                     <AiOutlinePlus className="section-icon-insert" />
                 </button>
             </div>}
-            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm sectionId={probs.sectionId} prevNum={probs.prevNum} nextNum={probs.nextNum} curriculum={curriculum} toggle={toggleForm} setToggle={setToggleForm} type="" />}
-            {toggleForm.type == "updateCurriculum" && <CurriculumForm sectionId={probs.sectionId} curriculum={curriculum} toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
+            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm sectionId={sectionId} prevNum={prevNum} nextNum={nextNum} curriculum={curriculum} toggle={toggleForm} setToggle={setToggleForm} type="" />}
+            {toggleForm.type == "updateCurriculum" && <CurriculumForm sectionId={sectionId} curriculum={curriculum} toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
             {toggleForm.type !== "updateCurriculum" &&
                 <div className="curriculum-container" onMouseLeave={handlMouseLeave} onMouseEnter={handleMouseEnter}>
                     <div className="curriculum-wrapper">
@@ -212,7 +239,7 @@ function Curriculum(probs: CurriculumType) {
                         </div>
                         <div className="curriculum-right">
                             {toggle.type !== "resources" && toggle.type !== "content" && curriculum.type == "lecture" && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
-                            {toggle.type !== "resources" && toggle.type !== "questions" && curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length === 0 && <Button onClick={() => setToggle({ type: "questions" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
+                            {toggle.type !== "resources" && toggle.type !== "questions" && curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length === 0 && <Button onClick={() => { setToggle({ type: "questions" }); setQuestionId(-1) }} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
                             {curriculum.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
                             {curriculum.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
                             {curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length > 0 && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdownQuestion" })} />}
@@ -229,7 +256,7 @@ function Curriculum(probs: CurriculumType) {
                             <div className="dropdown-questions-top">
                                 <div className="left">
                                     <span>Questions</span>
-                                    <Button onClick={() => setToggle({ type: "questions" })} >New Question</Button>
+                                    <Button onClick={() => { setToggle({ type: "questions" }); }} >New Question</Button>
                                 </div>
                                 <div className="right">
                                     <Button>Preview</Button>
@@ -246,7 +273,8 @@ function Curriculum(probs: CurriculumType) {
                                             <MdModeEdit className="icon-edit"
                                                 onClick={() => {
                                                     setToggle({ type: "questions" });
-                                                    handleViewQuestion(question.id)
+                                                    handleViewQuestion(question.id);
+                                                    setQuestionId(question.id);
                                                 }} />
                                             <FaTrash className="icon-trash" />
                                         </span>
@@ -259,7 +287,12 @@ function Curriculum(probs: CurriculumType) {
                     {toggle.type == "desc" && <div className="curriculum-dropdown">
                         <div className="dropdown-top">
                             <span>Lecture Description</span>
-                            <div className="lecture-rte"><ReactQuill modules={lectureModules} formats={lectureFormats} theme="snow" value={lectureDesc} onChange={setLectureDesc} placeholder="Add a description. Include what students will be able to do after completing the lecture." /></div>
+                            <div className="lecture-rte"><ReactQuill modules={lectureModules}
+                                formats={lectureFormats}
+                                theme="snow"
+                                value={lectureDesc}
+                                onChange={setLectureDesc}
+                                placeholder="Add a description. Include what students will be able to do after completing the lecture." /></div>
                             <div className="lecture-form-action">
                                 <div style={{ cursor: "pointer" }} className="cancel" onClick={() => setToggle({ type: "dropdown" })}>Cancel</div>
                                 <Button type="primary">Save</Button>
