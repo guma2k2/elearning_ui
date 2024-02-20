@@ -31,11 +31,11 @@ function Answer(probs: Probs) {
         if (radioRef.current) {
             radioRef.current.checked = true;
             const newAnswers = [...answers];
-            newAnswers.forEach((answer, id) => {
+            newAnswers.forEach((ans, id) => {
                 if (id === index) {
-                    answer.correct = true;
+                    ans.correct = true;
                 } else {
-                    answer.correct = false;
+                    ans.correct = false;
                 }
             })
             setAnswers(newAnswers);
@@ -43,21 +43,20 @@ function Answer(probs: Probs) {
     };
     const handleChangeDesc = (value: string) => {
         const newAnswers = [...answers];
-        newAnswers.forEach((answer, id) => {
+        newAnswers.forEach((ans, id) => {
             if (id === index) {
-                answer.answerText = value;
+                ans.answerText = value;
             }
         })
-        console.log(value);
         setAnswers(newAnswers);
     }
 
     const handleChangeReason = (event: ChangeEvent<HTMLInputElement>) => {
         const newReason = event.target.value;
         const newAnswers = [...answers];
-        newAnswers.forEach((answer, id) => {
+        newAnswers.forEach((ans, id) => {
             if (id === index) {
-                answer.reason = newReason;
+                ans.reason = newReason;
             }
         })
         setAnswers(newAnswers);

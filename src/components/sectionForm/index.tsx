@@ -47,7 +47,10 @@ function SectionForm(probs: Probs) {
         } else {
             const sectionId = section ? section.id : undefined;
             const res = await update(sectionPost, sectionId);
-            console.log(res);
+            if (res.data === 200) {
+
+            }
+            console.log(res.data);
         }
     }
     useEffect(() => {
