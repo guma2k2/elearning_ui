@@ -44,8 +44,15 @@ export const courseSlice = createSlice({
             console.log(current(state))
         },
         updateSection: (state, action: PayloadAction<SectionType>) => {
-            // Todo: update section
-            state.currentCourse?.sections.push(action.payload);
+            if (action.payload.id && state.currentCourse) {
+                state.currentCourse.sections.forEach((section, index) => {
+                    if (section.id === action.payload.id) {
+                        if (state.currentCourse) {
+                            state.currentCourse.sections[index] = action.payload
+                        }
+                    }
+                })
+            }
             state.currentCourse?.sections.sort((a: SectionType, b: SectionType) => a.number - b.number)
             console.log(current(state))
         }, addCurriculum: (state, action: PayloadAction<CurriculumPost>) => {
