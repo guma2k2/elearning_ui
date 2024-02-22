@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import './CourseLandingPage.style.scss'
 import { useForm, SubmitHandler } from "react-hook-form"
 import ReactQuill from 'react-quill'
@@ -20,6 +20,7 @@ const lectureFormats = [
 ];
 function CourseLandingPage() {
     const [courseDesc, setCourseDesc] = useState<string>("");
+    const fileRef = useRef<HTMLInputElement>(null);
     const {
         register,
         handleSubmit,
@@ -27,7 +28,17 @@ function CourseLandingPage() {
         formState: { errors },
     } = useForm<Inputs>()
     const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const selected = files[0];
+            console.log(selected);
+            var formData = new FormData();
+            formData.append("file", selected);
+            formData.append("type", "video");
 
+        }
+    };
     return (
         <div className="course-landingpage-container">
             <div className="header">
@@ -53,7 +64,7 @@ function CourseLandingPage() {
                     <div className="form-image">
                         <img src="https://s.udemycdn.com/course/750x422/placeholder.jpg" alt="Course image" />
                         <div className="input-file">
-                            <InputFile title='Upload file' />
+                            <InputFile title='Upload file' handleFileChange={handleFileChange} fileRef={fileRef} />
                         </div>
                     </div>
                 </div>

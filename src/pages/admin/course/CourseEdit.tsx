@@ -7,6 +7,7 @@ import { useEffect, } from "react";
 import { RootState } from "../../../redux/store";
 import { fetchCourseById } from "../../../redux/slices/CourseSlice";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import IntendedLeaners from "./intended-learners/IntendedLearners";
 function CourseEdit() {
     const { id } = useParams();
     const dispatch = useAppDispatch();
@@ -20,9 +21,15 @@ function CourseEdit() {
         <> {isLoading == true && <Spinner />}
             {isLoading == false && <Tabs
                 tabPosition={'left'}
-                items={new Array(2).fill(null).map((_, i) => {
+                items={new Array(3).fill(null).map((_, i) => {
                     const id = String(i + 1);
                     if (id == "1") {
+                        return {
+                            label: 'Intended learners',
+                            key: id,
+                            children: <IntendedLeaners />,
+                        };
+                    } else if (id == "2") {
                         return {
                             label: 'Curriculum',
                             key: id,

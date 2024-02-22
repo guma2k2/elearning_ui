@@ -13,16 +13,20 @@
             background-color: #f7f9fa;
             border-right: 1px solid #6a6f73;
             height: 100%;
-            width: 650px;
+            min-width: calc(100% - 111px);
         }
 
         .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 12px;
             cursor: pointer;
             background-color: white;
             color: #2d2f31;
             font-weight: 600;
             flex: 1;
+            max-width: 111px;
 
             &:hover {
                 background-color: #9da3a7;
