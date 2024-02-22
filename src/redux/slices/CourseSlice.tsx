@@ -22,7 +22,15 @@ export const fetchCourseById = createAsyncThunk(
     'courses/fetchByIdStatus',
     async (courseId: number | string | undefined) => {
         const response = await get(courseId);
-        return response.data
+        const data = response.data as CourseType;
+        let lectureNumber: number = 1;
+        let quizNumber: number = 1;
+        data.sections.forEach((section) => {
+            section.curriculums.forEach((curriclum) => {
+                curriclum.index = curriclum.type == "lecture" ? lectureNumber++ : quizNumber++;
+            })
+        })
+        return data;
     },
 )
 // Define the initial state using that type

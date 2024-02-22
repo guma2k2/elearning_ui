@@ -5,7 +5,7 @@ import { SectionType } from '../../types/CourseType'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { useEffect, } from 'react'
 import { create, update } from '../../services/SectionService'
-import { addSection, } from '../../redux/slices/CourseSlice'
+import { addSection, updateSection, } from '../../redux/slices/CourseSlice'
 
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
@@ -47,10 +47,12 @@ function SectionForm(probs: Probs) {
         } else {
             const sectionId = section ? section.id : undefined;
             const res = await update(sectionPost, sectionId);
-            if (res.data === 200) {
-
+            if (res.status === 200) {
+                console.log(res.data);
+                setToggle && setToggle({ type: "button" })
+                const data: SectionType = res.data;
+                dispatch(updateSection(data));
             }
-            console.log(res.data);
         }
     }
     useEffect(() => {
