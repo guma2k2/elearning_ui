@@ -1,48 +1,53 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import './IntendedLearners.style.scss'
 import IntendedLeaner from '../../../../components/intended-learner';
+import { CourseType } from '../../../../types/CourseType';
 
-const objectivesData: string[] = [
-    "", "", "", ""
-]
-const requirementsData: string[] = [
-    "",
-]
-
-const targetAudiencesData: string[] = [
-    "",
-]
 export enum AddType {
     Objective,
     Requirement,
     TargetAudience
 }
-function IntendedLeaners() {
-    const [objectives, setObjectives] = useState<string[]>(objectivesData);
-    const [requirements, setRequirements] = useState<string[]>(requirementsData);
-    const [targetAudiences, setTargetAudiences] = useState<string[]>(targetAudiencesData);
+type Probs = {
+    course: CourseType | undefined
+}
+function IntendedLeaners(probs: Probs) {
+    const { course } = probs;
+    const minLengthObjective: number = 4;
+    const minLengthRequirement: number = 4;
+    const minLengthTargetAudience: number = 1;
+    const [objectives, setObjectives] = useState<string[]>([]);
+    const [requirements, setRequirements] = useState<string[]>([]);
+    const [targetAudiences, setTargetAudiences] = useState<string[]>([]);
     const handleAdd = (type: AddType) => {
         if (type == AddType.Objective) {
+            if (!checkCanAdd(objectives)) return;
             setObjectives((prev) => [...prev, ""]);
         } else if (type == AddType.Requirement) {
+            if (!checkCanAdd(requirements)) return;
             setRequirements((prev) => [...prev, ""]);
         } else {
+            if (!checkCanAdd(targetAudiences)) return;
             setTargetAudiences((prev) => [...prev, ""]);
         }
     }
+    const checkCanAdd = (items: string[]): boolean => {
+        if (items[items.length - 1] == "" && items.length > 0) {
+            return false;
+        }
+        return true;
+    }
     const handleChange = (index: number, type: AddType, event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
-        console.log(value);
         if (type == AddType.Objective) {
-            const newObjectives = [...objectives];
-            newObjectives.forEach((objective, id) => {
-                if (id == index) {
-                    objective = value;
-                }
-            })
+
+            const newObjectives = objectives.map((objective, id) => {
+                return id === index ? value : objective;
+            });
             setObjectives(newObjectives);
         } else if (type == AddType.Requirement) {
             const newRequirements = [...requirements];
+
             newRequirements.forEach((requirement, id) => {
                 if (id == index) {
                     requirement = value;
@@ -50,6 +55,7 @@ function IntendedLeaners() {
             })
             setRequirements(newRequirements);
         } else {
+
             const newTargetAudiences = [...targetAudiences];
             newTargetAudiences.forEach((targetAudience, id) => {
                 if (id == index) {
@@ -62,21 +68,35 @@ function IntendedLeaners() {
 
     const handleDelete = (type: AddType, index: number) => {
         if (type == AddType.Objective) {
+            if (objectives.length <= minLengthObjective) {
+                return;
+            }
             const newObjectives = [...objectives];
-            newObjectives.filter((objective, id) => id !== index);
-            console.log(index);
-            console.log(newObjectives);
-            setObjectives(newObjectives);
+            const filteredObjectives = newObjectives.filter((objective, id) => id !== index);
+            setObjectives(filteredObjectives);
         } else if (type == AddType.Requirement) {
+            if (requirements.length <= minLengthRequirement) {
+                return;
+            }
             const newRequirements = [...requirements];
-            newRequirements.filter((requirement, id) => id !== index);
-            setRequirements(newRequirements);
+            const filteredObjectives = newRequirements.filter((requirement, id) => id !== index);
+            setRequirements(filteredObjectives);
         } else {
+            if (targetAudiences.length <= minLengthTargetAudience) {
+                return;
+            }
             const newTargetAudiences = [...targetAudiences];
-            newTargetAudiences.filter((target, id) => id !== index);
-            setTargetAudiences(newTargetAudiences);
+            const filteredObjectives = newTargetAudiences.filter((target, id) => id !== index);
+            setTargetAudiences(filteredObjectives);
         }
     }
+    useEffect(() => {
+        if (course) {
+            course.objectives && setObjectives(course.objectives);
+            course.requirement && setObjectives(course.requirement);
+            course.targetAudiences && setObjectives(course.targetAudiences);
+        }
+    }, [])
     return (
         <div className="course-intendedLearners-container">
             <div className="header">
@@ -91,7 +111,7 @@ function IntendedLeaners() {
                     handleAdd={handleAdd}
                     handleDelete={handleDelete}
                     items={objectives}
-                    minLength={4}
+                    minLength={minLengthObjective}
                 />
                 <IntendedLeaner
                     type={AddType.Requirement}
@@ -101,7 +121,7 @@ function IntendedLeaners() {
                     handleAdd={handleAdd}
                     handleDelete={handleDelete}
                     items={requirements}
-                    minLength={1}
+                    minLength={minLengthRequirement}
                 />
                 <IntendedLeaner
                     type={AddType.TargetAudience}
@@ -111,7 +131,7 @@ function IntendedLeaners() {
                     handleAdd={handleAdd}
                     handleDelete={handleDelete}
                     items={requirements}
-                    minLength={1}
+                    minLength={minLengthTargetAudience}
                 />
 
             </div>
