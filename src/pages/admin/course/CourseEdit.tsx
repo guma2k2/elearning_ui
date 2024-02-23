@@ -27,7 +27,7 @@ function CourseEdit() {
                         return {
                             label: 'Intended learners',
                             key: id,
-                            children: <IntendedLeaners />,
+                            children: <IntendedLeaners course={currentCourse} />,
                         };
                     } else if (id == "2") {
                         return {
@@ -39,7 +39,7 @@ function CourseEdit() {
                     return {
                         label: 'Course landing page',
                         key: id,
-                        children: <CourseLandingPage />,
+                        children: <CourseLandingPage course={currentCourse} />,
                     };
                 })}
             />}

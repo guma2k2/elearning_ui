@@ -3,6 +3,7 @@ export type CourseType = {
     title: string
     topicId: number
     categoryId: number
+    level?: string
     headline?: string
     objectives?: string[]
     requirement?: string[]

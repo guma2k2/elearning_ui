@@ -36,39 +36,23 @@ function IntendedLeaner(probs: Probs) {
             <h3 className="title">{title}</h3>
             <p className="desc">{desc}</p>
             <div className="list-input">
-                {minItems.map((element, index) => <div className='input-container' key={index} >
-                    <input
-                        className="input"
-                        value={items[index]}
-                        placeholder={element}
-                        onChange={(event) => handleChange(index, type, event)}
-                    />
-                    <div
-                        className="action-delete"
-                        style={{ cursor: `${items.length > minLength ? "pointer" : "not-allowed"}` }}
-                        onClick={() => handleDelete(type, index)}
-                    >
-                        <FaTrash className='icon-trash' />
-                    </div>
-                </div>)}
                 {items.map((item, index) => {
-                    if (index + 1 > minLength) {
-                        return <div className='input-container' key={index} >
-                            <input
-                                className="input"
-                                value={item}
-                                placeholder={addTypePlaceholder}
-                                onChange={(event) => handleChange(index, type, event)}
-                            />
-                            <div
-                                className="action-delete"
-                                style={{ cursor: `${items.length > minLength ? "pointer" : "not-allowed"}` }}
-                                onClick={() => handleDelete(type, index)}
-                            >
-                                <FaTrash className='icon-trash' />
-                            </div>
+                    const placeholder = index + 1 <= minLength ? minItems[index] : addTypePlaceholder;
+                    return <div className='input-container' key={index} >
+                        <input
+                            className="input"
+                            value={item}
+                            placeholder={placeholder}
+                            onChange={(event) => handleChange(index, type, event)}
+                        />
+                        <div
+                            className="action-delete"
+                            style={{ cursor: `${items.length > minLength ? "pointer" : "not-allowed"}` }}
+                            onClick={() => handleDelete(type, index)}
+                        >
+                            <FaTrash className='icon-trash' />
                         </div>
-                    }
+                    </div>
                 }
                 )}
 
