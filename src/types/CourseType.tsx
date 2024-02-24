@@ -6,10 +6,11 @@ export type CourseType = {
     level?: string
     headline?: string
     objectives?: string[]
-    requirement?: string[]
+    requirements?: string[]
     targetAudiences?: string[]
     description?: string
     imageURL?: string
+    imageId?: string
     createdAt?: string
     updatedAt?: string
     free?: boolean

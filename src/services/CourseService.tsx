@@ -12,6 +12,12 @@ export const createCourse = async (coursePost: CourseType) => {
     const res = await instance.post(url, coursePost);
     return res;
 }
+
+export const updateCourseById = async (coursePost: CourseType, courseId: number) => {
+    const url = `/admin/courses/${courseId}`;
+    const res = await instance.put(url, coursePost);
+    return res;
+}
 export const get = async (courseId: number | string | undefined) => {
     const url = `/courses/${courseId}`
     const res = await instance.get(url);
