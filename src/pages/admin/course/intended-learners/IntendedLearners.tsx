@@ -2,6 +2,10 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import './IntendedLearners.style.scss'
 import IntendedLeaner from '../../../../components/intended-learner';
 import { CourseType } from '../../../../types/CourseType';
+import { Button, Spin } from 'antd';
+import { useAppDispatch } from '../../../../redux/hooks';
+import { updateCourseById } from '../../../../services/CourseService';
+import { updateCourse } from '../../../../redux/slices/CourseSlice';
 
 export enum AddType {
     Objective,
@@ -19,6 +23,8 @@ function IntendedLeaners(probs: Probs) {
     const [objectives, setObjectives] = useState<string[]>([]);
     const [requirements, setRequirements] = useState<string[]>([]);
     const [targetAudiences, setTargetAudiences] = useState<string[]>([]);
+    const [isDataLoading, setIsDataLoading] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
     const handleAdd = (type: AddType) => {
         if (type == AddType.Objective) {
             if (!checkCanAdd(objectives)) return;
@@ -40,28 +46,21 @@ function IntendedLeaners(probs: Probs) {
     const handleChange = (index: number, type: AddType, event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         if (type == AddType.Objective) {
-
             const newObjectives = objectives.map((objective, id) => {
                 return id === index ? value : objective;
             });
             setObjectives(newObjectives);
         } else if (type == AddType.Requirement) {
-            const newRequirements = [...requirements];
-
-            newRequirements.forEach((requirement, id) => {
-                if (id == index) {
-                    requirement = value;
-                }
-            })
+            console.log(type);
+            const newRequirements = requirements.map((requirement, id) => {
+                return id === index ? value : requirement;
+            });
             setRequirements(newRequirements);
         } else {
-
-            const newTargetAudiences = [...targetAudiences];
-            newTargetAudiences.forEach((targetAudience, id) => {
-                if (id == index) {
-                    targetAudience = value;
-                }
-            })
+            console.log(type);
+            const newTargetAudiences = targetAudiences.map((target, id) => {
+                return id === index ? value : target;
+            });
             setTargetAudiences(newTargetAudiences);
         }
     }
@@ -90,52 +89,83 @@ function IntendedLeaners(probs: Probs) {
             setTargetAudiences(filteredObjectives);
         }
     }
+    const handleUpdateCourse = async () => {
+        if (course) {
+            setIsDataLoading(true)
+            const coursePut: CourseType = {
+                ...course,
+                requirements,
+                objectives,
+                targetAudiences
+            }
+            console.log(coursePut);
+            if (course.id) {
+                const res = await updateCourseById(coursePut, course.id);
+                if (res.status === 200) {
+                    const data = res.data as CourseType;
+                    console.log(data);
+
+                    dispatch(updateCourse(data))
+                }
+            }
+            setIsDataLoading(false);
+        } else {
+            throw new Error("Cannot save course");
+        }
+    }
     useEffect(() => {
         if (course) {
+            setIsDataLoading(true);
+            console.log(course);
+            console.log(course.objectives);
             course.objectives && setObjectives(course.objectives);
-            course.requirement && setObjectives(course.requirement);
-            course.targetAudiences && setObjectives(course.targetAudiences);
+            course.requirements && setRequirements(course.requirements);
+            course.targetAudiences && setTargetAudiences(course.targetAudiences);
+            setIsDataLoading(false);
         }
     }, [])
     return (
-        <div className="course-intendedLearners-container">
-            <div className="header">
-                <h2>Intended Learners</h2>
-            </div>
-            <div className="wrapper">
-                <IntendedLeaner
-                    type={AddType.Objective}
-                    desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
-                    title={"What will students learn in your course"}
-                    handleChange={handleChange}
-                    handleAdd={handleAdd}
-                    handleDelete={handleDelete}
-                    items={objectives}
-                    minLength={minLengthObjective}
-                />
-                <IntendedLeaner
-                    type={AddType.Requirement}
-                    desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
-                    title={"What will students learn in your course"}
-                    handleChange={handleChange}
-                    handleAdd={handleAdd}
-                    handleDelete={handleDelete}
-                    items={requirements}
-                    minLength={minLengthRequirement}
-                />
-                <IntendedLeaner
-                    type={AddType.TargetAudience}
-                    desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
-                    title={"What will students learn in your course"}
-                    handleChange={handleChange}
-                    handleAdd={handleAdd}
-                    handleDelete={handleDelete}
-                    items={requirements}
-                    minLength={minLengthTargetAudience}
-                />
+        <Spin spinning={isDataLoading}>
+            <div className="course-intendedLearners-container">
+                <div className="header">
+                    <h2>Intended Learners</h2>
+                    <Button onClick={handleUpdateCourse}>Save</Button>
+                </div>
+                <div className="wrapper">
+                    <IntendedLeaner
+                        type={AddType.Objective}
+                        desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
+                        title={"What will students learn in your course"}
+                        handleChange={handleChange}
+                        handleAdd={handleAdd}
+                        handleDelete={handleDelete}
+                        items={objectives}
+                        minLength={minLengthObjective}
+                    />
+                    <IntendedLeaner
+                        type={AddType.Requirement}
+                        desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
+                        title={"What will students learn in your course"}
+                        handleChange={handleChange}
+                        handleAdd={handleAdd}
+                        handleDelete={handleDelete}
+                        items={requirements}
+                        minLength={minLengthRequirement}
+                    />
+                    <IntendedLeaner
+                        type={AddType.TargetAudience}
+                        desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
+                        title={"What will students learn in your course"}
+                        handleChange={handleChange}
+                        handleAdd={handleAdd}
+                        handleDelete={handleDelete}
+                        items={targetAudiences}
+                        minLength={minLengthTargetAudience}
+                    />
 
+                </div>
             </div>
-        </div>
+        </Spin>
     )
 }
 
