@@ -80,13 +80,25 @@ export const courseSlice = createSlice({
                 })
             })
         },
-        // decrement: (state) => {
-        //     state.value -= 1
-        // },
-        // // Use the PayloadAction type to declare the contents of `action.payload`
-        // incrementByAmount: (state, action: PayloadAction<number>) => {
-        //     state.value += action.payload
-        // },
+        updateCourse: (state, action: PayloadAction<CourseType>) => {
+            if (state.currentCourse) {
+                const payload: CourseType = action.payload;
+                state.currentCourse.title = payload.title;
+                state.currentCourse.headline = payload.headline;
+                state.currentCourse.requirements = payload.requirements;
+                state.currentCourse.targetAudiences = payload.targetAudiences;
+                state.currentCourse.description = payload.description;
+                state.currentCourse.level = payload.level;
+                state.currentCourse.imageURL = payload.imageURL;
+                state.currentCourse.updatedAt = payload.updatedAt;
+                state.currentCourse.free = payload.free;
+                state.currentCourse.isPublish = payload.isPublish;
+                state.currentCourse.categoryId = payload.categoryId;
+                state.currentCourse.topicId = payload.topicId;
+            }
+        }
+
+
     }, extraReducers: (builder) => {
         builder
             .addCase(fetchCourseById.pending, (state, action) => {
@@ -108,7 +120,7 @@ export const courseSlice = createSlice({
     },
 })
 
-export const { updateDataStatus, addSection, updateSection, addCurriculum, addQuestion } = courseSlice.actions
+export const { updateDataStatus, addSection, updateSection, addCurriculum, addQuestion, updateCourse } = courseSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.courses

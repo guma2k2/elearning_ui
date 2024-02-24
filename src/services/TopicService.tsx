@@ -24,7 +24,7 @@ export const get = async (topicId: number) => {
     return res;
 }
 
-export const getTopicsByCategoryId = async (catId: number) => {
+export const getTopicsByCategoryId = async (catId: number | undefined) => {
     const url = `/topics/category/${catId}`
     const res = await instance.get(url);
     return res;
