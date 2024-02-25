@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import courseReducer from "./slices/CourseSlice"
+import messageReducer from './slices/MessageSlice'
 export const store = configureStore({
     reducer: {
         courses: courseReducer,
+        messages: messageReducer
     }
 })
 

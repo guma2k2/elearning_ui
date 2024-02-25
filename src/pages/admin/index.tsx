@@ -33,13 +33,14 @@ const items: MenuItem[] = [
     getItem('User', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>),
     getItem('Category', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>),
     getItem('Topic', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>),
-    getItem('Course', 'sub1', <UserOutlined />, [
-        getItem('Tom', '5'),
-        getItem('Bill', '6'),
-        getItem('Alex', '7'),
+    getItem('Course', '5', <Link to={"/admin/courses"}><DesktopOutlined /></Link>),
+    getItem('Report', 'sub1', <UserOutlined />, [
+        getItem('Tom', '6'),
+        getItem('Bill', '7'),
+        getItem('Alex', '8'),
     ]),
-    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '8'), getItem('Team 2', '9')]),
-    getItem('Files', '10', <FileOutlined />),
+    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '9'), getItem('Team 2', '10')]),
+    getItem('Files', '11', <FileOutlined />),
 ];
 
 const App: React.FC = () => {

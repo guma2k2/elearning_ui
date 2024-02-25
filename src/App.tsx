@@ -12,7 +12,12 @@ import Category from "./pages/admin/category";
 import Topic from "./pages/admin/topic";
 import Course from "./pages/admin/course";
 import CourseEdit from "./pages/admin/course/CourseEdit";
+import { message } from "antd";
+import { useAppSelector } from "./redux/hooks";
+import { useEffect } from "react";
 function App() {
+  const [messageApi, contextHolder] = message.useMessage();
+  const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -64,9 +69,25 @@ function App() {
       ]
     },
   ]);
+
+  useEffect(() => {
+    if (content !== "") {
+      messageApi.open({
+        type: type,
+        content,
+        duration
+      });
+    }
+  }, [isShow])
+
   return (
-    <RouterProvider router={router} />
+    <>
+      {contextHolder}
+      <RouterProvider router={router} ></RouterProvider>
+    </>
   )
+
+
 }
 
 export default App

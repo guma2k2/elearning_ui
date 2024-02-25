@@ -6,6 +6,7 @@ import { Button, Spin } from 'antd';
 import { useAppDispatch } from '../../../../redux/hooks';
 import { updateCourseById } from '../../../../services/CourseService';
 import { updateCourse } from '../../../../redux/slices/CourseSlice';
+import { Message, updateShowing } from '../../../../redux/slices/MessageSlice';
 
 export enum AddType {
     Objective,
@@ -104,8 +105,12 @@ function IntendedLeaners(probs: Probs) {
                 if (res.status === 200) {
                     const data = res.data as CourseType;
                     console.log(data);
-
                     dispatch(updateCourse(data))
+                    const message: Message = {
+                        type: "success",
+                        content: "save succesful"
+                    }
+                    dispatch(updateShowing(message))
                 }
             }
             setIsDataLoading(false);
