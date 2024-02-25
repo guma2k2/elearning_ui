@@ -4,8 +4,18 @@
   font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  --color-gray-600: #101112;
+  --color-gray-550: #1c1d1f;
+  --color-gray-500: #2d2f31;
+  --color-gray-400: #3e4143;
+  --color-gray-300: #6a6f73;
+  --color-gray-250: #9da3a7;
+  --color-gray-200: #d1d7dc;
+  --color-gray-150: #e4e8eb;
+  --color-gray-100: #f7f9fa;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
 }
 
 * {

@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .16);
-    background-color: #f7f9fa;
     border: 1px solid #6a6f73;
 
     .header {
@@ -35,7 +34,6 @@
             .list-input {
                 display: flex;
                 gap: 10px;
-                background-color: #f7f9fa;
                 flex-direction: column;
 
                 .input-container {
