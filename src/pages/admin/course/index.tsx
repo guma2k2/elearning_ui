@@ -59,7 +59,7 @@ function Course() {
             width: 300,
             render: (text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary"><Link to={`admin/courses/edit/${record.id}`}>Edit</Link></Button>
+                    <Button type="primary"><Link to={`edit/${record.id}`}>Edit</Link></Button>
                     <Popconfirm
                         title="Delete this user?"
                         description="Are you sure to delete this user?"
