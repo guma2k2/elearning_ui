@@ -1,10 +1,10 @@
 type CategoryType = {
     id: number
     name: string
-    description: string
+    description?: string
     isPublish: boolean
-    createdAt: string
-    updatedAt: string
+    createdAt?: string
+    updatedAt?: string
     parentId?: number,
 }
 
