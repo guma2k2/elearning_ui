@@ -1,9 +1,11 @@
 .navbar-top-container {
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 72px;
-    width: 1440px;
+    height: 72px;
+    font-weight: 400;
+    line-height: 1.4;
     padding: 0 24px;
     font-size: 14px;
     color: var(--color-gray-500);
@@ -20,6 +22,7 @@
             padding: 0;
             z-index: 1000;
             background: #ffffff;
+            opacity: 1;
         }
 
         .category-tooltip {
@@ -27,6 +30,7 @@
             padding: 8px 0;
             color: var(--color-gray-500);
             background-color: #fff;
+            opacity: 1;
 
             .category-item {
                 display: flex;
@@ -41,6 +45,7 @@
             padding: 8px 0;
             color: var(--color-gray-500);
             background-color: #fff;
+            opacity: 1;
 
             .category-item {
                 display: flex;
@@ -49,6 +54,22 @@
                 padding: 8px 16px;
             }
         }
+
+        .topic-tooltip {
+            min-width: 260px;
+            padding: 8px 0;
+            color: var(--color-gray-500);
+            background-color: #fff;
+            opacity: 1;
+
+            .category-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 8px 16px;
+            }
+        }
+
 
         .search {
             height: 48px;
@@ -101,8 +122,31 @@
         display: flex;
         align-items: center;
         text-align: center;
-
         gap: 24px;
+
+        .cart {
+            position: relative;
+
+            .icon-cart {
+                width: 22px;
+                height: 22px;
+
+            }
+
+            .cart-number {
+                position: absolute;
+                top: -14px;
+                right: -14px;
+                font-size: 8.5px;
+                border-radius: 999px;
+                text-align: center;
+                color: #fff;
+                font-weight: 700;
+                text-align: center;
+                padding: 4px 8px;
+                background-color: var(--color-violet);
+            }
+        }
 
         .profile {
             width: 32px;
@@ -120,7 +164,7 @@
 }
 
 .navbar-bottom-container {
-    width: 100%;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -144,16 +188,22 @@
         z-index: 1 !important;
         height: 48px;
         border-radius: 0;
+        opacity: 1;
 
         .wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
 
-
-            span {
-                color: #ffffff;
+            .navbar-bottom-item {
+                cursor: pointer;
+                padding: 8px 16px;
+                color: #fff;
                 font-size: 14px;
+
+                &:hover {
+                    color: var(--color-violet);
+                }
             }
         }
 
