@@ -1,16 +1,18 @@
 import { Button, Col, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Row, Select, Space, Switch, Table, TableColumnsType } from "antd";
 import { useEffect, useState } from "react";
 import { TopicType } from "./TopicType";
-import { getCategoryParents } from "../../../services/CategoryService";
 import TextArea from "antd/es/input/TextArea";
 import { get, getTopicWithPagination, save, update } from "../../../services/TopicService";
 import './Topic.style.scss'
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { fetchCategoryParents } from "../../../redux/slices/CategorySlice";
 
 function Topic() {
     const [open, setOpen] = useState<boolean>(false);
     const [pending, setPending] = useState(false);
-    const [categoryParents, setCategoryParents] = useState<CategoryListGetType[]>([]);
+    const { categoryParents } = useAppSelector((state) => state.categories);
     const [categoryChildrens, setCategoryChildrens] = useState<CategoryType[]>([]);
+    const dispatch = useAppDispatch();
     const [topics, setTopics] = useState<TopicType[]>([]);
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
@@ -53,7 +55,7 @@ function Topic() {
             title: 'Action',
             dataIndex: 'key',
             width: 300,
-            render: (text, record) => (
+            render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Button type="primary" onClick={() => handleUpdateTopic(record.id)}>Edit</Button>
                     <Popconfirm
@@ -120,13 +122,15 @@ function Topic() {
     }
     const handleChangeCategories = (value: string) => {
         console.log(value);
-        categoryParents.forEach((cat: CategoryListGetType) => {
-            if (cat.name === value) {
-                console.log(cat.childrens);
-                setCategoryChildrens(cat.childrens)
-                return;
-            }
-        })
+        if (categoryParents) {
+            categoryParents.forEach((cat: CategoryListGetType) => {
+                if (cat.name === value) {
+                    console.log(cat.childrens);
+                    setCategoryChildrens(cat.childrens)
+                    return;
+                }
+            })
+        }
     }
 
     useEffect(() => {
@@ -151,18 +155,7 @@ function Topic() {
 
 
     useEffect(() => {
-        const fetchCategoryParents = async () => {
-            const res = await getCategoryParents();
-            if (res.status === 200) {
-                console.log(res);
-                const data = res.data.map((cat: CategoryType) => ({
-                    key: cat.id, ...cat
-                }))
-                setCategoryParents(data);
-
-            }
-        }
-        fetchCategoryParents()
+        dispatch(fetchCategoryParents());
     }, [])
 
     return (

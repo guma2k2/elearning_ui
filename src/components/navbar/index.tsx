@@ -165,7 +165,6 @@ function Navbar() {
         }
         if (childCategoryTooltipRef.current) {
             const index: number = parentId;
-            console.log(index);
             const childrens: CategoryType[] = items[index].childrens;
             const html = childrens.length > 0 && childrens.map((child) => {
                 return <div key={child.id} className="category-item" onMouseEnter={() => handleShowTopics(child.id)}>
