@@ -11,11 +11,11 @@ import IntendedLeaners from "./intended-learners/IntendedLearners";
 function CourseEdit() {
     const { id } = useParams();
     const dispatch = useAppDispatch();
-    const { currentCourse, isLoading, isDataUpdated } = useAppSelector((state: RootState) => state.courses);
+    const { currentCourse, isLoading } = useAppSelector((state: RootState) => state.courses);
 
     useEffect(() => {
         dispatch(fetchCourseById(id));
-    }, [id, isDataUpdated])
+    }, [id])
 
     return (
         <> {isLoading == true && <Spinner />}

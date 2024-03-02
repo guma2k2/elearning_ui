@@ -72,21 +72,21 @@ function IntendedLeaners(probs: Probs) {
                 return;
             }
             const newObjectives = [...objectives];
-            const filteredObjectives = newObjectives.filter((objective, id) => id !== index);
+            const filteredObjectives = newObjectives.filter((_objective, id) => id !== index);
             setObjectives(filteredObjectives);
         } else if (type == AddType.Requirement) {
             if (requirements.length <= minLengthRequirement) {
                 return;
             }
             const newRequirements = [...requirements];
-            const filteredObjectives = newRequirements.filter((requirement, id) => id !== index);
+            const filteredObjectives = newRequirements.filter((_requirement, id) => id !== index);
             setRequirements(filteredObjectives);
         } else {
             if (targetAudiences.length <= minLengthTargetAudience) {
                 return;
             }
             const newTargetAudiences = [...targetAudiences];
-            const filteredObjectives = newTargetAudiences.filter((target, id) => id !== index);
+            const filteredObjectives = newTargetAudiences.filter((_target, id) => id !== index);
             setTargetAudiences(filteredObjectives);
         }
     }

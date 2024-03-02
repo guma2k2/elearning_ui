@@ -2,12 +2,15 @@ import { Button, Col, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Ro
 import { useEffect, useState } from "react";
 import './Category.style.scss'
 import TextArea from "antd/es/input/TextArea";
-import { get, getCategoryParents, getWithPagination, save, update } from "../../../services/CategoryService";
+import { get, getWithPagination, save, update } from "../../../services/CategoryService";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { fetchCategoryParents } from "../../../redux/slices/CategorySlice";
 
 function Category() {
     const [open, setOpen] = useState<boolean>(false);
     const [pending, setPending] = useState(false);
-    const [categoryParents, setCategoryParents] = useState<CategoryListGetType[]>([]);
+    const { categoryParents } = useAppSelector((state) => state.categories);
+    const dispatch = useAppDispatch();
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
@@ -50,7 +53,7 @@ function Category() {
             title: 'Action',
             dataIndex: 'key',
             width: 300,
-            render: (text, record) => (
+            render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Button type="primary" onClick={() => handleUpdateCategory(record.id)}>Edit</Button>
                     <Popconfirm
@@ -137,17 +140,7 @@ function Category() {
 
 
     useEffect(() => {
-        const fetchCategoryParents = async () => {
-            const res = await getCategoryParents();
-            if (res.status === 200) {
-                console.log(res);
-                const data = res.data.map((cat: CategoryType) => ({
-                    key: cat.id, ...cat
-                }))
-                setCategoryParents(data);
-            }
-        }
-        fetchCategoryParents()
+        dispatch(fetchCategoryParents())
     }, [])
 
     return (
