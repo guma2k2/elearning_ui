@@ -1,0 +1,15 @@
+.courses-container {
+    position: relative;
+    padding: 48px 74px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .slider {}
+    }
+}
