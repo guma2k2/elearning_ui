@@ -1,0 +1,16 @@
+.arrow-container {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #6a6f73;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .08);
+    background-color: #3e4143;
+    width: 48px;
+    height: 48px;
+    z-index: 10000;
+    opacity: 2;
+}

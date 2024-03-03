@@ -25,8 +25,6 @@ function Course() {
     const [topics, setTopics] = useState<TopicType[]>([]);
     const [form] = Form.useForm();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
-    // const [confirmLoading, setConfirmLoading] = useState(false);
-    // const [currentCourseId, setCurrentCourseId] = useState<number | undefined>();
     const columns: TableColumnsType<CourseType> = [
         {
             title: 'Id',
@@ -57,7 +55,7 @@ function Course() {
             title: 'Action',
             dataIndex: 'key',
             width: 300,
-            render: (text, record) => (
+            render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Button type="primary"><Link to={`edit/${record.id}`}>Edit</Link></Button>
                     <Popconfirm
@@ -120,6 +118,7 @@ function Course() {
         if (res.status == 201) {
             // setConfirmLoading(false);
             setIsDataUpdated((prev) => !prev)
+            // handleShowMessage("success", "Save course success", null, dispatch);
             form.resetFields()
             setOpen(false);
         }
