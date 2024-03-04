@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Arrow from '../../components/arrow/Arrow';
 import './Courses.style.scss'
 import { CourseType } from '../../types/CourseType';
@@ -10,12 +10,17 @@ import "slick-carousel/slick/slick-theme.css";
 function Courses() {
     const pageSize = 5;
     const [courses, setCourses] = useState<CourseType[]>([]);
+    const sliderRef = useRef<Slider>(null);
+
     const [page, setPage] = useState<number>(1);
     const handleSlideToShow = (type: string) => {
         console.log(type);
+        alert(type)
         if (type == "prev" && page > 1) {
+            sliderRef.current?.slickPrev();
             setPage((prev) => prev - 1);
         } else if (type = "next") {
+            sliderRef.current?.slickNext();
             setPage((prev) => prev + 1);
         }
     }
@@ -29,9 +34,8 @@ function Courses() {
                 if (courses.length == 0) {
                     setCourses(data);
                 } else {
-                    setCourses(prev => [...prev, data] as CourseType[]);
+                    setCourses(prev => [...prev, ...data]);
                 }
-                setPage(res.data.pageNum + 1);
                 // setPageSize(res.data.pageSize)
                 // setTotalElements(res.data.totalElements)
             }
@@ -49,18 +53,18 @@ function Courses() {
             <div className="wrapper">
                 <h2 className="header">Popular for Java Developers</h2>
                 <Slider
+                    ref={sliderRef}
                     className='slider'
                     {...settings}
                 >
                     {courses && courses.map((course, index) => {
-                        console.log(courses);
                         console.log(course);
                         return <Cart key={index} course={course} />
                     })}
 
                 </Slider>
-                <Arrow type={"prev"} />
-                <Arrow type={"next"} />
+                <Arrow type={"prev"} handleSlideToShow={handleSlideToShow} />
+                <Arrow type={"next"} handleSlideToShow={handleSlideToShow} />
             </div>
         </div>
     )
