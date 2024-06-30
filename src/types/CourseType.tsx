@@ -10,7 +10,7 @@ export type CourseType = {
     targetAudiences?: string[]
     description?: string
     imageURL?: string
-    imageId?: string
+    image?: string
     createdAt?: string
     updatedAt?: string
     free?: boolean

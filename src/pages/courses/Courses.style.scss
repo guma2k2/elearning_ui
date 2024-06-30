@@ -1,5 +1,4 @@
 .courses-container {
-    position: relative;
     padding: 48px 74px;
     display: flex;
     flex-direction: column;
@@ -10,6 +9,12 @@
         flex-direction: column;
         gap: 16px;
 
-        .slider {}
+        .slider {
+            .slick-arrow {
+                font-size: 10px;
+                color: red;
+                z-index: 10000;
+            }
+        }
     }
 }

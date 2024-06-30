@@ -117,7 +117,7 @@ function CourseLandingPage(probs: Probs) {
     }
     const handleUpdateCourse = async () => {
         setIsDataLoading(true);
-        let imageId: string = "";
+        let image: string = "";
         if (file) {
             var formData = new FormData();
             formData.append("file", file);
@@ -127,7 +127,7 @@ function CourseLandingPage(probs: Probs) {
             if (res.status === 200) {
                 const data = res.data;
                 console.log(data);
-                imageId = data.id;
+                image = data.url;
                 resetFileInput();
                 setFile(undefined);
             }
@@ -141,7 +141,7 @@ function CourseLandingPage(probs: Probs) {
                 level,
                 categoryId: defaultCategoryChild,
                 topicId: defaultTopic,
-                imageId
+                image
             };
             console.log(coursePut);
             if (course.id) {

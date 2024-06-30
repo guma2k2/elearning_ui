@@ -1,7 +1,7 @@
 
 export type UserType = {
     id: number;
-    photoId: any;
+    photo: any;
     photoURL?: string
     email: string;
     firstName: string;

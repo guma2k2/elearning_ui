@@ -52,19 +52,7 @@ const beforeUpload = (file: FileType) => {
     }
     return isJpgOrPng && isLt2M;
 };
-const data: UserType[] = [];
-for (let i = 1; i < 100; i++) {
-    data.push({
-        id: i,
-        photoId: "",
-        email: `Edward King@ ${i}.com`,
-        active: true,
-        firstName: `Edward  ${i}`,
-        lastName: `King ${i}`,
-        gender: `FEMALE`,
-        role: "ROLE_ADMIN"
-    });
-}
+
 function User() {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -109,6 +97,8 @@ function User() {
             dataIndex: 'photo',
             width: 150,
             render: (text, record) => {
+                console.log(text);
+
                 if (record.photoURL === "") {
                     return <img src={UserPhoto} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
                 }
@@ -198,19 +188,19 @@ function User() {
         setPending(true);
         console.log(values);
         const type = currentUser ? "update" : "create";
-        const checkIsUploadFile = values.photoId?.length ? true : false;
+        const checkIsUploadFile = values.photo?.length ? true : false;
         const checkIsChangePassword = values.password?.length ? true : false;
-        let photoId = "";
+        let photo = "";
         if (checkIsUploadFile) {
             var formData = new FormData();
-            formData.append("photo", values.photoId[0].originFileObj);
+            formData.append("photo", values.photo[0].originFileObj);
             formData.append("type", "photo");
             const res = await uploadFile(formData);
             if (res.status === 200) {
-                photoId = res.data.id;
+                photo = res.data.url;
             }
         }
-        values = { ...values, photoId: photoId }
+        values = { ...values, photo: photo }
         console.log(values);
         if (type === "create") {
             const resSaveUser = await save(values);
@@ -340,7 +330,7 @@ function User() {
                             <Form.Item
                                 name="gender"
                                 label="Gender"
-                                rules={[{ required: true, message: 'Please choose the approver' }]}
+                                rules={[{ required: true, message: 'Please choose the gender' }]}
                             >
                                 <Select>
                                     <Select.Option value="MALE">MALE</Select.Option>
@@ -352,7 +342,7 @@ function User() {
                             <Form.Item
                                 name="role"
                                 label="Role"
-                                rules={[{ required: true, message: 'Please choose the dateTime' }]}
+                                rules={[{ required: true, message: 'Please choose role for user' }]}
                             >
                                 <Select >
                                     <Select.Option value="ROLE_ADMIN">ROLE_ADMIN</Select.Option>

@@ -6,121 +6,13 @@ import './Navbar.style.scss'
 import { useEffect, useRef, useState } from "react"
 import PopperWrapper from "../popper/PopperWrapper"
 import { Tooltip, TooltipRefProps } from 'react-tooltip'
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import { RootState } from "../../redux/store"
+import { fetchCategoryParents } from "../../redux/slices/CategorySlice"
 
-const items: CategoryListGetType[] = [
-    {
-        id: 1,
-        name: "Development",
-        isPublish: true,
-        childrens: [
-            {
-                id: 2,
-                name: "sub cat1",
-                isPublish: true
-            },
-            {
-                id: 100,
-                name: "sub cat1",
-                isPublish: true
-            },
-            {
-                id: 101,
-                name: "sub cat1",
-                isPublish: true
-            },
-            {
-                id: 102,
-                name: "sub cat1",
-                isPublish: true
-            }
-        ]
-    },
-    {
-        id: 3,
-        name: "Business",
-        isPublish: true,
-        childrens: [
-            {
-                id: 4,
-                name: "sub cat2",
-                isPublish: true
-            }
-        ]
-    },
-    {
-        id: 5,
-        name: "Finance & Accounting",
-        isPublish: true,
-        childrens: [
-            {
-                id: 6,
-                name: "sub cat3",
-                isPublish: true
-            }
-        ]
-    },
-    {
-        id: 7,
-        name: "It & Software",
-        isPublish: true,
-        childrens: [
-            {
-                id: 8,
-                name: "sub cat4",
-                isPublish: true
-            }
-        ]
-    },
-    {
-        id: 9,
-        name: "Office Productivity",
-        isPublish: true,
-        childrens: [
-            {
-                id: 10,
-                name: "sub cat5",
-                isPublish: true
-            }
-        ]
-    },
-    {
-        id: 11,
-        name: "Personal Development",
-        isPublish: true,
-        childrens: [
-            {
-                id: 12,
-                name: "sub cat6",
-                isPublish: true
-            }
-        ]
-    },
-    {
-        id: 13,
-        name: "Design",
-        isPublish: true,
-        childrens: [
-            {
-                id: 14,
-                name: "sub cat7",
-                isPublish: true
-            }
-        ]
-    },
-    {
-        id: 15,
-        name: "Marketing",
-        isPublish: true,
-        childrens: [
-            {
-                id: 16,
-                name: "sub cat8",
-                isPublish: true
-            }
-        ]
-    }
-]
 function Navbar() {
+    const dispatch = useAppDispatch();
+    const { categoryParents } = useAppSelector((state: RootState) => state.categories);
     const [results, setResults] = useState<string[]>([])
     const [cartTotal, setCartTotal] = useState<number>(11);
     const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
@@ -138,7 +30,7 @@ function Navbar() {
         // Todo: get topics by categoryChildId
         if (topicTooltipRef.current) {
             const index = 0;
-            const childrens: CategoryType[] = items[index].childrens;
+            const childrens: CategoryType[] = categoryParents ? categoryParents[index].childrens : [];
             const html = childrens.length > 0 && childrens.map((child) => {
                 return <div key={child.id} className="category-item" onMouseEnter={() => handleShowTopics(child.id)}>
                     <span>{child.name}</span>
@@ -165,7 +57,7 @@ function Navbar() {
         }
         if (childCategoryTooltipRef.current) {
             const index: number = parentId;
-            const childrens: CategoryType[] = items[index].childrens;
+            const childrens: CategoryType[] = categoryParents ? categoryParents[index].childrens : [];
             const html = childrens.length > 0 && childrens.map((child) => {
                 return <div key={child.id} className="category-item" onMouseEnter={() => handleShowTopics(child.id)}>
                     <span>{child.name}</span>
@@ -197,6 +89,10 @@ function Navbar() {
         }
     }, [results])
 
+    useEffect(() => {
+        dispatch(fetchCategoryParents());
+    }, [])
+
     return (
         <>
             <div className="navbar-top-container" >
@@ -220,7 +116,7 @@ function Navbar() {
                         isOpen={categoryOpen}
                     >
                         <PopperWrapper >
-                            {items.map((item, index) => {
+                            {categoryParents?.map((item, index) => {
                                 return <div key={item.id} className="category-item"
                                     data-tooltip-id="category-child-tooltip"
                                     onMouseEnter={() => handleShowCategoryChildTooltip(index)}
@@ -282,7 +178,7 @@ function Navbar() {
                 </div>
             </div>
             <div className="navbar-bottom-container">
-                {items.map((item, index) => {
+                {categoryParents?.map((item, index) => {
                     return <div key={item.id}
                         className="navbar-bottom-item"
                         data-tooltip-id="tooltip-navbar-bottom"
@@ -300,7 +196,7 @@ function Navbar() {
                     render={({ content }) => {
                         if (content) {
                             const index: number = content ? parseInt(content) : -1;
-                            const childrens: CategoryType[] = items[index].childrens;
+                            const childrens: CategoryType[] = categoryParents ? categoryParents[index].childrens : [];
                             const html = childrens.length > 0 && childrens.map((child) => {
                                 return <div key={child.id} className="navbar-bottom-item"><span>{child.name}</span></div>
                             })

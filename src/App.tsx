@@ -15,6 +15,8 @@ import CourseEdit from "./pages/admin/course/CourseEdit";
 import { message } from "antd";
 import { useAppSelector } from "./redux/hooks";
 import { useEffect } from "react";
+import Login from "./pages/login";
+import Authenticate from "./pages/authenticate";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -30,7 +32,15 @@ function App() {
         {
           path: "/blog",
           element: <Blog />,
-        }
+        },
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/authenticate",
+          element: <Authenticate />,
+        },
       ]
     },
     {
