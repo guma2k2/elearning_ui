@@ -72,6 +72,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 20px;
 
             .button {
                 cursor: pointer;
@@ -83,5 +84,20 @@
                 justify-content: center;
             }
         }
+
+        .register {
+            width: 100%;
+            background-color: var(--color-gray-100);
+            text-align: center;
+            padding-top: 16px;
+            padding-bottom: 16px;
+
+            a {
+                color: var(--color-violet);
+                text-decoration: underline;
+                font-weight: 700;
+            }
+        }
+
     }
 }

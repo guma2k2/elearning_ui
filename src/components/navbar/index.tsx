@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Logo from "../../assets/logo-udemy.svg"
 import { BsCart, BsHeart } from "react-icons/bs"
 import { MdOutlineKeyboardArrowRight, MdOutlineNotifications, MdSearch } from "react-icons/md"
@@ -9,10 +9,13 @@ import { Tooltip, TooltipRefProps } from 'react-tooltip'
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { RootState } from "../../redux/store"
 import { fetchCategoryParents } from "../../redux/slices/CategorySlice"
+import { Button } from "antd"
 
 function Navbar() {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { categoryParents } = useAppSelector((state: RootState) => state.categories);
+    const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
     const [results, setResults] = useState<string[]>([])
     const [cartTotal, setCartTotal] = useState<number>(11);
     const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
@@ -74,6 +77,13 @@ function Navbar() {
             )
         }
 
+    }
+    const handleRedirectToLogin = () => {
+        navigate("/login")
+    }
+
+    const handleRedirectToRegister = () => {
+        navigate("/login")
     }
     const getCartTotal = (): string => {
         if (cartTotal > 9) {
@@ -167,14 +177,23 @@ function Navbar() {
                     </Tooltip>
                 </div>
                 <div className="right">
-                    <div className="learnings">My learning</div>
-                    <BsHeart className="icon" />
+                    {isLoggin && <><div className="learnings">My learning</div><BsHeart className="icon" /></>}
                     <div className="cart">
                         <BsCart className="icon-cart"></BsCart>
                         {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}
                     </div>
-                    <div className="notification"><MdOutlineNotifications className="icon" /></div>
-                    <div className="profile"></div>
+                    {isLoggin && <>
+                        <div className="notification"><MdOutlineNotifications className="icon" /></div>
+                        <img src={auth?.photoURL} alt="Photo" className="profile" />
+                    </>
+                    }
+                    {
+                        isLoggin == false && <>
+                            <Button onClick={handleRedirectToLogin} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "500", border: "1px solid #2d2f31" }}>Đăng nhập</Button>
+                            <Button onClick={handleRedirectToRegister} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "500", border: "1px solid #2d2f31" }}>Đăng ký</Button>
+                        </>
+                    }
+
                 </div>
             </div>
             <div className="navbar-bottom-container">
