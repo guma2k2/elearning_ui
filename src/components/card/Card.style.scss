@@ -1,0 +1,73 @@
+.cart-container {
+
+    .course-image {
+        width: 244px;
+        height: 137px;
+        object-fit: cover;
+    }
+
+    .course-instructor {
+        font-size: 12px;
+    }
+
+    .course-price {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .course-rating {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+
+        .rating {
+            font-size: 11px;
+        }
+    }
+
+    .tooltip-container {
+        width: 400px;
+        padding: 10px;
+        height: 600px;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--color-gray-150);
+
+        .header {
+            font-size: 20px;
+        }
+
+        .description {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            .updated-date {
+                font-size: 8px;
+            }
+
+            .sub-desc {
+                display: flex;
+                align-items: center;
+            }
+
+            .objective-container {
+                font-size: 12px;
+                display: flex;
+                flex-direction: column;
+
+                .objectives {
+                    display: flex;
+                    flex-direction: column;
+
+                    .objective {
+                        display: flex;
+                        gap: 15px;
+                        align-items: center;
+                    }
+                }
+            }
+        }
+    }
+}

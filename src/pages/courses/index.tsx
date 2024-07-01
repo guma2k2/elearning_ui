@@ -3,10 +3,10 @@ import './Courses.style.scss'
 import { CourseType } from '../../types/CourseType';
 import { getCourseWithPagination } from '../../services/CourseService';
 import Slider from 'react-slick';
-import Cart from '../../components/cart/Cart';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Banner from '../../components/banner';
+import Card from '../../components/card';
 function Courses() {
     const pageSize = 10;
     const [courses, setCourses] = useState<CourseType[]>([]);
@@ -41,7 +41,7 @@ function Courses() {
                     >
                         {courses && courses.map((course, index) => {
                             console.log(course);
-                            return <Cart key={index} course={course} />
+                            return <Card key={index} course={course} />
                         })}
                     </Slider>
                 </div>

@@ -53,6 +53,7 @@ function Login() {
                 </h2>
                 <div className="form">
                     <Form
+                        layout='vertical'
                         name="basic"
                         labelCol={{
                             span: 8,
@@ -61,7 +62,7 @@ function Login() {
                             span: 16,
                         }}
                         style={{
-                            maxWidth: 600,
+                            maxWidth: "100%",
                         }}
                         initialValues={{
                             remember: true,
@@ -73,6 +74,10 @@ function Login() {
                         <Form.Item<LoginRequest>
                             label="Email"
                             name="email"
+                            style={{ width: "100%" }}
+                            wrapperCol={{
+                                span: 24,
+                            }}
                             rules={[
                                 {
                                     required: true,
@@ -80,12 +85,16 @@ function Login() {
                                 },
                             ]}
                         >
-                            <Input />
+                            <Input style={{ width: "100%", height: "50px" }} />
                         </Form.Item>
 
                         <Form.Item<LoginRequest>
-                            label="Password"
+                            label="Mật khẩu"
                             name="password"
+                            style={{ width: "100%" }}
+                            wrapperCol={{
+                                span: 24,
+                            }}
                             rules={[
                                 {
                                     required: true,
@@ -93,15 +102,15 @@ function Login() {
                                 },
                             ]}
                         >
-                            <Input.Password />
+                            <Input.Password style={{ width: "100%", height: "50px" }} />
                         </Form.Item>
                         <Form.Item
                             wrapperCol={{
                                 span: 24,
                             }}
                         >
-                            <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-                                Log in
+                            <Button type="primary" htmlType="submit" style={{ width: "100%", height: "48px", borderRadius: "0", fontSize: "16px" }}>
+                                Đăng nhập
                             </Button>
                         </Form.Item>
                     </Form>

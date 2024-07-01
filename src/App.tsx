@@ -17,6 +17,7 @@ import { useAppSelector } from "./redux/hooks";
 import { useEffect } from "react";
 import Login from "./pages/login";
 import Authenticate from "./pages/authenticate";
+import Register from "./pages/register";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -36,6 +37,10 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
         },
         {
           path: "/authenticate",
