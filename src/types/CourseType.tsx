@@ -18,6 +18,21 @@ export type CourseType = {
     sections: SectionType[]
 }
 
+export type CourseListGetType = {
+    id?: number
+    title: string
+    level?: string
+    headline?: string
+    imageURL?: string
+    isPublish?: boolean
+    price: number
+    totalHours: number
+    totalLectures: number
+    averageRating: number
+    createdBy: string
+}
+
+
 export type SectionType = {
     id?: number
     title: string

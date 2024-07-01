@@ -45,7 +45,6 @@ function Courses() {
                         })}
                     </Slider>
                 </div>
-
             </div>
         </>
 

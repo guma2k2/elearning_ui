@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import Login from "./pages/login";
 import Authenticate from "./pages/authenticate";
 import Register from "./pages/register";
+import Cart from "./pages/cart";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -41,6 +42,10 @@ function App() {
         {
           path: "/register",
           element: <Register />,
+        },
+        {
+          path: "/cart",
+          element: <Cart />,
         },
         {
           path: "/authenticate",
