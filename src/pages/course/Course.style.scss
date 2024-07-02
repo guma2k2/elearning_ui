@@ -11,6 +11,7 @@
             color: white;
             flex: 7;
 
+
             .breadcrumb {
                 display: flex;
                 align-items: center;
@@ -63,6 +64,9 @@
 
         .left {
             flex: 7;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
 
             .lessons-content {
                 width: 100%;
@@ -87,7 +91,32 @@
 
             }
 
-            .course-content {}
+            .course-content {
+                .course-content-header-wrapper {
+                    .sub-head-wrapper {
+                        display: flex;
+                        font-size: 14px;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .sub-head-left {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            font-size: 14px;
+                        }
+
+                        .sub-head-right {}
+                    }
+                }
+
+                .lessons-container {
+                    margin-top: 24px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                }
+            }
         }
 
         .right {
