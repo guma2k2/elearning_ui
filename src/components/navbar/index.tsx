@@ -115,7 +115,7 @@ function Navbar() {
                         ref={categoryRef}
                         onMouseEnter={() => setCategoryOpen(true)}
 
-                    >Categories</div>
+                    >Thể loại</div>
                     <Tooltip id="category-tooltip"
                         place="bottom-end"
                         className="category-tooltip"
@@ -160,7 +160,7 @@ function Navbar() {
                     />
                     <div className="search" data-tooltip-id="my-tooltip">
                         <div className="button"><MdSearch className="icon" /></div>
-                        <input type="text" placeholder="Search for anything" />
+                        <input type="text" placeholder="Tìm kiếm khóa học" />
                     </div>
                     <Tooltip id="my-tooltip" className="search-tooltip"
                         disableStyleInjection
