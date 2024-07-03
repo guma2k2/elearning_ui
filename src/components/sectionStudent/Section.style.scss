@@ -1,0 +1,51 @@
+.section-detail-container {
+    display: flex;
+    flex-direction: column;
+
+    .section-student-container {
+        width: 100%;
+        height: 52px;
+        display: flex;
+        font-weight: 400;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+
+        background-color: var(--color-gray-100);
+        padding: 14px 30px 14px 48px;
+
+        .section-student-container-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .icon-toggle {
+                font-size: 14px;
+            }
+        }
+    }
+
+    .curriculum-student-container {
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--color-gray-100);
+        border-right: 1px solid var(--color-gray-100);
+
+        .curriculum-student-item {
+            width: 100%;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 14px 30px 14px 48px;
+            border-bottom: 1px solid var(--color-gray-100);
+
+            .curriculum-student-left {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    }
+}

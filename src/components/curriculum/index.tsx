@@ -77,7 +77,7 @@ function Curriculum(probs: CurriculumType) {
         console.log(values);
     }
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
+        const files = event.target.files
         if (files && files.length > 0) {
             const selected = files[0];
             console.log(selected);
@@ -214,6 +214,11 @@ function Curriculum(probs: CurriculumType) {
                 }
             }
         }
+    }
+
+    if (curriculum) {
+        console.log("my cur", curriculum);
+
     }
     const resetForm = () => {
         const answersForm: AnswerType[] = [

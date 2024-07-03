@@ -13,6 +13,18 @@ function CurriculumList(probs: Probs) {
     const { course } = probs;
     const sections = course?.sections;
 
+    var prevNumber: number = 0;
+    var nextNumber: number = 0;
+    if (sections) {
+        if (sections.length > 0) {
+            prevNumber = sections[sections?.length - 1].number + 1;
+            nextNumber = sections[sections?.length - 1].number + 1
+        } else {
+            prevNumber = 0;
+            nextNumber = 0;
+        }
+    }
+
     return (
         <div className="curriculumlist-container">
             <div className="header">
@@ -38,7 +50,7 @@ function CurriculumList(probs: Probs) {
                 <Button className='btn-plus' icon={<AiOutlinePlus />}>Section</Button>
             </div>}
             {toggle == true && <div className="curriculumlist-add-section">
-                <SectionForm prevNum={sections && sections[sections?.length - 1].number + 1} nextNum={sections && sections[sections?.length - 1].number + 1} label='New Section' toggle={{ type: "" }} setToggleCurriculumList={setToggle} />
+                <SectionForm prevNum={prevNumber} nextNum={nextNumber} label='New Section' toggle={{ type: "" }} setToggleCurriculumList={setToggle} />
             </div>}
 
 
