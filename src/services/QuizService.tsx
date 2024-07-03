@@ -7,7 +7,7 @@ export const createQuiz = async (quizPost: QuizPost) => {
     return res;
 }
 
-export const update = async (quizPost: QuizPost, quizId: number | undefined) => {
+export const updateQuiz = async (quizPost: QuizPost, quizId: number | undefined) => {
     const url = `/admin/quizzes/${quizId}`;
     const res = await instance.put(url, quizPost);
     return res;

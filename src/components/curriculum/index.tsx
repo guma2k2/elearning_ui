@@ -13,7 +13,7 @@ import InputFile from "../inputFile"
 import { LiaTimesSolid } from "react-icons/lia"
 import CurriculumForm from "../curriculumForm"
 import { uploadFile } from "../../services/MediaService"
-import { update } from "../../services/LectureService"
+import { updateLecture } from "../../services/LectureService"
 import { AnswerType, QuestionType } from "../../types/CourseType"
 import { QuestionPost } from "../../types/Question"
 import { createQuestion, updateQuestion } from "../../services/QuestionService"
@@ -86,13 +86,13 @@ function Curriculum(probs: CurriculumType) {
             formData.append("type", "video");
             const res = await uploadFile(formData);
             if (res.status === 200) {
-                const videoId = res.data.id;
+                const videoUrl = res.data.url;
                 const duration = res.data.duration;
                 const lecturePost: LecturePost = {
-                    ...curriculum, sectionId: sectionId, videoId: videoId, duration: duration
+                    ...curriculum, sectionId: sectionId, video: videoUrl, duration: duration
                 }
                 console.log(lecturePost);
-                const resOfUploadVideoLecture = await update(lecturePost, curriculum.id);
+                const resOfUploadVideoLecture = await updateLecture(lecturePost, curriculum.id);
                 if (resOfUploadVideoLecture.status === 200) {
                     console.log((resOfUploadVideoLecture).data);
                     setToggle({ type: "" })

@@ -3,7 +3,7 @@ type LecturePost = {
     title: string
     number: number
     sectionId: number
-    videoId?: string
+    video?: string
     lectureDetails?: string
     duration?: number
 }

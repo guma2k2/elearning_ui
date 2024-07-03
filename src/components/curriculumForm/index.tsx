@@ -5,11 +5,11 @@ import { LiaTimesSolid } from "react-icons/lia";
 import ReactQuill from "react-quill";
 import { useState } from "react";
 import { ICurriculum, ILecture, IQuiz } from "../../types/CourseType";
-import { createLecture } from "../../services/LectureService";
+import { createLecture, updateLecture } from "../../services/LectureService";
 import { useAppDispatch } from "../../redux/hooks";
-import { CurriculumPost, addCurriculum } from "../../redux/slices/CourseSlice";
+import { CurriculumPost, addCurriculum, updateCurriculum } from "../../redux/slices/CourseSlice";
 import { QuizPost } from "../../types/QuizType";
-import { createQuiz } from "../../services/QuizService";
+import { createQuiz, updateQuiz } from "../../services/QuizService";
 type ToggleType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
 }
@@ -46,18 +46,34 @@ function CurriculumForm(probs: ProbsType) {
             number: getNumber(),
             sectionId: sectionId
         }
-        const res = await createLecture(lecturePost);
-        console.log(res);
-        if (res.status === 201) {
-            console.log(res.data);
+        if (type == "create") {
+            const res = await createLecture(lecturePost);
+            console.log(res);
+            if (res.status === 201) {
+                console.log(res.data);
 
-            const data = res.data as ILecture;
-            const curriculumPost: CurriculumPost = {
-                curriculum: data,
-                sectionId
+                const data = res.data as ILecture;
+                const curriculumPost: CurriculumPost = {
+                    curriculum: data,
+                    sectionId
+                }
+                dispatch(addCurriculum(curriculumPost))
+                handleToggle()
             }
-            dispatch(addCurriculum(curriculumPost))
-            handleToggle()
+        } else if (type == "update") {
+            const res = await updateLecture(lecturePost, curriculum?.id);
+            console.log(res);
+            if (res.status === 200) {
+                console.log(res.data);
+
+                const data = res.data as ILecture;
+                const curriculumPost: CurriculumPost = {
+                    curriculum: data,
+                    sectionId
+                }
+                dispatch(updateCurriculum(curriculumPost))
+                handleToggle()
+            }
         }
     }
     const handleToggle = () => {
@@ -80,17 +96,32 @@ function CurriculumForm(probs: ProbsType) {
             description: descQuiz,
             sectionId: sectionId
         }
-        const res = await createQuiz(quizPost);
-        console.log(res);
-        if (res.status === 201) {
-            console.log(res.data);
-            const data = res.data as IQuiz;
-            const curriculumPost: CurriculumPost = {
-                curriculum: data,
-                sectionId
+        if (type == "create") {
+            const res = await createQuiz(quizPost);
+            console.log(res);
+            if (res.status === 201) {
+                console.log(res.data);
+                const data = res.data as IQuiz;
+                const curriculumPost: CurriculumPost = {
+                    curriculum: data,
+                    sectionId
+                }
+                dispatch(addCurriculum(curriculumPost))
+                handleToggle()
             }
-            dispatch(addCurriculum(curriculumPost))
-            handleToggle()
+        } else if (type == "update") {
+            const res = await updateQuiz(quizPost, curriculum?.id);
+            console.log(res);
+            if (res.status === 200) {
+                console.log(res.data);
+                const data = res.data as IQuiz;
+                const curriculumPost: CurriculumPost = {
+                    curriculum: data,
+                    sectionId
+                }
+                dispatch(updateCurriculum(curriculumPost))
+                handleToggle()
+            }
         }
     }
 
@@ -127,7 +158,7 @@ function CurriculumForm(probs: ProbsType) {
                     </div>
                     <div className="lecture-form-action">
                         <div className="cancel">Cancel</div>
-                        <Button type="primary" onClick={handleCreateLecture} >Add Lecture</Button>
+                        <Button type="primary" onClick={handleCreateLecture} >{curriculum ? "Update lecture" : "Add Lecture"}</Button>
                     </div>
                 </div>
             }
@@ -143,7 +174,7 @@ function CurriculumForm(probs: ProbsType) {
                     </div>
                     <div className="quiz-form-action">
                         <div className="cancel">Cancel</div>
-                        <Button type="primary" onClick={handleCreateQuiz}>Add Quiz</Button>
+                        <Button type="primary" onClick={handleCreateQuiz}> {curriculum ? "Update quiz" : "Add quiz"}</Button>
                     </div>
                 </div>
             }
@@ -152,3 +183,4 @@ function CurriculumForm(probs: ProbsType) {
 }
 
 export default CurriculumForm
+

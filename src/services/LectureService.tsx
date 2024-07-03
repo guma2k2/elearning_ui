@@ -6,7 +6,7 @@ export const createLecture = async (lecturePost: LecturePost) => {
     return res;
 }
 
-export const update = async (lecturePost: LecturePost, lectureId: number | undefined) => {
+export const updateLecture = async (lecturePost: LecturePost, lectureId: number | undefined) => {
     const url = `/admin/lectures/${lectureId}`;
     const res = await instance.put(url, lecturePost);
     return res;

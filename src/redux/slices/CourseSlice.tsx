@@ -71,6 +71,30 @@ export const courseSlice = createSlice({
                 }
             })
         },
+        updateCurriculum: (state, action: PayloadAction<CurriculumPost>) => {
+            state.currentCourse?.sections.forEach((sec) => {
+                if (sec.id === action.payload.sectionId) {
+                    const payload: CurriculumPost = action.payload;
+                    const newCurriculum = payload.curriculum;
+                    if (newCurriculum.type === 'lecture') {
+                        sec.curriculums.forEach((cur) => {
+                            if (cur.id == newCurriculum.id && cur.type == "lecture") {
+                                cur.title = newCurriculum.title;
+                                cur.number = newCurriculum.number;
+                                cur.lectureDetails = newCurriculum.lectureDetails;
+                            }
+                        })
+                    } else if (newCurriculum.type === 'quiz') {
+                        sec.curriculums.forEach((cur) => {
+                            if (cur.id == newCurriculum.id && cur.type == "quiz") {
+                                cur.title = newCurriculum.title;
+                                cur.number = newCurriculum.number;
+                            }
+                        })
+                    }
+                }
+            })
+        },
         addQuestion: (state, action: PayloadAction<QuestionsPost>) => {
             state.currentCourse?.sections.forEach((sec) => {
                 sec.curriculums.forEach((curriculum) => {
@@ -120,7 +144,7 @@ export const courseSlice = createSlice({
     },
 })
 
-export const { updateDataStatus, addSection, updateSection, addCurriculum, addQuestion, updateCourse } = courseSlice.actions
+export const { updateDataStatus, addSection, updateSection, addCurriculum, addQuestion, updateCourse, updateCurriculum } = courseSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.courses
