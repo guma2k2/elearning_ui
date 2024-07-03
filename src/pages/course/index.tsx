@@ -1,11 +1,14 @@
-import { Rate } from 'antd';
+import { Button, Rate } from 'antd';
 import './Course.style.scss'
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight, MdOutlineOndemandVideo } from "react-icons/md";
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { get } from '../../services/CourseService';
 import { CourseType } from '../../types/CourseType';
 import SectionForStudent from '../../components/sectionStudent';
+import { FaClock } from 'react-icons/fa';
+import { FaBatteryFull } from 'react-icons/fa6';
+import { PiSubtitles } from 'react-icons/pi';
 function CourseDetail() {
     let { courseId } = useParams();
 
@@ -76,7 +79,37 @@ function CourseDetail() {
 
                 </div>
             </div>
-            <div className="right"></div>
+            <div className="right">
+                <div className="course-media">
+                    <img src={course?.imageURL} alt="Course img" />
+                </div>
+                <div className="course-detail">
+                    <div className="course-detail-action">
+                        <span className="course-action-price">249.000 đ</span>
+                        <Button className='btn-add-to-cart'>Thêm vào giỏ hàng</Button>
+                        <Button className='btn-buy-now'>Mua ngay</Button>
+                    </div>
+                    <div className="course-info">
+                        <div className="course-info-level">
+                            <PiSubtitles />
+                            <span>Trinh do co ban</span>
+                        </div>
+                        <div className="course-info-total-lesson">
+                            <MdOutlineOndemandVideo />
+                            <span>Tong so 13 bai hoc</span>
+                        </div>
+                        <div className="course-info-total-time">
+                            <FaClock />
+                            <span>Thoi luong 01 gio 34 phut</span>
+                        </div>
+                        <div className="course-info-benefit">
+                            <FaBatteryFull />
+                            <span>Hoc moi luc moi noi</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
     </div>;
