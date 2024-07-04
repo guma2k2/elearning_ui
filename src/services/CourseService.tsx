@@ -23,3 +23,10 @@ export const get = async (courseId: number | string | undefined) => {
     const res = await instance.get(url);
     return res;
 }
+
+
+export const getCourseBySlug = async (courseSlug: string | undefined) => {
+    const url = `/courses/${courseSlug}/learn`
+    const res = await instance.get(url);
+    return res;
+}

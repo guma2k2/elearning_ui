@@ -20,6 +20,7 @@ import Authenticate from "./pages/authenticate";
 import Register from "./pages/register";
 import Cart from "./pages/cart";
 import CourseDetail from "./pages/course";
+import Learning from "./pages/learning";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -93,6 +94,10 @@ function App() {
         },
       ]
     },
+    {
+      path: "/course/:slug/learning",
+      element: <Learning />
+    }
   ]);
 
   useEffect(() => {
