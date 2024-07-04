@@ -3,12 +3,14 @@ import courseReducer from "./slices/CourseSlice"
 import messageReducer from './slices/MessageSlice'
 import categoryReducer from './slices/CategorySlice'
 import authReducer from './slices/AuthenticationSlice'
+import learningReducer from './slices/LearningSlice'
 export const store = configureStore({
     reducer: {
         courses: courseReducer,
         messages: messageReducer,
         categories: categoryReducer,
-        auth: authReducer
+        auth: authReducer,
+        learning: learningReducer,
     }
 })
 

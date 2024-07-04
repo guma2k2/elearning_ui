@@ -1,0 +1,54 @@
+.section-learning-container {
+    display: flex;
+    flex-direction: column;
+
+    .section-learning-wrapper {
+        display: flex;
+        flex-direction: column;
+        background-color: #f7f8fa;
+        padding: 8px 20px;
+        border-bottom: 1px solid #e7e7e7;
+        height: 61px;
+
+        &:hover {
+            cursor: pointer;
+            background-color: #edeff1;
+        }
+
+        .section-learning-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #000;
+            font-size: 16px;
+            line-height: 1.4;
+            font-weight: 600;
+
+            .section-learning-top-right {
+                .section-learning-toggle {
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .section-learning-bottom {
+            color: #29303b;
+            font-size: 12px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+        }
+    }
+
+    .section-learning-curriculum-wrapper {
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+
+    }
+
+
+}

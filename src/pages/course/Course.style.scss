@@ -59,7 +59,6 @@
     }
 
     .content {
-        height: 1000px;
         padding: 20px 216px;
         display: flex;
         gap: 48px;
@@ -94,6 +93,8 @@
             }
 
             .course-content {
+                padding-bottom: 50px;
+
                 .course-content-header-wrapper {
                     .sub-head-wrapper {
                         display: flex;
