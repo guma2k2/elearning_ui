@@ -32,7 +32,7 @@ function SectionLearning(probs: PropType) {
             </div>
             {toggle === true && <div className="section-learning-curriculum-wrapper">
                 {section.curriculums.length > 0 && section.curriculums.map((cur) => {
-                    return <CurriculumLearning curriculum={cur} key={cur.id} />
+                    return <CurriculumLearning curriculum={cur} key={`cur-learning-${cur.type}-${cur.id}`} />
                 })}
             </div>}
         </div>
