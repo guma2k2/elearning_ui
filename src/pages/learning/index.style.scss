@@ -78,7 +78,95 @@
             width: 100%;
             overflow-y: scroll;
             flex: 8;
-            background-color: aqua;
+
+
+            .learning-quiz-container {
+                padding: 48px 190px;
+
+                .learning-quiz-title {
+                    font-size: 28px;
+                    line-height: 1.4;
+                }
+
+                .learning-quiz-updated-time {
+                    font-size: 13px;
+                    margin-bottom: 36px;
+                }
+
+                .learning-quiz-question-content {
+                    background-color: #f2f9ff;
+                    font-size: 16px;
+                    border-radius: 8px;
+                    padding: 18px 16px;
+                    white-space: pre-wrap;
+                    text-align: left;
+                    word-spacing: normal;
+                    word-wrap: break-word;
+                    line-height: 1.5;
+                }
+
+                .learning-quiz-select-title {
+                    margin: 16px 0;
+                }
+
+                .learning-quiz-btn-answer {
+                    margin-top: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: end;
+
+                    .btn-answer {
+                        width: 115px;
+                        height: 32px;
+                        font-weight: 700;
+                        background-color: #0093fc;
+                        color: white;
+                        text-transform: uppercase;
+                        border-radius: 99px;
+                    }
+                }
+
+                .learning-quiz-explain {
+                    margin-top: 36px;
+
+                    .learning-quiz-explain-header {
+                        font-size: 18px;
+                        font-weight: 600;
+                    }
+
+                    .learning-quiz-explain {
+                        font-size: 14px;
+                        margin: 16px 0;
+                    }
+                }
+            }
+
+            .learning-video {
+                background-color: #000;
+            }
+
+            .learning-curriculum-info {
+                padding: 0 8.5%;
+                min-height: 400px;
+
+                .learning-curriculum-title {
+                    margin: 48px 0 8px;
+                    font-size: 28px;
+                    line-height: 1.4;
+                }
+
+                .learning-curriculum-time {
+                    font-size: 12px;
+                    margin-bottom: 36px;
+                }
+
+                .learning-curriculum-footer {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 14px;
+                }
+            }
         }
 
         .learning-right {
@@ -87,7 +175,7 @@
             overflow-y: scroll;
             flex: 2;
             background-color: #fff;
-            padding-left: 1px solid #e7e7e7;
+            border-left: 1px solid #e7e7e7;
 
             .learning-right-header {
                 padding-left: 16px;
