@@ -72,6 +72,10 @@
             align-items: center;
             justify-content: flex-end;
             gap: 10px;
+
+            .lecture-form-cancel-btn {
+                cursor: pointer;
+            }
         }
     }
 
@@ -107,6 +111,10 @@
             align-items: center;
             justify-content: flex-end;
             gap: 10px;
+
+            .quiz-form-cancel-btn {
+                cursor: pointer;
+            }
         }
     }
 }

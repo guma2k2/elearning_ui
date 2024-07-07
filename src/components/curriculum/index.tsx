@@ -1,7 +1,7 @@
 import { GrStatusGood } from "react-icons/gr"
 import { CurriculumType } from "./CurriculumType"
 import { AiOutlineFile, AiOutlinePlus, AiOutlineQuestionCircle } from "react-icons/ai"
-import { Button, Form, Input, Tabs, TabsProps } from "antd"
+import { Button, Tabs, TabsProps } from "antd"
 import './Curriculum.style.scss'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { MdModeEdit } from "react-icons/md"
@@ -14,12 +14,12 @@ import { LiaTimesSolid } from "react-icons/lia"
 import CurriculumForm from "../curriculumForm"
 import { uploadFile } from "../../services/MediaService"
 import { updateLecture } from "../../services/LectureService"
-import { AnswerType, QuestionType } from "../../types/CourseType"
+import { AnswerType, ILecture, QuestionType } from "../../types/CourseType"
 import { QuestionPost } from "../../types/Question"
 import { createQuestion, updateQuestion } from "../../services/QuestionService"
 import QuestionForm from "../questionForm"
 import { useAppDispatch } from "../../redux/hooks"
-import { QuestionsPost, addQuestion } from "../../redux/slices/CourseSlice"
+import { CurriculumPost, QuestionsPost, addQuestion, editQuestion, updateCurriculum } from "../../redux/slices/CourseSlice"
 
 type ToggleType = {
     type: "desc" | "resources" | "lecture" | "quiz" | "dropdown" | "" | "content" | "questions" | "add" | "dropdownQuestion"
@@ -28,10 +28,6 @@ type ToggleType = {
 type ToggleFormType = {
     type: "button" | "select" | "lecture" | "quiz" | "section" | "addSection" | "updateSection" | "" | "updateCurriculum"
 }
-type FieldType = {
-    title?: string;
-    url?: string;
-};
 const lectureModules = {
     toolbar: [
         ['bold', 'italic'],
@@ -43,11 +39,6 @@ const lectureFormats = [
     'bold', 'italic', 'list', 'bullet',
 ];
 
-const answerClone: AnswerType = {
-    answerText: "",
-    reason: "",
-    correct: false
-}
 const answersClone: AnswerType[] = [
     {
         answerText: "",
@@ -62,20 +53,18 @@ const answersClone: AnswerType[] = [
 ]
 function Curriculum(probs: CurriculumType) {
     const { curriculum, sectionId, nextNum, prevNum } = probs;
+    const lectureDescInit: string = curriculum.type == "lecture" && curriculum.lectureDetails ? curriculum.lectureDetails : "";
     const curriculumHeaderRef = useRef<HTMLDivElement | null>(null);
     const questionHeaderRef = useRef<HTMLDivElement | null>(null);
     const [toggleForm, setToggleForm] = useState<ToggleFormType>({ type: "" });
     const [toggle, setToggle] = useState<ToggleType>({ type: "" });
-    const [lectureDesc, setLectureDesc] = useState<string>("");
+    const [lectureDesc, setLectureDesc] = useState<string>(lectureDescInit);
     const [questionDesc, setQuestionDesc] = useState<string>("");
     const [answers, setAnswers] = useState<AnswerType[]>(answersClone);
     const [indexAnswerActive, setIndexAnswerActive] = useState<number>(-1);
     const [questionId, setQuestionId] = useState<number | undefined>(-1);
     const fileRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
-    const onFinish = (values: FieldType) => {
-        console.log(values);
-    }
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files
         if (files && files.length > 0) {
@@ -108,41 +97,8 @@ function Curriculum(probs: CurriculumType) {
             key: '1',
             label: 'Downloadable File',
             children: <InputFile title="Select File" handleFileChange={handleFileChange} fileRef={fileRef} />,
-        },
-        {
-            key: '2',
-            label: 'External Resource',
-            children: <Form
-                layout="vertical"
-                name="basic"
-                labelCol={{ span: 2 }}
-                wrapperCol={{ span: 24 }}
-                style={{ minWidth: "100%" }}
-                onFinish={onFinish}
-            >
-                <Form.Item<FieldType>
-                    label="Title"
-                    name="title"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
-                >
-                    <Input />
-                </Form.Item>
-
-                <Form.Item<FieldType>
-                    label="URL"
-                    name="url"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input />
-                </Form.Item>
-
-                <Form.Item wrapperCol={{ span: 24 }} style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
-                    <Button type="primary" htmlType="submit">
-                        Add Link
-                    </Button>
-                </Form.Item>
-            </Form>,
         }
+
     ];
     const handleMouseEnter = () => {
         if (curriculumHeaderRef.current) {
@@ -157,7 +113,11 @@ function Curriculum(probs: CurriculumType) {
     }
 
     const handleAddAnswer = () => {
-        setAnswers((prev) => [...prev, answerClone]);
+        setAnswers((prev) => [...prev, {
+            answerText: "",
+            reason: "",
+            correct: false
+        }]);
     }
 
     const handleRemoveAnswer = (answerIndex: number) => {
@@ -207,18 +167,49 @@ function Curriculum(probs: CurriculumType) {
                     quizId: curriculum.id,
                     answers
                 }
+                console.log(questionPost);
                 const res = await updateQuestion(questionPost, questionId);
                 if (res.status === 200) {
                     console.log(res.data);
+                    const data = res.data as QuestionType;
+
+                    let quizId: number = 0;
+                    if (curriculum.id) {
+                        quizId = curriculum.id;
+                    }
+                    const request: QuestionsPost = {
+                        quizId,
+                        question: data
+                    }
+                    dispatch(editQuestion(request));
                     setToggle({ type: "dropdownQuestion" })
                 }
             }
         }
     }
 
-    if (curriculum) {
-        console.log("my cur", curriculum);
+    const handleUpdateLecture = async () => {
+        if (curriculum) {
+            const lecturePost: LecturePost = {
+                ...curriculum, lectureDetails: lectureDesc, sectionId: sectionId
+            }
+            let lectureId: number = 0;
+            if (curriculum.id) {
+                lectureId = curriculum.id;
+            }
+            const res = await updateLecture(lecturePost, lectureId);
+            if (res.status === 200) {
+                console.log(res.data);
+                const data = res.data as ILecture;
+                const request: CurriculumPost = {
+                    sectionId,
+                    curriculum: data
+                }
+                dispatch(updateCurriculum(request));
+                setToggle({ type: "dropdown" })
+            }
 
+        }
     }
     const resetForm = () => {
         const answersForm: AnswerType[] = [
@@ -320,7 +311,7 @@ function Curriculum(probs: CurriculumType) {
                                 placeholder="Add a description. Include what students will be able to do after completing the lecture." /></div>
                             <div className="lecture-form-action">
                                 <div style={{ cursor: "pointer" }} className="cancel" onClick={() => setToggle({ type: "dropdown" })}>Cancel</div>
-                                <Button type="primary">Save</Button>
+                                <Button type="primary" onClick={handleUpdateLecture}>Save</Button>
                             </div>
                         </div>
                         <Button style={{ width: "8rem" }} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>

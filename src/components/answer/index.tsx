@@ -30,26 +30,32 @@ function Answer(probs: Probs) {
     const handleChecked = () => {
         if (radioRef.current) {
             radioRef.current.checked = true;
-            const newAnswers = [...answers];
-            newAnswers.forEach((ans, id) => {
+            const newAnswers = answers.map((ans, id) => {
                 if (id === index) {
-                    ans.correct = true;
+                    return { ...ans, correct: true };
                 } else {
-                    ans.correct = false;
+                    return { ...ans, correct: false };
                 }
-            })
+            });
+            console.log(newAnswers);
             setAnswers(newAnswers);
         }
     };
     const handleChangeDesc = (value: string) => {
+        console.log(index);
         const newAnswers = [...answers];
         newAnswers.forEach((ans, id) => {
             if (id === index) {
                 ans.answerText = value;
             }
         })
+        console.log(newAnswers);
         setAnswers(newAnswers);
     }
+
+    // const handleChangeCorrect = (e: ChangeEvent<HTMLInputElement>) => {
+    //     console.log(e.target.value);
+    // }
 
     const handleChangeReason = (event: ChangeEvent<HTMLInputElement>) => {
         const newReason = event.target.value;

@@ -21,6 +21,7 @@ import Register from "./pages/register";
 import Cart from "./pages/cart";
 import CourseDetail from "./pages/course";
 import Learning from "./pages/learning";
+import Filter from "./pages/filter";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -50,8 +51,12 @@ function App() {
           element: <Cart />,
         },
         {
-          path: "/course/:courseId",
+          path: "/courses/:courseId",
           element: <CourseDetail />,
+        },
+        {
+          path: "/courses/search",
+          element: <Filter />,
         },
         {
           path: "/authenticate",
