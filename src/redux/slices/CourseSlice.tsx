@@ -111,6 +111,23 @@ export const courseSlice = createSlice({
                 })
             })
         },
+        editQuestion: (state, action: PayloadAction<QuestionsPost>) => {
+            const newQuestion = action.payload.question;
+            state.currentCourse?.sections.forEach((sec) => {
+                sec.curriculums.forEach((curriculum) => {
+                    if (curriculum.id === action.payload.quizId && curriculum.type == "quiz") {
+                        if (curriculum.questions && curriculum.questions.length > 0) {
+                            curriculum.questions.forEach((q) => {
+                                if (q.id == newQuestion.id) {
+                                    q.title = newQuestion.title;
+                                    q.answers = newQuestion.answers;
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+        },
         updateCourse: (state, action: PayloadAction<CourseType>) => {
             if (state.currentCourse) {
                 const payload: CourseType = action.payload;
@@ -151,7 +168,7 @@ export const courseSlice = createSlice({
     },
 })
 
-export const { updateDataStatus, addSection, updateSection, addCurriculum, addQuestion, updateCourse, updateCurriculum } = courseSlice.actions
+export const { updateDataStatus, addSection, updateSection, addCurriculum, addQuestion, updateCourse, updateCurriculum, editQuestion } = courseSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.courses

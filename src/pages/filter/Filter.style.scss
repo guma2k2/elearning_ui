@@ -1,0 +1,154 @@
+.filter-container {
+    display: flex;
+    padding: 48px 42px;
+    gap: 10px;
+
+    .filter-left {
+        flex: 3;
+
+        .filter-form {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 15px;
+
+            .filter-btn {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 10px;
+                margin: 0;
+
+                .filter-btn-reset {
+                    color: var(--color-gray-500);
+                    background-color: transparent;
+                    border: 1px solid #2d2f31;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    height: 62px;
+                    border-radius: 0;
+
+                    span {
+                        font-size: 16px;
+                        font-weight: 700;
+                    }
+                }
+
+                .filter-select-sort {
+                    display: flex;
+                    align-items: flex-start;
+                    flex-direction: column;
+                    margin-top: 15px;
+
+                    .filter-label-sort {
+                        font-size: 16px;
+                    }
+
+                    .filer-selection {
+                        border-radius: 0;
+                        height: 50px;
+                        width: 300px;
+                    }
+                }
+            }
+
+            .filter-form-item {
+                display: flex;
+                flex-direction: column;
+                min-width: 100%;
+
+                .filter-form-devider {
+                    min-width: 100%;
+                    margin: 0;
+                    background-color: #d1d7dd;
+                }
+
+                .filter-form-header {
+                    color: #2d2f31;
+                    text-align: left;
+                    white-space: normal;
+                    font-size: 19px;
+                    margin-top: 10px;
+                }
+
+                .filter-form-content {
+                    margin-top: 15px;
+                }
+            }
+        }
+    }
+
+    .filter-right {
+        flex: 7;
+        margin-top: 130px;
+
+        .filter-right-course-container {
+            display: flex;
+            gap: 10px;
+
+            .filter-right-course-left {
+                flex: 2;
+
+                img {
+                    width: 100%;
+                    height: 135px;
+                    object-fit: cover;
+                }
+            }
+
+            .filter-right-course-middle {
+                flex: 6;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                gap: 5px;
+
+                .filter-right-course-title {
+                    font-size: 16px;
+                    line-height: 1.2;
+                    letter-spacing: 0;
+                    font-weight: 700;
+                }
+
+                .filter-right-course-desc {
+                    font-size: 13px;
+                    color: #2d2f31;
+                }
+
+                .filter-right-course-instructor {
+                    font-size: 13px;
+                    color: #2d2f31;
+                }
+
+                .filter-right-course-rating {
+                    font-size: 13px;
+                    color: #2d2f31;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 5px;
+                }
+
+                .filter-right-course-total {
+                    font-size: 13px;
+                    color: #2d2f31;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 10px;
+                }
+
+            }
+
+            .filter-right-course-right {
+                flex: 2;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+        }
+    }
+}

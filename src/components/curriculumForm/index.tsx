@@ -33,9 +33,13 @@ const formats = [
 ];
 function CurriculumForm(probs: ProbsType) {
     const [descQuiz, setDescQuiz] = useState<string>("");
-    const [lectureTitle, setLectureTitle] = useState<string>("")
-    const [quizTitle, setQuizTitle] = useState<string>("")
+
+
+
     const { sectionId, toggle, type, curriculum, nextNum, prevNum, setToggle } = probs;
+    const title: string = curriculum ? curriculum.title : "";
+    const [quizTitle, setQuizTitle] = useState<string>(title)
+    const [lectureTitle, setLectureTitle] = useState<string>(title)
     const dispatch = useAppDispatch();
     const handleCreateLecture = async () => {
         const type = curriculum ? "update" : "create";
@@ -76,6 +80,7 @@ function CurriculumForm(probs: ProbsType) {
             }
         }
     }
+    console.log(lectureTitle);
     const handleToggle = () => {
         if (setToggle) {
             if (probs.type == "") {
@@ -87,8 +92,6 @@ function CurriculumForm(probs: ProbsType) {
     }
     const handleCreateQuiz = async () => {
         const type = curriculum ? "update" : "create";
-        console.log(type);
-        console.log(getNumber());
 
         const quizPost: QuizPost = {
             title: quizTitle,
@@ -110,6 +113,7 @@ function CurriculumForm(probs: ProbsType) {
                 handleToggle()
             }
         } else if (type == "update") {
+            console.log(lectureTitle);
             const res = await updateQuiz(quizPost, curriculum?.id);
             console.log(res);
             if (res.status === 200) {
@@ -157,7 +161,7 @@ function CurriculumForm(probs: ProbsType) {
                         <input type="text" placeholder="Enter a Title" value={lectureTitle} onChange={(e) => setLectureTitle(e.target.value)} />
                     </div>
                     <div className="lecture-form-action">
-                        <div className="cancel">Cancel</div>
+                        <div className="lecture-form-cancel-btn" onClick={() => setToggle && setToggle({ type: "" })}>Cancel</div>
                         <Button type="primary" onClick={handleCreateLecture} >{curriculum ? "Update lecture" : "Add Lecture"}</Button>
                     </div>
                 </div>
@@ -173,7 +177,7 @@ function CurriculumForm(probs: ProbsType) {
                         <div className="quiz-rte"><ReactQuill modules={modules} formats={formats} theme="snow" value={descQuiz} onChange={setDescQuiz} placeholder="Quiz Description" /></div>
                     </div>
                     <div className="quiz-form-action">
-                        <div className="cancel">Cancel</div>
+                        <div className="quiz-form-cancel-btn" onClick={() => setToggle && setToggle({ type: "" })}>Cancel</div>
                         <Button type="primary" onClick={handleCreateQuiz}> {curriculum ? "Update quiz" : "Add quiz"}</Button>
                     </div>
                 </div>
