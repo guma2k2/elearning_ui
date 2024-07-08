@@ -36,28 +36,32 @@ function Filter() {
                     </div>
                     <div className="filter-form-item">
                         <Divider className='filter-form-devider' />
-                        <h2 className="filter-form-header">Xep Hang</h2>
+                        <h2 className="filter-form-header">Xếp hạng</h2>
                         <Form.Item className='filter-form-content' name="checkbox-group">
                             <Checkbox.Group>
                                 <Row>
                                     <Col span={16}>
-                                        <Checkbox value="A" style={{ lineHeight: '32px' }}>
-                                            A
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <Rate className="filter-form-content-rating" disabled defaultValue={2} />
+                                            <span>Từ 4.5 sao trở lên</span>
                                         </Checkbox>
                                     </Col>
                                     <Col span={16}>
-                                        <Checkbox value="B" style={{ lineHeight: '32px' }} disabled>
-                                            B
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <Rate className="filter-form-content-rating" disabled defaultValue={2} />
+                                            <span>Từ 4.5 sao trở lên</span>
                                         </Checkbox>
                                     </Col>
                                     <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <Rate className="filter-form-content-rating" disabled defaultValue={2} />
+                                            <span>Từ 4.5 sao trở lên</span>
                                         </Checkbox>
                                     </Col>
                                     <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <Rate className="filter-form-content-rating" disabled defaultValue={2} />
+                                            <span>Từ 4.5 sao trở lên</span>
                                         </Checkbox>
                                     </Col>
                                 </Row>
@@ -66,28 +70,28 @@ function Filter() {
                     </div>
                     <div className="filter-form-item">
                         <Divider className='filter-form-devider' />
-                        <h2 className="filter-form-header">Xep Hang</h2>
+                        <h2 className="filter-form-header">Cấp độ</h2>
                         <Form.Item className='filter-form-content' name="checkbox-group">
                             <Checkbox.Group>
                                 <Row>
                                     <Col span={16}>
-                                        <Checkbox value="A" style={{ lineHeight: '32px' }}>
-                                            A
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <span>Tất cả trình độ</span>
                                         </Checkbox>
                                     </Col>
                                     <Col span={16}>
-                                        <Checkbox value="B" style={{ lineHeight: '32px' }} disabled>
-                                            B
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <span>Sơ cấp</span>
                                         </Checkbox>
                                     </Col>
                                     <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <span>Trung cấp </span>
                                         </Checkbox>
                                     </Col>
                                     <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <span>Chuyên gia</span>
                                         </Checkbox>
                                     </Col>
                                 </Row>
@@ -96,93 +100,79 @@ function Filter() {
                     </div>
                     <div className="filter-form-item">
                         <Divider className='filter-form-devider' />
-                        <h2 className="filter-form-header">Xep Hang</h2>
+                        <h2 className="filter-form-header">Gía tiền</h2>
                         <Form.Item className='filter-form-content' name="checkbox-group">
                             <Checkbox.Group>
                                 <Row>
                                     <Col span={16}>
-                                        <Checkbox value="A" style={{ lineHeight: '32px' }}>
-                                            A
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <span>Có trả phí</span>
                                         </Checkbox>
                                     </Col>
                                     <Col span={16}>
-                                        <Checkbox value="B" style={{ lineHeight: '32px' }} disabled>
-                                            B
-                                        </Checkbox>
-                                    </Col>
-                                    <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
-                                        </Checkbox>
-                                    </Col>
-                                    <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
+                                        <Checkbox value="A" style={{ lineHeight: '32px' }} className='filter-form-content-checkbox'>
+                                            <span>Miễn phí</span>
                                         </Checkbox>
                                     </Col>
                                 </Row>
                             </Checkbox.Group>
                         </Form.Item>
                     </div>
-                    <div className="filter-form-item">
-                        <Divider className='filter-form-devider' />
-                        <h2 className="filter-form-header">Xep Hang</h2>
-                        <Form.Item className='filter-form-content' name="checkbox-group">
-                            <Checkbox.Group>
-                                <Row>
-                                    <Col span={16}>
-                                        <Checkbox value="A" style={{ lineHeight: '32px' }}>
-                                            A
-                                        </Checkbox>
-                                    </Col>
-                                    <Col span={16}>
-                                        <Checkbox value="B" style={{ lineHeight: '32px' }} disabled>
-                                            B
-                                        </Checkbox>
-                                    </Col>
-                                    <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
-                                        </Checkbox>
-                                    </Col>
-                                    <Col span={16}>
-                                        <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                                            C
-                                        </Checkbox>
-                                    </Col>
-                                </Row>
-                            </Checkbox.Group>
-                        </Form.Item>
-                    </div>
-                    <Form.Item name="rate" label="Rate">
-                        <Rate />
-                    </Form.Item>
-
                 </Form>
             </div>
             <div className="filter-right">
-                <div className="filter-right-course-container">
-                    <div className="filter-right-course-left">
-                        <img src="https://img-c.udemycdn.com/course/480x270/533682_c10c_4.jpg" alt="course-image" />
-                    </div>
-                    <div className="filter-right-course-middle">
-                        <h3 className="filter-right-course-title">Java 17 Masterclass: Start Coding in 2024</h3>
-                        <span className="filter-right-course-desc">Acquire Key <strong>Java</strong> Skills: From Basics to Advanced Programming and Certification - Start Your Dev Career</span>
-                        <div className="filter-right-course-instructor">Man Nguyen</div>
-                        <div className="filter-right-course-rating">
-                            <div className="rating-number">4.7</div>
-                            <Rate className="rating" disabled defaultValue={2} />
-                            <div className="review-number">(3.502 xếp hạng)</div>
+                <div className="filter-right-container">
+                    <div className="filter-right-course-container">
+                        <div className="filter-right-course-left">
+                            <img src="https://img-c.udemycdn.com/course/480x270/533682_c10c_4.jpg" alt="course-image" />
                         </div>
-                        <div className="filter-right-course-total">
-                            <div className="total-hours">Tổng số 36.5 giờ</div>
-                            <div className="total-lectures">250 bài giảng</div>
-                            <div className="level">Sơ cấp</div>
+                        <div className="filter-right-course-middle">
+                            <h3 className="filter-right-course-title">Java 17 Masterclass: Start Coding in 2024</h3>
+                            <span className="filter-right-course-desc">Acquire Key <strong>Java</strong> Skills: From Basics to Advanced Programming and Certification - Start Your Dev Career</span>
+                            <div className="filter-right-course-instructor">Man Nguyen</div>
+                            <div className="filter-right-course-rating">
+                                <div className="rating-number">4.7</div>
+                                <Rate className="rating" disabled defaultValue={2} />
+                                <div className="review-number">(3.502 xếp hạng)</div>
+                            </div>
+                            <div className="filter-right-course-total">
+                                <div className="total-hours">Tổng số 36.5 giờ</div>
+                                <div className="total-lectures">250 bài giảng</div>
+                                <div className="level">Sơ cấp</div>
+                            </div>
+                        </div>
+                        <div className="filter-right-course-right">
+                            2.399.000 d
                         </div>
                     </div>
-                    <div className="filter-right-course-right">
-                        2.399.000 d
+                    <Divider className='filter-right-course-devider' />
+                </div>
+
+                <div className="filter-right-container">
+                    <div className="filter-right-course-container">
+                        <div className="filter-right-course-left">
+                            <img src="https://img-c.udemycdn.com/course/480x270/533682_c10c_4.jpg" alt="course-image" />
+                        </div>
+                        <div className="filter-right-course-middle">
+                            <h3 className="filter-right-course-title">Java 17 Masterclass: Start Coding in 2024</h3>
+                            <span className="filter-right-course-desc">Acquire Key <strong>Java</strong> Skills: From Basics to Advanced Programming and Certification - Start Your Dev Career</span>
+                            <div className="filter-right-course-instructor">Man Nguyen</div>
+                            <div className="filter-right-course-rating">
+                                <div className="rating-number">4.7</div>
+                                <Rate className="rating" disabled defaultValue={2} />
+                                <div className="review-number">(3.502 xếp hạng)</div>
+                            </div>
+                            <div className="filter-right-course-total">
+                                <div className="total-hours">Tổng số 36.5 giờ</div>
+                                <div className="total-lectures">250 bài giảng</div>
+                                <div className="level">Sơ cấp</div>
+                            </div>
+                        </div>
+                        <div className="filter-right-course-right">
+                            2.399.000 d
+                        </div>
                     </div>
+                    <Divider className='filter-right-course-devider' />
                 </div>
             </div>
         </div>
