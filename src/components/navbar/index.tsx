@@ -9,7 +9,8 @@ import { Tooltip, TooltipRefProps } from 'react-tooltip'
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { RootState } from "../../redux/store"
 import { fetchCategoryParents } from "../../redux/slices/CategorySlice"
-import { Button } from "antd"
+import { Button, Popover } from "antd"
+import PopoverCart from "../popover-cart"
 
 function Navbar() {
     const dispatch = useAppDispatch();
@@ -23,6 +24,15 @@ function Navbar() {
     const topicTooltipRef = useRef<TooltipRefProps>(null)
     const childCategoryTooltipRef = useRef<TooltipRefProps>(null)
     const categoryRef = useRef<HTMLDivElement>(null)
+    const [open, setOpen] = useState(false);
+
+    const hide = () => {
+        setOpen(false);
+    };
+
+    const handleOpenChange = () => {
+        setOpen((prev) => !prev);
+    };
     const handleShowTopics = (childId: number) => {
         console.log(childId);
         let xCategoryTooltipPosition: number = 0;
@@ -178,10 +188,18 @@ function Navbar() {
                 </div>
                 <div className="right">
                     {isLoggin && <><div className="learnings">My learning</div><BsHeart className="icon" /></>}
-                    <div className="cart">
-                        <BsCart className="icon-cart"></BsCart>
+
+                    <div className="cart" >
+                        <Popover content={() => <PopoverCart hide={hide} />} placement="bottomRight" rootClassName="popover-carts"
+                            open={open}
+                            trigger={"click"}
+                            destroyTooltipOnHide={open}
+                            onOpenChange={handleOpenChange}>
+                            <BsCart className="icon-cart"></BsCart>
+                        </Popover>
                         {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}
                     </div>
+
                     {isLoggin && <>
                         <div className="notification"><MdOutlineNotifications className="icon" /></div>
                         <img src={auth?.photoURL} alt="Photo" className="profile" />
