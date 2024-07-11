@@ -14,6 +14,7 @@ import { Button, Popover } from "antd"
 import PopoverCart from "../popover-cart"
 import PopoverUserProfile from "../popover-user-photo"
 import PopoverLearning from "../popover-learning"
+import PopoverSearch from "../popover-search"
 
 function Navbar() {
     const dispatch = useAppDispatch();
@@ -23,17 +24,12 @@ function Navbar() {
     const [results, setResults] = useState<string[]>([])
     const [cartTotal, setCartTotal] = useState<number>(11);
     const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
-    const searchTooltipRef = useRef<TooltipRefProps>(null)
     const topicTooltipRef = useRef<TooltipRefProps>(null)
     const childCategoryTooltipRef = useRef<TooltipRefProps>(null)
     const categoryRef = useRef<HTMLDivElement>(null)
     const [open, setOpen] = useState<boolean>(false);
     const [openProfile, setOpenProfile] = useState<boolean>(false);
     const [openLearning, setOpenLearning] = useState<boolean>(false);
-
-    const hide = () => {
-        setOpen(false);
-    };
 
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);
@@ -114,9 +110,7 @@ function Navbar() {
     }
     useEffect(() => {
         if (results.length > 0) {
-            if (searchTooltipRef.current) {
-                searchTooltipRef.current.open();
-            }
+
         }
     }, [results])
 
@@ -179,23 +173,18 @@ function Navbar() {
                         clickable
                         afterHide={() => setCategoryOpen(false)}
                     />
-                    <div className="search" data-tooltip-id="my-tooltip">
-                        <div className="button"><MdSearch className="icon" /></div>
-                        <input type="text" placeholder="Tìm kiếm khóa học" />
-                    </div>
-                    <Tooltip id="my-tooltip" className="search-tooltip"
-                        disableStyleInjection
-                        ref={searchTooltipRef} imperativeModeOnly>
-                        <PopperWrapper>
-                            <h3>This is a very interesting header</h3>
-                            <p>Here's some interesting stuff:</p>
-                            <ul>
-                                <li>Some</li>
-                                <li>Interesting</li>
-                                <li>Stuff</li>
-                            </ul>
-                        </PopperWrapper>
-                    </Tooltip>
+
+                    <Popover
+                        placement="bottom"
+                        content={PopoverSearch}
+                        rootClassName="popover-search"
+                        open={results.length > 0}
+                    >
+                        <div className="search" >
+                            <div className="button"><MdSearch className="icon" /></div>
+                            <input type="text" placeholder="Tìm kiếm khóa học" />
+                        </div>
+                    </Popover>
                 </div>
                 <div className="right">
                     {isLoggin == false && <>

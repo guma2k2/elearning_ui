@@ -259,3 +259,108 @@ li {
     }
   }
 }
+
+.popover-search {
+  .popover-search-container {
+    min-width: 650px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+
+    .popover-search-course-titles {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+
+      .popover-search-course-title {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        gap: 20px;
+        padding: 8px 0;
+
+        .popover-search-course-title-left {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .popover-icon-search {
+            font-size: 20px;
+            color: #2d2f31;
+          }
+        }
+
+        .popover-search-course-title-right {
+          font-size: 16px;
+          font-size: 700;
+          line-height: 1.4;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        &:hover {
+          cursor: pointer;
+          background-color: #f7f9fa;
+        }
+      }
+    }
+
+    .popover-search-course-wrapper {
+      display: flex;
+      flex-direction: column;
+
+      .popover-search-course {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .popover-search-course-left {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+
+          }
+        }
+
+        .popover-search-course-right {
+          display: flex;
+          flex-direction: column;
+
+          .popover-search-course-title {
+            color: #2d2f31;
+            font-size: 16px;
+            font-weight: 700;
+          }
+
+          .popover-search-course-type {
+            color: #6a6f73;
+            font-weight: 700;
+            font-size: 12px;
+
+          }
+
+          .popover-search-course-intructor {
+            font-size: 12px;
+
+            color: #6a6f73;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+        }
+
+        &:hover {
+          cursor: pointer;
+          background-color: #f7f9fa;
+        }
+      }
+    }
+  }
+}
