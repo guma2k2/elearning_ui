@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import Logo from "../../assets/logo-udemy.svg"
+import UserPhoto from "../../assets/userPhoto.png"
 import { BsCart, BsHeart } from "react-icons/bs"
 import { MdOutlineKeyboardArrowRight, MdOutlineNotifications, MdSearch } from "react-icons/md"
 import './Navbar.style.scss'
@@ -11,6 +12,8 @@ import { RootState } from "../../redux/store"
 import { fetchCategoryParents } from "../../redux/slices/CategorySlice"
 import { Button, Popover } from "antd"
 import PopoverCart from "../popover-cart"
+import PopoverUserProfile from "../popover-user-photo"
+import PopoverLearning from "../popover-learning"
 
 function Navbar() {
     const dispatch = useAppDispatch();
@@ -24,14 +27,22 @@ function Navbar() {
     const topicTooltipRef = useRef<TooltipRefProps>(null)
     const childCategoryTooltipRef = useRef<TooltipRefProps>(null)
     const categoryRef = useRef<HTMLDivElement>(null)
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState<boolean>(false);
+    const [openProfile, setOpenProfile] = useState<boolean>(false);
+    const [openLearning, setOpenLearning] = useState<boolean>(false);
 
     const hide = () => {
         setOpen(false);
     };
 
-    const handleOpenChange = () => {
-        setOpen((prev) => !prev);
+    const handleOpenChange = (newOpen: boolean) => {
+        setOpen(newOpen);
+    };
+    const handleOpenProfileChange = (newOpen: boolean) => {
+        setOpenProfile(newOpen);
+    };
+    const handleOpenLearning = (newOpen: boolean) => {
+        setOpenLearning(newOpen);
     };
     const handleShowTopics = (childId: number) => {
         console.log(childId);
@@ -187,61 +198,57 @@ function Navbar() {
                     </Tooltip>
                 </div>
                 <div className="right">
-                    {isLoggin && <><div className="learnings">My learning</div><BsHeart className="icon" /></>}
+                    {isLoggin == false && <>
+                        <Popover
+                            placement="bottomRight"
+                            content={PopoverLearning}
+                            rootClassName="popover-learnings"
+                            trigger="click"
+                            open={openLearning}
+                            onOpenChange={handleOpenLearning}
+                        >
+                            <div className="learnings">Khoa hoc cua toi</div>
+                        </Popover>
+                        <BsHeart className="icon" />
+                    </>}
 
                     <div className="cart" >
-                        <Popover content={() => <PopoverCart hide={hide} />} placement="bottomRight" rootClassName="popover-carts"
+                        <Popover
+                            placement="bottomRight"
+                            content={PopoverCart}
+                            rootClassName="popover-carts"
+                            trigger="click"
                             open={open}
-                            trigger={"click"}
-                            destroyTooltipOnHide={open}
-                            onOpenChange={handleOpenChange}>
+                            onOpenChange={handleOpenChange}
+                        >
                             <BsCart className="icon-cart"></BsCart>
                         </Popover>
                         {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}
                     </div>
 
-                    {isLoggin && <>
+                    {isLoggin == false && <>
                         <div className="notification"><MdOutlineNotifications className="icon" /></div>
-                        <img src={auth?.photoURL} alt="Photo" className="profile" />
+                        {/* <img src={auth?.photoURL} alt="Photo" className="profile" /> */}
+                        <Popover
+                            content={PopoverUserProfile}
+                            rootClassName="popover-profiles"
+                            trigger="click"
+                            open={openProfile}
+                            placement="bottomLeft"
+                            onOpenChange={handleOpenProfileChange}
+                        >
+                            <img src={UserPhoto} alt="Photo" className="profile" />
+                        </Popover>
                     </>
                     }
                     {
-                        isLoggin == false && <>
+                        isLoggin == true && <>
                             <Button onClick={handleRedirectToLogin} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "500", border: "1px solid #2d2f31" }}>Đăng nhập</Button>
                             <Button onClick={handleRedirectToRegister} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "500", border: "1px solid #2d2f31" }}>Đăng ký</Button>
                         </>
                     }
 
                 </div>
-            </div>
-            <div className="navbar-bottom-container">
-                {categoryParents?.map((item, index) => {
-                    return <div key={item.id}
-                        className="navbar-bottom-item"
-                        data-tooltip-id="tooltip-navbar-bottom"
-                        data-tooltip-content={index.toString()}
-                    >
-                        <span>{item.name}</span>
-                    </div>
-                })}
-                <Tooltip
-                    className="subnav-tooltip"
-                    id="tooltip-navbar-bottom"
-                    place="bottom"
-                    offset={5}
-                    clickable
-                    render={({ content }) => {
-                        if (content) {
-                            const index: number = content ? parseInt(content) : -1;
-                            const childrens: CategoryType[] = categoryParents ? categoryParents[index].childrens : [];
-                            const html = childrens.length > 0 && childrens.map((child) => {
-                                return <div key={child.id} className="navbar-bottom-item"><span>{child.name}</span></div>
-                            })
-                            return <div className="wrapper" >{html}</div>;
-                        }
-                    }
-                    }
-                />
             </div>
         </>
     )

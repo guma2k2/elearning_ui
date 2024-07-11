@@ -22,6 +22,7 @@ import Cart from "./pages/cart";
 import CourseDetail from "./pages/course";
 import Learning from "./pages/learning";
 import Filter from "./pages/filter";
+import './index.scss'
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);

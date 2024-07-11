@@ -37,75 +37,225 @@ li {
 }
 
 .popover-carts {
-  display: flex;
-  flex-direction: column;
-  min-height: 500px;
-  width: 305px;
+  .popover-cart-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+    width: 305px;
 
-  .popover-cart-top {
-    height: calc(500px - 115px);
-    width: 100%;
-    overflow-y: scroll;
+    .popover-cart-top {
+      height: calc(500px - 115px);
+      width: 100%;
+      overflow-y: scroll;
 
-    .popover-carts-wrapper {
+      .popover-carts-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        .popover-carts-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+
+          .popover-carts-item-left {
+            flex: 3;
+
+            img {
+              width: 100%;
+              height: auto;
+              object-fit: cover;
+            }
+          }
+
+          .popover-carts-item-right {
+            flex: 7;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+          }
+        }
+
+        .popover-cart-devider {
+          background-color: #909498;
+          width: 100%;
+        }
+      }
+    }
+
+    .popover-cart-bottom {
+      height: 90px;
+      width: 100%;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      background-color: #fff;
+      color: #2d2f31;
+      gap: 10px;
 
-      .popover-carts-item {
+      .popover-cart-bottom-price {
+        font-size: 19px;
+        font-weight: 700;
+      }
+
+      .popover-cart-bottom-btn {
+        width: 100%;
+        height: 49px;
+        font-size: 16px;
         display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: black;
+        color: #fff;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.popover-profiles {
+  .popover-user-profile-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 230px;
+
+    .popover-user-profile-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+
+      .popover-user-profile-top-left {
+        flex: 1;
+
+        img {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+        }
+      }
+
+      .popover-user-profile-top-right {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
         align-items: flex-start;
+
+        .user-profile-fullname {
+          font-size: 16px;
+          font-weight: 600;
+          color: #292929;
+        }
+
+        .user-profile-email {
+          width: 100%;
+          font-size: 12px;
+          color: #757575;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .popover-profile-devider {
+      margin: 0;
+    }
+
+    .popover-user-profile-bottom,
+    .popover-user-profile-middle {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .popover-profile-link-redirect {
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      padding: 10px 0;
+
+      &:hover {
+        color: #292929;
+      }
+    }
+  }
+}
+
+.popover-learnings {
+  .popover-learning-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 390px;
+
+
+    .popover-learning-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .popover-mylearning {
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .popover-learning-btn-viewall {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f47425;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        padding: 8px;
+        border-color: transparent;
+      }
+    }
+
+    .popover-learning-courses-wrapper {
+      display: flex;
+      flex-direction: column;
+      max-height: 68vh;
+      overflow-y: scroll;
+
+      .popover-learning-course {
+        display: flex;
+        align-items: center;
         gap: 10px;
 
-        .popover-carts-item-left {
-          flex: 3;
+        .popover-learning-course-left {
+          flex: 1;
 
           img {
             width: 100%;
             height: auto;
-            object-fit: cover;
           }
         }
 
-        .popover-carts-item-right {
-          flex: 7;
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
+        .popover-learning-course-right {
+          flex: 2;
+
+          .popover-learning-course-title {
+            color: #333;
+            font-size: 14px;
+          }
+
+          .popover-learning-course-time {
+            color: #666;
+            font-size: 12px;
+          }
+
+          .popover-learning-course-progress {
+            width: 200px;
+          }
+        }
+
+        &:hover {
+          background-color: #1618230d;
+          cursor: pointer;
         }
       }
-
-      .popover-cart-devider {
-        background-color: #909498;
-        width: 100%;
-      }
-    }
-  }
-
-  .popover-cart-bottom {
-    height: 90px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    color: #2d2f31;
-    gap: 10px;
-
-    .popover-cart-bottom-price {
-      font-size: 19px;
-      font-weight: 700;
-    }
-
-    .popover-cart-bottom-btn {
-      width: 100%;
-      height: 49px;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: black;
-      color: #fff;
-      font-weight: 700;
     }
   }
 }
