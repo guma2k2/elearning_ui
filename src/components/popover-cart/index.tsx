@@ -2,8 +2,8 @@ import { Button, Divider } from "antd";
 type PropType = {
     hide: any
 }
-function PopoverCart(props: PropType) {
-    return <>
+function PopoverCart() {
+    return <div className="popover-cart-container">
         <div className="popover-cart-top" >
             <div className="popover-carts-wrapper">
                 <div className="popover-carts-item">
@@ -100,7 +100,7 @@ function PopoverCart(props: PropType) {
             <Button className="popover-cart-bottom-btn">Chuyen den gio hang</Button>
         </div>
 
-    </>
+    </div>
 }
 
 export default PopoverCart;
