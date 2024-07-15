@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import Cookies from 'universal-cookie';
 import { RootState } from '../store'
-import { AuthType, LoginRequest } from '../../types/AuthType'
+import { jwtDecode } from "jwt-decode";
+import { LoginRequest, LoginResponse } from '../../types/AuthType'
 import { loginUser } from "../../services/AuthService"
 interface AuthState {
-    auth?: AuthType
+    auth?: LoginResponse
     isLoading: boolean
     isError: boolean,
     isLoggin: boolean,
@@ -14,7 +15,7 @@ export const login = createAsyncThunk(
     'auth/login',
     async (request: LoginRequest) => {
         const response = await loginUser(request);
-        const data = response.data as AuthType;
+        const data = response.data as LoginResponse;
         return data;
     },
 )
@@ -26,11 +27,21 @@ const initialState: AuthState = {
 }
 
 export const authSlice = createSlice({
-    name: 'courses',
+    name: 'auth',
     initialState,
     reducers: {
-        updateUserProfile: (state) => {
-
+        saveUserProfile: (state, action) => {
+            const payload = action.payload as LoginResponse
+            state.auth = payload;
+            state.isLoggin = true;
+        },
+        logOut: (state) => {
+            if (state.auth) {
+                state.auth = undefined
+            }
+            state.isLoading = false
+            state.isError = false
+            state.isLoggin = false
         },
     }, extraReducers: (builder) => {
         builder
@@ -41,7 +52,14 @@ export const authSlice = createSlice({
                 state.isLoggin = false;
             })
             .addCase(login.fulfilled, (state, action) => {
-                state.auth = action.payload;
+                const payload = action.payload as LoginResponse
+                const token = payload.token as string
+                const decoded = jwtDecode(token);
+                const cookies = new Cookies();
+                if (decoded.exp) {
+                    cookies.set('token', token, { expires: new Date(decoded.exp * 1000) });
+                }
+                state.auth = payload;
                 state.isError = false;
                 state.isLoading = false
                 state.isLoggin = true;
@@ -55,7 +73,7 @@ export const authSlice = createSlice({
     },
 })
 
-export const { } = authSlice.actions
+export const { saveUserProfile, logOut } = authSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.courses

@@ -23,7 +23,7 @@ export type CourseListGetType = {
     title: string
     level?: string
     headline?: string
-    imageURL?: string
+    image?: string
     isPublish?: boolean
     price: number
     totalHours: number

@@ -27,9 +27,11 @@
         .review {
             font-size: 10px;
             display: flex;
+            align-items: center;
+            gap: 5px;
 
             .rating {
-                font-size: 12px;
+                font-size: 10px;
             }
 
         }
@@ -49,6 +51,14 @@
         flex: 3;
         font-size: 14px;
         color: #5022c3;
+
+        .delete {
+            cursor: pointer;
+        }
+
+        .save-for-later {
+            cursor: pointer;
+        }
     }
 
     .course-price {

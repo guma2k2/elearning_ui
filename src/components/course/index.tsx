@@ -1,36 +1,49 @@
 import { Divider, Rate } from "antd";
-import { CourseListGetType } from "../../types/CourseType"
-
 import './Course.style.scss'
+import { CartType } from "../../types/CartType";
+import { useAppDispatch } from "../../redux/hooks";
+import { deleteCart, updateCart } from "../../redux/slices/CartSlice";
+import { deleteCartById, updateCartBuyLaterById } from "../../services/CartService";
 type PropType = {
-    course: CourseListGetType
+    cart: CartType
 }
-function Course() {
-    // const { course } = probs;
+function Course(props: PropType) {
+    const { cart } = props;
+    const dispatch = useAppDispatch();
+    const handleDeleteCart = async () => {
+        const cartId = cart.id as number;
+        const res = await deleteCartById(cartId);
+        dispatch(deleteCart(cartId))
+    }
+    const handleSaveForLater = async () => {
+        const cartId = cart.id as number;
+        const res = await updateCartBuyLaterById(cartId);
+        dispatch(updateCart(cartId))
+    }
     return (
         <>
             <Divider />
             <div className="course-component-container">
                 <img src="https://img-c.udemycdn.com/course/480x270/4364200_0221_5.jpg" alt="image course" className="image-course" />
                 <div className="content-course">
-                    <h2 className="course-title">[NEW] Master Spring 6, Spring Boot 3, REST, JPA, Hibernate</h2>
-                    <div className="intructor-name">Eazy Bytes</div>
+                    <h2 className="course-title">{cart.course.title}</h2>
+                    <div className="intructor-name">{cart.course.createdBy}</div>
                     <div className="review">
-                        <div className="rating-number"></div>
-                        <Rate className="rating" disabled defaultValue={2} />
+                        <div className="rating-number">4</div>
+                        <Rate className="rating" disabled defaultValue={4} />
                         <div className="review-number">(3.502 xếp hạng)</div>
                     </div>
                     <div className="desc">
                         <div className="total-hours">Tổng số 36.5 giờ</div>
                         <div className="total-lectures">250 bài giảng</div>
-                        <div className="level">Sơ cấp</div>
+                        <div className="level">{cart.course.level}</div>
                     </div>
                 </div>
                 <div className="course-action">
-                    <div className="delete">Xóa</div>
-                    <div className="save-for-later">Lưu lại để xem sau</div>
+                    <div className="delete" onClick={handleDeleteCart}>Xóa</div>
+                    <div className="save-for-later" onClick={handleSaveForLater}>Lưu lại để xem sau</div>
                 </div>
-                <div className="course-price">299.000 d</div>
+                <div className="course-price">{cart.course.price} d</div>
             </div>
         </>
     )

@@ -1,7 +1,20 @@
 import { Divider } from "antd";
 import UserPhoto from "../../assets/userPhoto.png"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../redux/hooks";
+import { logOut } from "../../redux/slices/AuthenticationSlice";
+import { resetCart } from "../../redux/slices/CartSlice";
 function PopoverUserProfile() {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        console.log("handle logout");
+        dispatch(logOut());
+        dispatch(resetCart());
+        if (window.location.pathname !== "/") {
+            navigate("/")
+        }
+    }
     return <div className="popover-user-profile-container">
         <div className="popover-user-profile-top">
             <div className="popover-user-profile-top-left">
@@ -14,14 +27,14 @@ function PopoverUserProfile() {
         </div>
         <Divider className="popover-profile-devider" />
         <div className="popover-user-profile-middle">
-            <Link className="popover-profile-link-redirect" to={""}> <span>Gio hang cua toi</span> </Link>
-            <Link className="popover-profile-link-redirect" to={""}> <span>Hoc tap</span> </Link>
-            <Link className="popover-profile-link-redirect" to={""}> <span>Lich su mua hang</span> </Link>
+            <Link className="popover-profile-link-redirect" to={""}> <span>Giỏ hàng của tôi</span> </Link>
+            <Link className="popover-profile-link-redirect" to={""}> <span>Học tập</span> </Link>
+            <Link className="popover-profile-link-redirect" to={""}> <span>Lịch sử mua hàng</span> </Link>
         </div>
         <Divider className="popover-profile-devider" />
         <div className="popover-user-profile-bottom">
-            <Link className="popover-profile-link-redirect" to={""}> <span>Cai Dat</span> </Link>
-            <Link className="popover-profile-link-redirect" to={""}> <span>Dang xuat</span> </Link>
+            <Link className="popover-profile-link-redirect" to={""}> <span>Cài đặt</span> </Link>
+            <div onClick={handleLogout} className="popover-profile-link-redirect" > <span>Đăng xuất</span> </div>
         </div>
     </div>;
 }

@@ -1,10 +1,16 @@
 import axios from "axios";
+import Cookies from 'universal-cookie';
 
 
 const baseURL = import.meta.env.VITE_BACKEND_URL
+const cookies = new Cookies();
+
+// Retrieve the token from cookies
+const token = cookies.get('token');
+
 const instance = axios.create({
     baseURL,
-    // headers: {'X-Custom-Header': 'foobar'}
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
 });
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {

@@ -8,16 +8,19 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 import { login } from '../../redux/slices/AuthenticationSlice';
 import { useEffect } from 'react';
+import { getCartsByUser } from '../../redux/slices/CartSlice';
+import { ROLE_ADMIN, ROLE_INSTRUCTOR } from '../../utils/Constants';
 
 function Login() {
 
     const dispatch = useAppDispatch();
-    const { isLoggin } = useAppSelector((state: RootState) => state.auth);
+    const { isLoggin, auth } = useAppSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
 
     const onFinish: FormProps<LoginRequest>['onFinish'] = async (values) => {
+        console.log(values);
+        console.log("is login...");
         dispatch(login(values));
-
     };
     const onFinishFailed = () => {
         console.log('Failed:');
@@ -38,8 +41,17 @@ function Login() {
     }
 
     useEffect(() => {
-        if (isLoggin) {
-            navigate("/")
+        console.log(isLoggin);
+        if (isLoggin === true) {
+            if (auth) {
+                const role = auth.user.role as string;
+                if (role === ROLE_ADMIN || role === ROLE_INSTRUCTOR) {
+                    navigate("/admin")
+                } else {
+                    dispatch(getCartsByUser());
+                    navigate("/")
+                }
+            }
         }
     }, [isLoggin])
     return (
