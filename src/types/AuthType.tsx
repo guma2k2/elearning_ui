@@ -8,7 +8,12 @@ export type AuthType = {
     lastName: string;
     gender: string;
     role: string;
-    accessToken: string
+    dateOfBirth: string
+}
+
+export type LoginResponse = {
+    token: string,
+    user: AuthType
 }
 
 

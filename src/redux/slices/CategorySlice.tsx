@@ -23,7 +23,7 @@ const initialState: CategoryState = {
 }
 
 export const categorySlice = createSlice({
-    name: 'courses',
+    name: 'category',
     initialState,
     reducers: {
         updateDataStatus: (state) => {

@@ -1,0 +1,23 @@
+.my-learning-container {
+    max-width: 1016px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 30px 0;
+
+    .my-learning-header {
+        font-size: 40px;
+        line-height: 1.15;
+        font-weight: 700;
+    }
+
+    .my-learning-wrapper {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+
+    }
+
+}

@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import Logo from "../../assets/logo-udemy.svg"
-import UserPhoto from "../../assets/userPhoto.png"
-import { BsCart, BsHeart } from "react-icons/bs"
+import { PiShoppingCartLight } from "react-icons/pi";
 import { MdOutlineKeyboardArrowRight, MdOutlineNotifications, MdSearch } from "react-icons/md"
 import './Navbar.style.scss'
 import { useEffect, useRef, useState } from "react"
@@ -22,7 +21,8 @@ function Navbar() {
     const { categoryParents } = useAppSelector((state: RootState) => state.categories);
     const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
     const [results, setResults] = useState<string[]>([])
-    const [cartTotal, setCartTotal] = useState<number>(11);
+    const { carts } = useAppSelector((state: RootState) => state.carts);
+    const cartTotal = carts ? carts.length : 0;
     const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
     const topicTooltipRef = useRef<TooltipRefProps>(null)
     const childCategoryTooltipRef = useRef<TooltipRefProps>(null)
@@ -66,8 +66,10 @@ function Navbar() {
             }
             )
         }
-
     }
+
+
+
     const handleShowCategoryChildTooltip = (parentId: number) => {
         console.log(parentId);
         let xCategoryTooltipPosition: number = 0;
@@ -100,7 +102,7 @@ function Navbar() {
     }
 
     const handleRedirectToRegister = () => {
-        navigate("/login")
+        navigate("/register")
     }
     const getCartTotal = (): string => {
         if (cartTotal > 9) {
@@ -117,7 +119,6 @@ function Navbar() {
     useEffect(() => {
         dispatch(fetchCategoryParents());
     }, [])
-
     return (
         <>
             <div className="navbar-top-container" >
@@ -187,7 +188,7 @@ function Navbar() {
                     </Popover>
                 </div>
                 <div className="right">
-                    {isLoggin == false && <>
+                    {isLoggin == true && <>
                         <Popover
                             placement="bottomRight"
                             content={PopoverLearning}
@@ -196,13 +197,12 @@ function Navbar() {
                             open={openLearning}
                             onOpenChange={handleOpenLearning}
                         >
-                            <div className="learnings">Khoa hoc cua toi</div>
+                            <div className="learnings">Khóa học của tôi</div>
                         </Popover>
-                        <BsHeart className="icon" />
                     </>}
 
                     <div className="cart" >
-                        <Popover
+                        {isLoggin == true && <> <Popover
                             placement="bottomRight"
                             content={PopoverCart}
                             rootClassName="popover-carts"
@@ -210,14 +210,15 @@ function Navbar() {
                             open={open}
                             onOpenChange={handleOpenChange}
                         >
-                            <BsCart className="icon-cart"></BsCart>
+                            <PiShoppingCartLight className="icon-cart"></PiShoppingCartLight>
                         </Popover>
-                        {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}
+                            {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}</>}
+
                     </div>
 
-                    {isLoggin == false && <>
+                    {isLoggin == true && <>
                         <div className="notification"><MdOutlineNotifications className="icon" /></div>
-                        {/* <img src={auth?.photoURL} alt="Photo" className="profile" /> */}
+
                         <Popover
                             content={PopoverUserProfile}
                             rootClassName="popover-profiles"
@@ -226,14 +227,14 @@ function Navbar() {
                             placement="bottomLeft"
                             onOpenChange={handleOpenProfileChange}
                         >
-                            <img src={UserPhoto} alt="Photo" className="profile" />
+                            <img src={auth?.user.photoURL} alt="Photo" className="profile" />
                         </Popover>
                     </>
                     }
                     {
-                        isLoggin == true && <>
-                            <Button onClick={handleRedirectToLogin} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "500", border: "1px solid #2d2f31" }}>Đăng nhập</Button>
-                            <Button onClick={handleRedirectToRegister} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "500", border: "1px solid #2d2f31" }}>Đăng ký</Button>
+                        isLoggin == false && <>
+                            <Button onClick={handleRedirectToLogin} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "700", border: "1px solid #2d2f31" }}>Đăng nhập</Button>
+                            <Button onClick={handleRedirectToRegister} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "700", border: "1px solid #2d2f31", color: "#fff", backgroundColor: "#2d2f31" }}>Đăng ký</Button>
                         </>
                     }
 

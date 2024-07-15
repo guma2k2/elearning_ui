@@ -1,103 +1,41 @@
 import { Button, Divider } from "antd";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
+import { useNavigate } from "react-router-dom";
+import { Fragment } from "react";
 type PropType = {
-    hide: any
 }
 function PopoverCart() {
+    const { carts } = useAppSelector((state: RootState) => state.carts);
+    const navigate = useNavigate();
+    const cartLength = carts ? carts.length : 0;
+    const totalPrice = carts ? carts.reduce((total, item) => total + item.course.price, 0) : 0
+    const handleRedirectToCartPage = () => {
+        navigate("/cart")
+    }
     return <div className="popover-cart-container">
         <div className="popover-cart-top" >
             <div className="popover-carts-wrapper">
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
-                <Divider className="popover-cart-devider" />
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
-                <Divider className="popover-cart-devider" />
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
-                <Divider className="popover-cart-devider" />
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
-                <Divider className="popover-cart-devider" />
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
-                <Divider className="popover-cart-devider" />
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
-                <Divider className="popover-cart-devider" />
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
-                <Divider className="popover-cart-devider" />
-                <div className="popover-carts-item">
-                    <div className="popover-carts-item-left">
-                        <img src="https://img-c.udemycdn.com/course/100x100/4364200_0221_5.jpg" alt="course-image" />
-                    </div>
-                    <div className="popover-carts-item-right">
-                        <h3 className="popover-carts-item-title">My course</h3>
-                        <span className="popover-carts-item-instructor">Me</span>
-                        <span>500.000 d</span>
-                    </div>
-                </div>
+                {carts && carts.map((cart, index) => {
+                    return <Fragment key={`cart-item-${index}`} >
+                        <div className="popover-carts-item">
+                            <div className="popover-carts-item-left">
+                                <img src={cart.course.image} alt="course-image" />
+                            </div>
+                            <div className="popover-carts-item-right">
+                                <h3 className="popover-carts-item-title">{cart.course.title}</h3>
+                                <span className="popover-carts-item-instructor">Me</span>
+                                <span>{cart.course.price} d</span>
+                            </div>
+                        </div>
+                        {index !== cartLength && <Divider className="popover-cart-devider" />}
+                    </Fragment>
+                })}
             </div>
         </div>
         <div className="popover-cart-bottom">
-            <span className="popover-cart-bottom-price">Tong Tien: 200.000 d</span>
-            <Button className="popover-cart-bottom-btn">Chuyen den gio hang</Button>
+            <span className="popover-cart-bottom-price">Tổng tiền: {totalPrice} d</span>
+            <Button onClick={handleRedirectToCartPage} className="popover-cart-bottom-btn">Chuyển đến giỏ hàng</Button>
         </div>
 
     </div>

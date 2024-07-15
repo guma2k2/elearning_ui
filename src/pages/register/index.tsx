@@ -1,10 +1,16 @@
 import { Button, Form, FormProps, Input } from "antd";
-import { RegisterRequest } from "../../types/AuthType";
+import { AuthType, RegisterRequest } from "../../types/AuthType";
 import { Link } from "react-router-dom";
 import './index.style.scss'
+import { registerUser } from "../../services/AuthService";
 function Register() {
     const onFinish: FormProps<RegisterRequest>['onFinish'] = async (values) => {
-
+        const res = await registerUser(values);
+        if (res.status == 200) {
+            const data = res.data as AuthType;
+            // show register successful 
+            // then redirect to login page 
+        }
     };
     const onFinishFailed = () => {
         console.log('Failed:');

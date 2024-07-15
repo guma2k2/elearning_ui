@@ -6,7 +6,6 @@ import Home from "./pages/home";
 import AdminPage from "./pages/admin";
 import Dashboard from "./pages/admin/dashboard";
 import Courses from "./pages/courses";
-import Blog from "./pages/blog";
 import User from "./pages/admin/user";
 import Category from "./pages/admin/category";
 import Topic from "./pages/admin/topic";
@@ -23,12 +22,16 @@ import CourseDetail from "./pages/course";
 import Learning from "./pages/learning";
 import Filter from "./pages/filter";
 import './index.scss'
+import MyLearning from "./pages/my-learning/indext";
+import ProtectedRoute from "./components/protected-route";
+import NotFound from "./components/not-found";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
   const router = createBrowserRouter([
     {
       path: "/",
+      errorElement: <NotFound />,
       element: <Home />,
       children: [
         {
@@ -36,12 +39,12 @@ function App() {
           element: <Courses />,
         },
         {
-          path: "/blog",
-          element: <Blog />,
-        },
-        {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/my-learning",
+          element: <ProtectedRoute><MyLearning /></ProtectedRoute>,
         },
         {
           path: "/register",
@@ -49,11 +52,11 @@ function App() {
         },
         {
           path: "/cart",
-          element: <Cart />,
+          element: <ProtectedRoute><Cart /> </ProtectedRoute>,
         },
         {
           path: "/courses/:courseId",
-          element: <CourseDetail />,
+          element: <ProtectedRoute><CourseDetail /> </ProtectedRoute>,
         },
         {
           path: "/courses/search",
@@ -67,7 +70,8 @@ function App() {
     },
     {
       path: "/admin",
-      element: <AdminPage />,
+      errorElement: <NotFound />,
+      element: <ProtectedRoute><AdminPage /> </ProtectedRoute>,
       children: [
         {
           index: true,
@@ -102,7 +106,8 @@ function App() {
     },
     {
       path: "/course/:slug/learning",
-      element: <Learning />
+      errorElement: <NotFound />,
+      element: <ProtectedRoute><Learning /></ProtectedRoute>
     }
   ]);
 
