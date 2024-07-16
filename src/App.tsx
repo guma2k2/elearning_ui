@@ -25,6 +25,9 @@ import './index.scss'
 import MyLearning from "./pages/my-learning/indext";
 import ProtectedRoute from "./components/protected-route";
 import NotFound from "./components/not-found";
+import Profile from "./pages/profile";
+import VnPayCallback from "./pages/vnpay-callback";
+import Payment from "./pages/payment";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -41,6 +44,10 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/profile",
+          element: <Profile />,
         },
         {
           path: "/my-learning",
@@ -65,6 +72,14 @@ function App() {
         {
           path: "/authenticate",
           element: <Authenticate />,
+        },
+        {
+          path: "/vn-pay-callback",
+          element: <VnPayCallback />,
+        },
+        {
+          path: "/payment/checkout",
+          element: <Payment />,
         },
       ]
     },
