@@ -9,12 +9,13 @@ function Cart() {
     const { carts } = useAppSelector((state: RootState) => state.carts);
     const navigate = useNavigate()
     const cartLength = carts ? carts.length : 0;
-    const totalPrice = carts ? carts.reduce((total, item) => item.buyLater == true ? total + item.course.price : total, 0) : 0
+    const totalPrice = carts ? carts.reduce((total, item) => item.buyLater == false ? total + item.course.price : total, 0) : 0
     const cartBuyLaters = carts && carts.filter(item => item.buyLater) as CartType[]
     const cartBuyLaterLength = cartBuyLaters ? cartBuyLaters.length : 0;
     const handleRedirectToPaymentPage = () => {
         navigate("/payment/checkout")
     }
+
     return <div className="cart-container">
         <div className="header">Giỏ hàng</div>
         <div className="wrapper">

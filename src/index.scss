@@ -36,6 +36,15 @@ li {
   list-style: none;
 }
 
+
+.review-modal {
+  .ant-modal-content {
+    min-width: 600px;
+
+  }
+}
+
+
 .popover-carts {
   .popover-cart-container {
     display: flex;

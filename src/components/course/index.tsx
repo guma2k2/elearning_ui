@@ -15,6 +15,9 @@ function Course(props: PropType) {
         const res = await deleteCartById(cartId);
         dispatch(deleteCart(cartId))
     }
+
+    console.log(cart.course.image);
+
     const handleSaveForLater = async () => {
         const cartId = cart.id as number;
         const res = await updateCartBuyLaterById(cartId);
@@ -24,7 +27,7 @@ function Course(props: PropType) {
         <>
             <Divider />
             <div className="course-component-container">
-                <img src="https://img-c.udemycdn.com/course/480x270/4364200_0221_5.jpg" alt="image course" className="image-course" />
+                <img src={cart.course.image} alt="image course" className="image-course" />
                 <div className="content-course">
                     <h2 className="course-title">{cart.course.title}</h2>
                     <div className="intructor-name">{cart.course.createdBy}</div>
