@@ -27,11 +27,11 @@ function VnPayCallback() {
         const paymentPost: PaymentPost = {
             amount, bankCode, bankTranNo, cartType, payDate, orderId
         }
-
+        setResponseCode(vnp_ResponseCode);
         if (vnp_ResponseCode == "00") {
             createPayment(paymentPost, orderId);
         }
-        setResponseCode(vnp_ResponseCode);
+
     }, []);
 
     const createPayment = async (paymentPost: PaymentPost, orderId: string) => {

@@ -74,9 +74,12 @@ function Curriculum(probs: CurriculumType) {
             formData.append("file", selected);
             formData.append("type", "video");
             const res = await uploadFile(formData);
+            console.log(res);
+
             if (res.status === 200) {
                 const videoUrl = res.data.url;
-                const duration = res.data.duration;
+                console.log(res.data.url);
+                const duration = parseInt(res.data.duration);
                 const lecturePost: LecturePost = {
                     ...curriculum, sectionId: sectionId, video: videoUrl, duration: duration
                 }
