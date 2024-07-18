@@ -70,9 +70,9 @@ export const courseSlice = createSlice({
                     sec.curriculums.sort((a: ICurriculum, b: ICurriculum) => a.number - b.number)
                 }
             })
+            let lectureNumber: number = 1;
+            let quizNumber: number = 1;
             state.currentCourse?.sections.forEach((sec) => {
-                let lectureNumber: number = 1;
-                let quizNumber: number = 1;
                 sec.curriculums.forEach((curriclum) => {
                     curriclum.index = curriclum.type == "lecture" ? lectureNumber++ : quizNumber++;
                 })

@@ -125,7 +125,7 @@ function Curriculum(probs: CurriculumType) {
 
     const handleRemoveAnswer = (answerIndex: number) => {
 
-        setAnswers((prev) => prev.filter((answer, index) => index !== answerIndex))
+        setAnswers((prev) => prev.filter((_answer, index) => index !== answerIndex))
     }
 
     const handleViewQuestion = (questionId: number | undefined) => {
