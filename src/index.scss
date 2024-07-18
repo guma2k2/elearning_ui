@@ -40,7 +40,28 @@ li {
 .review-modal {
   .ant-modal-content {
     min-width: 600px;
+    margin: 16px 24px;
+    font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
+    .ant-modal-body {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+
+      .review-modal-rating-text {
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .review-modal-rating-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px !important;
+      }
+    }
   }
 }
 

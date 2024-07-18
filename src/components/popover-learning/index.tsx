@@ -1,10 +1,15 @@
 import { Button, Progress } from "antd";
+import { useNavigate } from "react-router-dom";
 
 function PopoverLearning() {
+    const navigate = useNavigate();
+    const navigateToMyLearning = () => {
+        navigate("/my-learning")
+    }
     return <div className="popover-learning-container">
         <div className="popover-learning-header">
             <h3 className="popover-mylearning">Khóa học của tôi</h3>
-            <Button className="popover-learning-btn-viewall">Xem tất cả</Button>
+            <Button className="popover-learning-btn-viewall" onClick={navigateToMyLearning}>Xem tất cả</Button>
         </div>
         <div className="popover-learning-courses-wrapper">
             <div className="popover-learning-course">

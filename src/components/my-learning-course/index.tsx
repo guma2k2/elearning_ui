@@ -1,13 +1,25 @@
-import { Modal, Progress, Rate } from "antd";
+import { Form, Input, Modal, Progress, Rate } from "antd";
 import './MyLearningCourse.style.scss'
 import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
-function MyLearningCourse() {
+import { LearningCourse } from "../../types/learning/LearningCourseType";
+import { ReviewPost } from "../../types/ReviewType";
+import { useForm } from "antd/es/form/Form";
+import { createReview, updateReview } from "../../services/ReviewService";
+import { useAppDispatch } from "../../redux/hooks";
+import { Message, updateShowing } from "../../redux/slices/MessageSlice";
+
+type PropType = {
+    learingCourse: LearningCourse
+}
+function MyLearningCourse(props: PropType) {
+    const { learingCourse } = props;
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+    const [ratingText, setRatingText] = useState<string>("Tuyệt vời, trên cả mong đợi!");
+    const [form] = Form.useForm();
+    const dispatch = useAppDispatch();
     const handleOk = () => {
-        console.log("cancel");
-
+        form.submit()
         setIsModalOpen(false);
     };
     const handleCancel = () => {
@@ -17,27 +29,102 @@ function MyLearningCourse() {
         setIsModalOpen(true);
     };
 
+    const onFinish = async (values: ReviewPost) => {
+        console.log('Received values of form: ', values);
+        const type: string = learingCourse.review ? "update" : "create";
+        console.log(type);
+
+        if (type == "create") {
+            const res = await createReview(values);
+            if (res.status == 204) {
+                const message: Message = {
+                    content: "create review successful",
+                    duration: 2,
+                    type: "success",
+                }
+                dispatch(updateShowing(message));
+            }
+        } else {
+            if (learingCourse.review) {
+                const reviewId = learingCourse.review.id;
+                const res = await updateReview(values, reviewId);
+                if (res.status == 204) {
+
+                }
+            }
+        }
+    };
+
     const hanldeHoverChange = (value: number) => {
         console.log(value);
+        switch (value) {
+            case 5:
+                setRatingText("Tuyệt vời, trên cả mong đợi!")
+                break;
+            case 4.5:
+                setRatingText("Tốt/Tuyệt vời")
+                break;
+            case 4:
+                setRatingText("Tốt, như tôi mong đợi")
+                break;
+            case 3.5:
+                setRatingText("Trung bình/Tốt")
+                break;
+            case 3:
+                setRatingText("Trung bình, lẽ ra có thể hay hơn")
+                break;
+            case 2.5:
+                setRatingText("Kém/Trung bình")
+                break;
+            case 2:
+                setRatingText("Kém, khá thất vọng")
+                break;
+            case 1.5:
+                setRatingText("Rất tệ/Kém")
+                break;
+            case 1:
+                setRatingText("Rất tệ, hoàn toàn không như tôi mong đợi")
+                break;
 
+            default:
+                break;
+        }
     }
     return <div className="my-learning-course-container">
-        <img src="https://img-b.udemycdn.com/course/240x135/4625262_4a39.jpg" alt="course-image" className="my-learning-course-image" />
-        <h3 className="my-learning-course-title">Thực Hành Bài Test Fresher React Frontend</h3>
-        <div className="my-learning-course-instructor">Hỏi Dân IT với Eric .</div>
-        <Progress percent={100} showInfo={false} className="my-learning-course-progress" />
+        <img src={learingCourse.course.image} alt="course-image" className="my-learning-course-image" />
+        <h3 className="my-learning-course-title">{learingCourse.course.title}</h3>
+        <div className="my-learning-course-instructor">{learingCourse.course.createdBy}</div>
+        <Progress percent={learingCourse.percentFinished} showInfo={false} className="my-learning-course-progress" />
         <div className="my-learning-course-bottom">
-            <div className="my-learning-course-progress-text">Hoàn thành 100%</div>
+            <div className="my-learning-course-progress-text">Hoàn thành {learingCourse.percentFinished}%</div>
             <div className="my-learning-course-rating" onClick={showModal}>
-                <Rate disabled defaultValue={2} className="my-learning-course-rating-icon" />
+                <Rate disabled defaultValue={learingCourse.review ? learingCourse.review.rating : 2} className="my-learning-course-rating-icon" />
                 <div className="my-learning-course-rating-text">Xep hang cua ban</div>
 
             </div>
         </div>
-        <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} rootClassName="review-modal">
+        <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} rootClassName="review-modal" okText={"Luu va tiep tuc"}>
             <h1>Vì sao bạn xếp hạng ở mức này?</h1>
-            <Rate allowHalf defaultValue={5} onHoverChange={hanldeHoverChange} />
-            <TextArea rows={4} />
+            <span className="review-modal-rating-text">{ratingText}</span>
+            <Form
+                form={form}
+                name="validate_other"
+                onFinish={onFinish}
+                style={{ width: "100%" }}
+                initialValues={{
+                    'courseId': learingCourse.course.id,
+                    'ratingStar': learingCourse.review ? learingCourse.review.rating : 5,
+                    'content': learingCourse.review ? learingCourse.review.content : "",
+                }}
+            >
+                <Form.Item name="courseId" hidden><Input hidden={true} /></Form.Item>
+                <Form.Item name="ratingStar">
+                    <Rate className="review-modal-rating-icon" allowHalf onHoverChange={hanldeHoverChange} />
+                </Form.Item>
+                <Form.Item name="content">
+                    <TextArea style={{ width: "100%" }} rows={4} placeholder="Hãy cho chúng tôi biết trải nghiệm cá nhân của riêng bạn khi tham gia khóa học này. Khóa học có phù hợp với bạn không?" />
+                </Form.Item>
+            </Form>
         </Modal>
     </div>;
 }
