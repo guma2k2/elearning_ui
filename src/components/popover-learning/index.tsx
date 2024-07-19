@@ -1,7 +1,11 @@
 import { Button, Progress } from "antd";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../../redux/store";
+import { useAppSelector } from "../../redux/hooks";
 
 function PopoverLearning() {
+
+    const { learningCourses } = useAppSelector((state: RootState) => state.learningCourses);
     const navigate = useNavigate();
     const navigateToMyLearning = () => {
         navigate("/my-learning")
@@ -12,76 +16,19 @@ function PopoverLearning() {
             <Button className="popover-learning-btn-viewall" onClick={navigateToMyLearning}>Xem tất cả</Button>
         </div>
         <div className="popover-learning-courses-wrapper">
-            <div className="popover-learning-course">
-                <div className="popover-learning-course-left">
-                    <img src="https://files.fullstack.edu.vn/f8-prod/courses/1.png" alt="course-image" />
+
+            {learningCourses && learningCourses.map((item) => {
+                return <div className="popover-learning-course" key={`learning-course-popover-${item.id}`}>
+                    <div className="popover-learning-course-left">
+                        <img src={item.course.image} alt="course-image" />
+                    </div>
+                    <div className="popover-learning-course-right">
+                        <div className="popover-learning-course-title">{item.course.title}</div>
+                        <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
+                        <Progress percent={item.percentFinished} showInfo={false} className="popover-learning-course-progress" />
+                    </div>
                 </div>
-                <div className="popover-learning-course-right">
-                    <div className="popover-learning-course-title">Lập Trình JavaScript Cơ Bản</div>
-                    <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
-                    <Progress percent={50} showInfo={false} className="popover-learning-course-progress" />
-                </div>
-            </div>
-            <div className="popover-learning-course">
-                <div className="popover-learning-course-left">
-                    <img src="https://files.fullstack.edu.vn/f8-prod/courses/1.png" alt="course-image" />
-                </div>
-                <div className="popover-learning-course-right">
-                    <div className="popover-learning-course-title">Lập Trình JavaScript Cơ Bản</div>
-                    <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
-                    <Progress percent={50} showInfo={false} className="popover-learning-course-progress" />
-                </div>
-            </div>
-            <div className="popover-learning-course">
-                <div className="popover-learning-course-left">
-                    <img src="https://files.fullstack.edu.vn/f8-prod/courses/1.png" alt="course-image" />
-                </div>
-                <div className="popover-learning-course-right">
-                    <div className="popover-learning-course-title">Lập Trình JavaScript Cơ Bản</div>
-                    <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
-                    <Progress percent={50} showInfo={false} className="popover-learning-course-progress" />
-                </div>
-            </div>
-            <div className="popover-learning-course">
-                <div className="popover-learning-course-left">
-                    <img src="https://files.fullstack.edu.vn/f8-prod/courses/1.png" alt="course-image" />
-                </div>
-                <div className="popover-learning-course-right">
-                    <div className="popover-learning-course-title">Lập Trình JavaScript Cơ Bản</div>
-                    <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
-                    <Progress percent={50} showInfo={false} className="popover-learning-course-progress" />
-                </div>
-            </div>
-            <div className="popover-learning-course">
-                <div className="popover-learning-course-left">
-                    <img src="https://files.fullstack.edu.vn/f8-prod/courses/1.png" alt="course-image" />
-                </div>
-                <div className="popover-learning-course-right">
-                    <div className="popover-learning-course-title">Lập Trình JavaScript Cơ Bản</div>
-                    <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
-                    <Progress percent={50} showInfo={false} className="popover-learning-course-progress" />
-                </div>
-            </div>
-            <div className="popover-learning-course">
-                <div className="popover-learning-course-left">
-                    <img src="https://files.fullstack.edu.vn/f8-prod/courses/1.png" alt="course-image" />
-                </div>
-                <div className="popover-learning-course-right">
-                    <div className="popover-learning-course-title">Lập Trình JavaScript Cơ Bản</div>
-                    <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
-                    <Progress percent={50} showInfo={false} className="popover-learning-course-progress" />
-                </div>
-            </div>
-            <div className="popover-learning-course">
-                <div className="popover-learning-course-left">
-                    <img src="https://files.fullstack.edu.vn/f8-prod/courses/1.png" alt="course-image" />
-                </div>
-                <div className="popover-learning-course-right">
-                    <div className="popover-learning-course-title">Lập Trình JavaScript Cơ Bản</div>
-                    <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
-                    <Progress percent={50} showInfo={false} className="popover-learning-course-progress" />
-                </div>
-            </div>
+            })}
         </div>
     </div>
 }

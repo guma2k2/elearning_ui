@@ -4,6 +4,11 @@ export type ReviewPost = {
     ratingStar: number
 }
 
+export type ReviewLearningCourse = {
+    id: number,
+    review: ReviewGet
+}
+
 
 export type ReviewGet = {
     id: number,

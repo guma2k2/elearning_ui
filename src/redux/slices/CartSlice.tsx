@@ -59,7 +59,7 @@ export const cartSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(getCartsByUser.fulfilled, (state, action) => {
-                console.log(action.payload);
+                // console.log(action.payload);
                 state.carts = action.payload
                 state.isError = false;
                 state.isLoading = false

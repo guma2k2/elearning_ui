@@ -14,7 +14,13 @@ export type CourseType = {
     createdAt?: string
     updatedAt?: string
     free?: boolean
-    isPublish?: boolean
+    isPublish?: boolean,
+    price: number,
+    ratingCount: number,
+    averageRating: number,
+    totalLectureCourse: number,
+    totalDurationCourse: string,
+    createdBy: string,
     sections: SectionType[]
 }
 
