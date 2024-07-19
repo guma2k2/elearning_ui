@@ -165,7 +165,7 @@ function CourseLandingPage(probs: Probs) {
             setCourseTitle(course.title);
             course.headline && setCourseHeadline(course.headline);
             course.description && setCourseDesc(course.description);
-            course.imageURL && setImgSrc(course.imageURL);
+            course.image && setImgSrc(course.image);
         }
         const fetchCategoryParents = async () => {
             const res = await getCategoryParents();

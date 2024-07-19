@@ -22,7 +22,7 @@ import CourseDetail from "./pages/course";
 import Learning from "./pages/learning";
 import Filter from "./pages/filter";
 import './index.scss'
-import MyLearning from "./pages/my-learning/indext";
+import MyLearning from "./pages/my-learning";
 import ProtectedRoute from "./components/protected-route";
 import NotFound from "./components/not-found";
 import Profile from "./pages/profile";
@@ -127,13 +127,13 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (content !== "") {
-      messageApi.open({
-        type: type,
-        content,
-        duration
-      });
-    }
+    // if (content !== "") {
+    //   messageApi.open({
+    //     type: type,
+    //     content,
+    //     duration
+    //   });
+    // }
   }, [isShow])
 
   return (

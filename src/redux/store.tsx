@@ -5,6 +5,8 @@ import categoryReducer from './slices/CategorySlice'
 import authReducer from './slices/AuthenticationSlice'
 import learningReducer from './slices/LearningSlice'
 import cartReducer from './slices/CartSlice'
+import learningCourseReducer from './slices/LearningCourseSlice'
+
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
@@ -12,7 +14,7 @@ import storage from 'redux-persist/lib/storage'
 const persistConfig = {
     key: 'root',
     storage,
-    whiteList: ['auth', 'cart']
+    whiteList: ['auth', 'cart', 'learningCourse']
 }
 const rootReducer = combineReducers({
     courses: courseReducer,
@@ -20,7 +22,8 @@ const rootReducer = combineReducers({
     categories: categoryReducer,
     auth: authReducer,
     learning: learningReducer,
-    carts: cartReducer
+    carts: cartReducer,
+    learningCourses: learningCourseReducer
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

@@ -1,0 +1,31 @@
+.review-container {
+    width: calc(50% - 15px);
+    display: flex;
+    flex-direction: column;
+
+    .review-top {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .review-top-right {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+
+            .review-rating {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    }
+}

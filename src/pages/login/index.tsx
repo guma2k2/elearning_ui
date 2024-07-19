@@ -10,6 +10,7 @@ import { login } from '../../redux/slices/AuthenticationSlice';
 import { useEffect } from 'react';
 import { getCartsByUser } from '../../redux/slices/CartSlice';
 import { ROLE_ADMIN, ROLE_INSTRUCTOR } from '../../utils/Constants';
+import { getLearningCourse } from '../../redux/slices/LearningCourseSlice';
 
 function Login() {
 
@@ -49,6 +50,7 @@ function Login() {
                     navigate("/admin")
                 } else {
                     dispatch(getCartsByUser());
+                    dispatch(getLearningCourse())
                     navigate("/")
                 }
             }

@@ -3,11 +3,10 @@ import './MyLearningCourse.style.scss'
 import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 import { LearningCourse } from "../../types/learning/LearningCourseType";
-import { ReviewPost } from "../../types/ReviewType";
-import { useForm } from "antd/es/form/Form";
+import { ReviewGet, ReviewLearningCourse, ReviewPost } from "../../types/ReviewType";
 import { createReview, updateReview } from "../../services/ReviewService";
 import { useAppDispatch } from "../../redux/hooks";
-import { Message, updateShowing } from "../../redux/slices/MessageSlice";
+import { createReviewForLearningCourse, updateReviewOfLearningCourse } from "../../redux/slices/LearningCourseSlice";
 
 type PropType = {
     learingCourse: LearningCourse
@@ -36,20 +35,24 @@ function MyLearningCourse(props: PropType) {
 
         if (type == "create") {
             const res = await createReview(values);
-            if (res.status == 204) {
-                const message: Message = {
-                    content: "create review successful",
-                    duration: 2,
-                    type: "success",
+            if (res.status == 200) {
+                const review = res.data as ReviewGet
+                const reviewLearningCourse: ReviewLearningCourse = {
+                    review, id: learingCourse.id
                 }
-                dispatch(updateShowing(message));
+
+                dispatch(createReviewForLearningCourse(reviewLearningCourse))
             }
         } else {
             if (learingCourse.review) {
                 const reviewId = learingCourse.review.id;
                 const res = await updateReview(values, reviewId);
-                if (res.status == 204) {
-
+                if (res.status == 200) {
+                    const review = res.data as ReviewGet
+                    const reviewLearningCourse: ReviewLearningCourse = {
+                        review, id: learingCourse.id
+                    }
+                    dispatch(updateReviewOfLearningCourse(reviewLearningCourse))
                 }
             }
         }
@@ -98,7 +101,7 @@ function MyLearningCourse(props: PropType) {
         <div className="my-learning-course-bottom">
             <div className="my-learning-course-progress-text">Hoàn thành {learingCourse.percentFinished}%</div>
             <div className="my-learning-course-rating" onClick={showModal}>
-                <Rate disabled defaultValue={learingCourse.review ? learingCourse.review.rating : 2} className="my-learning-course-rating-icon" />
+                <Rate allowHalf disabled value={learingCourse.review ? learingCourse.review.rating : 2} className="my-learning-course-rating-icon" />
                 <div className="my-learning-course-rating-text">Xep hang cua ban</div>
 
             </div>
