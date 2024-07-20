@@ -1,3 +1,5 @@
+import { UserProfile } from "./UserType"
+
 export type CourseType = {
     id?: number
     title: string
@@ -21,7 +23,9 @@ export type CourseType = {
     totalLectureCourse: number,
     totalDurationCourse: string,
     createdBy: string,
-    sections: SectionType[]
+    sections: SectionType[],
+    user?: UserProfile,
+    learning?: boolean
 }
 
 export type CourseListGetType = {
