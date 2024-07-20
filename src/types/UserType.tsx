@@ -25,3 +25,13 @@ export type UserGetDetailType = {
     dateOfBirth: string
     role: string;
 }
+
+export type UserProfile = {
+    id: number,
+    fullName: string,
+    photo: string,
+    averageRating: number,
+    numberOfReview: number,
+    numberOfStudent: number,
+    numberOfCourse: number
+}

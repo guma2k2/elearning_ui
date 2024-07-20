@@ -1,10 +1,16 @@
 import { ReviewPost } from "../types/ReviewType";
 import instance from "../utils/axiosCustomize";
 
-// export const getCarts = async () => {
-//     const res = await instance.get(url);
-//     return res;
-// }
+export const getReviewsByCourseId = async (courseId: number | string | undefined, pageNum: number | undefined, ratingStar: number | undefined) => {
+    const url = `reviews/search/${courseId}`
+    const res = await instance.get(url, {
+        params: {
+            pageNum: pageNum ? pageNum : 0,
+            ratingStar: ratingStar ? ratingStar : null
+        }
+    })
+    return res;
+}
 
 
 export const createReview = async (reviewPost: ReviewPost) => {
