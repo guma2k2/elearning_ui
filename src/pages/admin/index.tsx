@@ -29,18 +29,16 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-    getItem('Dashboard', '1', <PieChartOutlined />),
+    getItem('Dashboard', '1', <Link to={"/admin"}><PieChartOutlined /></Link>),
     getItem('User', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>),
     getItem('Category', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>),
     getItem('Topic', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>),
     getItem('Course', '5', <Link to={"/admin/courses"}><DesktopOutlined /></Link>),
-    getItem('Report', 'sub1', <UserOutlined />, [
-        getItem('Tom', '6'),
-        getItem('Bill', '7'),
-        getItem('Alex', '8'),
-    ]),
-    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '9'), getItem('Team 2', '10')]),
-    getItem('Files', '11', <FileOutlined />),
+    getItem('Coupon', '6', <Link to={"/admin/coupons"}><DesktopOutlined /></Link>),
+    getItem('Order', '7', <Link to={"/admin/orders"}><DesktopOutlined /></Link>),
+    getItem('Review', '8', <Link to={"/admin/reviews"}><DesktopOutlined /></Link>),
+    getItem('Student', '9', <Link to={"/admin/students"}><DesktopOutlined /></Link>),
+
 ];
 
 const App: React.FC = () => {
