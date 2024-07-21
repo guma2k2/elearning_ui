@@ -28,6 +28,10 @@ import NotFound from "./components/not-found";
 import Profile from "./pages/profile";
 import VnPayCallback from "./pages/vnpay-callback";
 import Payment from "./pages/payment";
+import CouponManagement from "./pages/admin/coupon";
+import OrderManagement from "./pages/admin/order";
+import StudentManagement from "./pages/admin/student";
+import ReviewManagement from "./pages/admin/review";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -114,8 +118,20 @@ function App() {
 
         },
         {
-          path: "/admin/promotions",
-          element: <Dashboard />
+          path: "/admin/coupons",
+          element: <CouponManagement />
+        },
+        {
+          path: "/admin/orders",
+          element: <OrderManagement />
+        },
+        {
+          path: "/admin/reviews",
+          element: <ReviewManagement />
+        },
+        {
+          path: "/admin/students",
+          element: <StudentManagement />
         },
       ]
     },
