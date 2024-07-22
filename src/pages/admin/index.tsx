@@ -7,8 +7,11 @@ import {
     UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu, Popover, theme } from 'antd';
 import { Link, Outlet } from 'react-router-dom';
+import PopoverUserProfile from '../../components/popover-user-photo';
+import { useAppSelector } from '../../redux/hooks';
+import { RootState } from '../../redux/store';
 
 const { Header, Content, Sider } = Layout;
 
@@ -43,10 +46,15 @@ const items: MenuItem[] = [
 
 const App: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
+
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
-
+    const [openProfile, setOpenProfile] = useState<boolean>(false);
+    const handleOpenProfileChange = (newOpen: boolean) => {
+        setOpenProfile(newOpen);
+    };
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
@@ -57,7 +65,18 @@ const App: React.FC = () => {
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
             <Layout >
-                <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }} />
+                <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }}>
+                    <Popover
+                        content={PopoverUserProfile}
+                        rootClassName="popover-profiles"
+                        trigger="click"
+                        open={openProfile}
+                        placement="bottomLeft"
+                        onOpenChange={handleOpenProfileChange}
+                    >
+                        <img src={auth?.user.photoURL} alt="Photo" className="profile" />
+                    </Popover>
+                </Header>
                 <Content style={{ margin: '0 16px' }}>
                     <div
                         style={{
