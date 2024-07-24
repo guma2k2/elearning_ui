@@ -18,6 +18,23 @@ function Category() {
     const [currentCatId, setCurrentCatId] = useState<number | undefined>();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     const [form] = Form.useForm();
+    const handleUpdateStatusCateogry = async (checked: boolean, id: number) => {
+        const res = await get(id)
+        if (res && res.status === 200) {
+            const data = res.data as CategoryType
+            const parentId = res.data.parentId == -1 ? '' : res.data.parentId;
+
+            const categoryPut = {
+                ...data, isPublish: checked, parentId
+            }
+            console.log(checked);
+            console.log(categoryPut);
+
+            const resOfUpdate = await update(categoryPut, id);
+            console.log(resOfUpdate);
+            setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+        }
+    }
     const columns: TableColumnsType<CategoryType> = [
         {
             title: 'Id',
@@ -38,6 +55,11 @@ function Category() {
             title: 'Publish',
             dataIndex: 'isPublish',
             width: 100,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatusCateogry(checked, record.id)} />
+                </Flex>
+            ),
         },
         {
             title: 'Created at',

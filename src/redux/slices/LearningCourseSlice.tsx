@@ -54,6 +54,13 @@ export const learningCourseSlice = createSlice({
                 })
             }
         },
+        resetLearningCoures: (state) => {
+            if (state.learningCourses) {
+                state.learningCourses = undefined
+            }
+            state.isError = false;
+            state.isLoading = false;
+        }
     }, extraReducers: (builder) => {
         builder
             .addCase(getLearningCourse.pending, (state, action) => {
@@ -75,6 +82,6 @@ export const learningCourseSlice = createSlice({
     },
 })
 
-export const { createReviewForLearningCourse, updateReviewOfLearningCourse } = learningCourseSlice.actions
+export const { createReviewForLearningCourse, updateReviewOfLearningCourse, resetLearningCoures } = learningCourseSlice.actions
 
 export default learningCourseSlice.reducer
