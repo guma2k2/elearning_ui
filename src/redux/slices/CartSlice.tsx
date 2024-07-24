@@ -63,7 +63,6 @@ export const cartSlice = createSlice({
                 state.carts = action.payload
                 state.isError = false;
                 state.isLoading = false
-
             })
             .addCase(getCartsByUser.rejected, (state, action) => {
                 console.log(action);

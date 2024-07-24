@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../redux/hooks";
 import { logOut } from "../../redux/slices/AuthenticationSlice";
 import { resetCart } from "../../redux/slices/CartSlice";
+import { resetLearningCoures } from "../../redux/slices/LearningCourseSlice";
 function PopoverUserProfile() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ function PopoverUserProfile() {
         console.log("handle logout");
         dispatch(logOut());
         dispatch(resetCart());
+        dispatch(resetLearningCoures());
         if (window.location.pathname !== "/") {
             navigate("/")
         }

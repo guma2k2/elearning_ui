@@ -90,7 +90,8 @@ function App() {
     {
       path: "/admin",
       errorElement: <NotFound />,
-      element: <ProtectedRoute><AdminPage /> </ProtectedRoute>,
+      // element: <ProtectedRoute><AdminPage /> </ProtectedRoute>,
+      element: <AdminPage />,
       children: [
         {
           index: true,
