@@ -136,6 +136,25 @@
             padding: 8px;
             position: relative;
 
+            .curriculum-lecture-video-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .curriculum-lecture-video-right {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    gap: 5px;
+
+                    .lecture-content-edit {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                    }
+                }
+            }
+
             .tab-title {
                 position: absolute;
                 right: 34px;

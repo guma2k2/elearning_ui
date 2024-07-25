@@ -5,6 +5,15 @@ export type StudentType = {
     lastName: string,
     gender: string,
     active: boolean,
-    photoURL: string,
+    photo: string,
     dateOfBirth: string
+}
+
+export type StudentGetType = {
+    id: number,
+    email: string,
+    firstName: string,
+    lastName: string,
+    photo: string,
+    active: boolean
 }

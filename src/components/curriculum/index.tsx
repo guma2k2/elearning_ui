@@ -1,12 +1,12 @@
 import { GrStatusGood } from "react-icons/gr"
 import { CurriculumType } from "./CurriculumType"
 import { AiOutlineFile, AiOutlinePlus, AiOutlineQuestionCircle } from "react-icons/ai"
-import { Button, Tabs, TabsProps } from "antd"
+import { Button, Spin, Tabs, TabsProps } from "antd"
 import './Curriculum.style.scss'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { MdModeEdit } from "react-icons/md"
 import { FaTrash } from "react-icons/fa"
-import { ChangeEvent, useRef, useState } from "react"
+import { ChangeEvent, Fragment, useRef, useState } from "react"
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css';
 import InputFile from "../inputFile"
@@ -63,11 +63,13 @@ function Curriculum(probs: CurriculumType) {
     const [answers, setAnswers] = useState<AnswerType[]>(answersClone);
     const [indexAnswerActive, setIndexAnswerActive] = useState<number>(-1);
     const [questionId, setQuestionId] = useState<number | undefined>(-1);
+    const [pendingLecture, setPendingLecture] = useState<boolean>(false)
     const fileRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files
         if (files && files.length > 0) {
+            setPendingLecture(true);
             const selected = files[0];
             console.log(selected);
             var formData = new FormData();
@@ -93,6 +95,7 @@ function Curriculum(probs: CurriculumType) {
                     }
                 }
             }
+            setPendingLecture(false);
         }
     };
     const items: TabsProps['items'] = [
@@ -266,7 +269,7 @@ function Curriculum(probs: CurriculumType) {
                     </div>
                     {toggle.type == "dropdown" && <div className="curriculum-dropdown">
                         <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "desc" })} className='btn-desc-curriculum' icon={<AiOutlinePlus />}>Description</Button>
-                        <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "resources" })} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
+                        {/* <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "resources" })} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button> */}
                     </div>
                     }
                     {
@@ -337,12 +340,36 @@ function Curriculum(probs: CurriculumType) {
                         toggle.type == "content" &&
                         <div className="curriculum-dropdown">
                             <div className="dropdown-bottom">
-                                <div className="tab-title">
-                                    <span>Add Video</span>
-                                    <span className="tab-title-icon" onClick={() => setToggle({ type: "dropdown" })}><LiaTimesSolid /></span>
-                                </div>
-                                <InputFile fileRef={fileRef} title="Select Video"
-                                    handleFileChange={handleFileChange} />
+                                {(curriculum.type == "lecture" && curriculum.videoId && curriculum.videoId != "") && <Fragment>
+                                    <div className="tab-title">
+                                        <span>Add Video</span>
+                                        <span className="tab-title-icon" onClick={() => {
+                                            setToggle({ type: "dropdown" });
+                                        }}><LiaTimesSolid /></span>
+                                    </div>
+                                    <div className="curriculum-lecture-video-container">
+                                        <video width={100} height={100} controls className='curriculum-lecture-video-left'>
+                                            <source src={curriculum.videoId} type='video/mp4' />
+                                        </video>
+                                        <div className="curriculum-lecture-video-right">
+                                            <h3>lecture{curriculum.index}.mp4</h3>
+                                            <div className="lecture-content-edit">
+                                                <MdModeEdit className="icon-edit" />
+                                                <span>Chinh sua noi dung </span>
+                                            </div>
+                                        </div>
+                                    </div></Fragment>}
+                                {curriculum.type == "lecture" && (curriculum.videoId == null || curriculum.videoId == "") && <Fragment>
+                                    <div className="tab-title">
+                                        <span>Add Video</span>
+                                        <span className="tab-title-icon" onClick={() => {
+                                            setToggle({ type: "dropdown" })
+                                        }}><LiaTimesSolid /></span>
+                                    </div>
+                                    <Spin spinning={pendingLecture} tip="Loading..." ><InputFile fileRef={fileRef} title="Select Video"
+                                        handleFileChange={handleFileChange} /></Spin>
+                                </Fragment>
+                                }
                             </div>
                         </div>
                     }

@@ -1,40 +1,41 @@
 import { useEffect, useState } from 'react';
 import { StudentType } from '../../../types/StudentType';
-import { Table, Button, Flex, Col, Drawer, Form, Input, Row, Select, Space, Popconfirm, Upload, message, Switch, InputNumber, TableColumnsType, PaginationProps, UploadProps, GetProp } from 'antd';
+import { Table, Flex, Switch, TableColumnsType, PaginationProps } from 'antd';
 import UserPhoto from "../../../assets/userPhoto.png"
 import './StudentManagement.style.scss'
+import { getWithPagination, updateStatus } from '../../../services/StudentService';
 function StudentManagement() {
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [pending, setPending] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>();
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
-    const [form] = Form.useForm();
-    const [currentStudent, setCurrentUser] = useState<StudentType>();
-    const [userList, setUserList] = useState<StudentType[]>([]);
-    const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const [studentList, setStudentList] = useState<StudentType[]>([]);
+    const [isDataUpdated, setIsDataUpdated] = useState<boolean>();
 
+    const handleUpdateStatus = async (checked: boolean, id: number) => {
+        const res = await updateStatus(checked, id);
+        if (res.status === 204) {
+            setIsDataUpdated((prev) => !prev);
+        }
+    }
     useEffect(() => {
-        // const fetchUsers = async () => {
-        //     const res = await getWithPagination(current - 1, pageSize);
+        const fetchUsers = async () => {
+            const res = await getWithPagination(current - 1, pageSize);
 
-        //     if (res && res.status === 200) {
-        //         console.log(res);
-        //         const content = res.data.content.map((user: UserType) => (
-        //             {
-        //                 ...user, key: user.id
-        //             }
-        //         ))
-        //         console.log(content)
-        //         setUserList(content);
-        //         setCurrent(res.data.pageNum + 1);
-        //         setPageSize(res.data.pageSize)
-        //         setTotalElements(res.data.totalElements)
-        //     }
-        // }
-        // fetchUsers()
+            if (res && res.status === 200) {
+                console.log(res);
+                const content = res.data.content.map((student: StudentType) => (
+                    {
+                        ...student, key: student.id
+                    }
+                ))
+                console.log(content)
+                setStudentList(content);
+                setCurrent(res.data.pageNum + 1);
+                setPageSize(res.data.pageSize)
+                setTotalElements(res.data.totalElements)
+            }
+        }
+        fetchUsers()
     }, [current, pageSize, isDataUpdated])
 
 
@@ -50,10 +51,10 @@ function StudentManagement() {
             render: (text, record) => {
                 console.log(text);
 
-                if (record.photoURL === "") {
-                    return <img src={UserPhoto} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
+                if (record.photo === "") {
+                    return <img src={UserPhoto} alt='User photo' style={{ width: "30px", height: "30px", objectFit: "cover", borderRadius: "50%" }} />
                 }
-                return <img src={record.photoURL} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
+                return <img src={record.photo} alt='User photo' style={{ width: "30px", height: "30px", objectFit: "cover", borderRadius: "50%" }} />
             }
         },
         {
@@ -72,28 +73,15 @@ function StudentManagement() {
             width: 200,
         },
         {
-            title: 'Gender',
-            dataIndex: 'gender',
+            title: 'Active',
+            dataIndex: 'active',
             width: 100,
-        },
-        {
-            title: 'Action',
-            dataIndex: 'key',
-            width: 300,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary">Edit</Button>
-                    <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this user?"
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button danger>Delete</Button>
-                    </Popconfirm>
+                    <Switch checkedChildren="active" unCheckedChildren="unactive" checked={record.active} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
                 </Flex>
             ),
-        },
+        }
     ];
 
     const handleChangePage = (page: PaginationProps) => {
@@ -109,7 +97,7 @@ function StudentManagement() {
         <div className='student-header' >
             <span>Student</span>
         </div>
-        <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+        <Table columns={columns} dataSource={studentList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>
 }
 

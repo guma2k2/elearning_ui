@@ -26,3 +26,17 @@ export const updateReview = async (reviewPut: ReviewPost, reviewId: number) => {
     return res;
 }
 
+
+export const getWithPagination = async (current: number, pageSize: number) => {
+    const url = `/admin/reviews/paging?pageNum=${current}&pageSize=${pageSize}`
+    const res = await instance.get(url);
+    return res;
+}
+export const updateStatus = async (status: boolean, id: number) => {
+    const url = `/admin/reviews/${id}/status/${status}`
+    const res = await instance.put(url);
+    return res;
+}
+
+
+

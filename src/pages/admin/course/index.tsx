@@ -1,8 +1,8 @@
-import { Button, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Select, Table, TableColumnsType, TreeSelect } from 'antd';
+import { Button, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Select, Switch, Table, TableColumnsType, TreeSelect } from 'antd';
 import { useEffect, useState } from 'react'
 import './Course.style.scss'
 import { CourseType } from '../../../types/CourseType';
-import { createCourse, getCourseWithPagination } from '../../../services/CourseService';
+import { createCourse, getCourseWithPagination, updateStatus } from '../../../services/CourseService';
 import { SearchOutlined } from '@ant-design/icons';
 import { getCategoryParents } from '../../../services/CategoryService';
 import { TopicType } from '../topic/TopicType';
@@ -25,6 +25,12 @@ function Course() {
     const [topics, setTopics] = useState<TopicType[]>([]);
     const [form] = Form.useForm();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const handleUpdateStatus = async (checked: boolean, id: number) => {
+        const res = await updateStatus(checked, id);
+        if (res.status === 204) {
+            setIsDataUpdated((prev) => !prev);
+        }
+    }
     const columns: TableColumnsType<CourseType> = [
         {
             title: 'Id',
@@ -40,6 +46,11 @@ function Course() {
             title: 'Publish',
             dataIndex: 'isPublish',
             width: 100,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                </Flex>
+            ),
         },
         {
             title: 'Created at',
@@ -128,9 +139,9 @@ function Course() {
             const res = await getCourseWithPagination(current - 1, pageSize);
             if (res && res.status === 200) {
                 console.log(res);
-                const content = res.data.content.map((cat: CourseType) => (
+                const content = res.data.content.map((course: CourseType) => (
                     {
-                        ...cat, key: cat.id
+                        ...course, key: course.id
                     }
                 ))
                 console.log(content)

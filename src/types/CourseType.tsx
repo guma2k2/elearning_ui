@@ -1,7 +1,7 @@
 import { UserProfile } from "./UserType"
 
 export type CourseType = {
-    id?: number
+    id: number
     title: string
     topicId: number
     categoryId: number
@@ -26,6 +26,12 @@ export type CourseType = {
     sections: SectionType[],
     user?: UserProfile,
     learning?: boolean
+}
+
+export type CourseGetType = {
+    id: number,
+    title: string,
+    image: string
 }
 
 export type CourseListGetType = {

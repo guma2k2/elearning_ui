@@ -30,3 +30,12 @@ export const getCourseBySlug = async (courseSlug: string | undefined) => {
     const res = await instance.get(url);
     return res;
 }
+
+export const updateStatus = async (status: boolean, id: number) => {
+    const url = `/admin/courses/${id}/status/${status}`
+    const res = await instance.put(url);
+    return res;
+}
+
+
+
