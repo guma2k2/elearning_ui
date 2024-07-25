@@ -1,3 +1,6 @@
+import { CourseGetType } from "./CourseType"
+import { StudentGetType } from "./StudentType"
+
 export type ReviewPost = {
     courseId: number
     content: string
@@ -13,7 +16,11 @@ export type ReviewLearningCourse = {
 export type ReviewGet = {
     id: number,
     content: string,
-    rating: number,
-    updated_at?: string
+    ratingStar: number,
+    createdAt: string,
+    updatedAt: string,
+    status: boolean,
+    student: StudentGetType,
+    course: CourseGetType
 }
 

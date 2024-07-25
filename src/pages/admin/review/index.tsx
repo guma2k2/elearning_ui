@@ -1,39 +1,40 @@
-import { Button, Flex, Form, PaginationProps, Popconfirm, Table, TableColumnsType } from 'antd';
+import { Flex, PaginationProps, Switch, Table, TableColumnsType } from 'antd';
 import { useEffect, useState } from 'react';
 import { ReviewGet } from '../../../types/ReviewType';
+import { getWithPagination, updateStatus } from '../../../services/ReviewService';
+import './ReviewManagement.style.scss'
 function ReviewManagement() {
-
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [pending, setPending] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>();
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
-    const [form] = Form.useForm();
-    const [currentStudent, setCurrentUser] = useState<ReviewGet>();
-    const [userList, setUserList] = useState<ReviewGet[]>([]);
-    const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const [reviewList, setReviewList] = useState<ReviewGet[]>([]);
+    const [isDataUpdated, setIsDataUpdated] = useState<boolean>();
+    const handleUpdateStatus = async (checked: boolean, id: number) => {
+        const res = await updateStatus(checked, id);
+        if (res.status === 204) {
+            setIsDataUpdated((prev) => !prev);
+        }
+    }
 
     useEffect(() => {
-        // const fetchUsers = async () => {
-        //     const res = await getWithPagination(current - 1, pageSize);
+        const fetchUsers = async () => {
+            const res = await getWithPagination(current - 1, pageSize);
 
-        //     if (res && res.status === 200) {
-        //         console.log(res);
-        //         const content = res.data.content.map((user: UserType) => (
-        //             {
-        //                 ...user, key: user.id
-        //             }
-        //         ))
-        //         console.log(content)
-        //         setUserList(content);
-        //         setCurrent(res.data.pageNum + 1);
-        //         setPageSize(res.data.pageSize)
-        //         setTotalElements(res.data.totalElements)
-        //     }
-        // }
-        // fetchUsers()
+            if (res && res.status === 200) {
+                console.log(res);
+                const content = res.data.content.map((review: ReviewGet) => (
+                    {
+                        ...review, key: review.id
+                    }
+                ))
+                console.log(content)
+                setReviewList(content);
+                setCurrent(res.data.pageNum + 1);
+                setPageSize(res.data.pageSize)
+                setTotalElements(res.data.totalElements)
+            }
+        }
+        fetchUsers()
     }, [current, pageSize, isDataUpdated])
 
 
@@ -46,7 +47,7 @@ function ReviewManagement() {
         {
             title: 'Rating star',
             dataIndex: 'ratingStar',
-            width: 250,
+            width: 120,
         },
         {
             title: 'Content',
@@ -54,9 +55,14 @@ function ReviewManagement() {
             width: 200,
         },
         {
-            title: 'Created at',
-            dataIndex: 'createdAt',
-            width: 200,
+            title: 'Active',
+            dataIndex: 'active',
+            width: 100,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Switch checkedChildren="active" unCheckedChildren="unactive" checked={record.status} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                </Flex>
+            ),
         },
         {
             title: 'Updated at',
@@ -64,20 +70,22 @@ function ReviewManagement() {
             width: 200,
         },
         {
-            title: 'Action',
+            title: 'Student',
             dataIndex: 'key',
             width: 300,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary">Edit</Button>
-                    <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this user?"
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button danger>Delete</Button>
-                    </Popconfirm>
+                    <span>{record.student.email}</span>
+                </Flex>
+            ),
+        },
+        {
+            title: 'Course',
+            dataIndex: 'key',
+            width: 300,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <span>{record.course.title}</span>
                 </Flex>
             ),
         },
@@ -95,7 +103,7 @@ function ReviewManagement() {
         <div className='review-header' >
             <span>Review</span>
         </div>
-        <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+        <Table columns={columns} dataSource={reviewList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>;
 }
 

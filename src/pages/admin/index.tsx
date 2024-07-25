@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import {
     DesktopOutlined,
-    FileOutlined,
     PieChartOutlined,
-    TeamOutlined,
-    UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Popover, theme } from 'antd';
@@ -66,16 +63,18 @@ const App: React.FC = () => {
             </Sider>
             <Layout >
                 <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }}>
-                    <Popover
-                        content={PopoverUserProfile}
-                        rootClassName="popover-profiles"
-                        trigger="click"
-                        open={openProfile}
-                        placement="bottomLeft"
-                        onOpenChange={handleOpenProfileChange}
-                    >
-                        <img src={auth?.user.photoURL} alt="Photo" className="profile" />
-                    </Popover>
+                    <div className="header-admin-info" style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end", marginRight: "20px" }}>
+                        <Popover
+                            content={PopoverUserProfile}
+                            rootClassName="popover-profiles"
+                            trigger="click"
+                            open={openProfile}
+                            placement="bottomLeft"
+                            onOpenChange={handleOpenProfileChange}
+                        >
+                            <img src={auth?.user.photoURL} alt="Photo" className="profile" />
+                        </Popover>
+                    </div>
                 </Header>
                 <Content style={{ margin: '0 16px' }}>
                     <div

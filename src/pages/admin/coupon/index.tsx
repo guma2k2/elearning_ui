@@ -12,11 +12,8 @@ function CouponManagement() {
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
     const [form] = Form.useForm();
-    const [currentCoupon, setCurrenCoupon] = useState<CouponType>();
     const [couponList, setCouponList] = useState<CouponType[]>([]);
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
-    const [startTime, setStartTime] = useState<string>();
-    const [endTime, setEndTime] = useState<string>();
     const showDrawer = () => {
         setOpen(true);
     };
@@ -24,28 +21,23 @@ function CouponManagement() {
     const onClose = () => {
         setOpen(false);
         form.resetFields();
-        setCurrenCoupon(undefined)
     };
     const handleUpdateCoupon = async (couponId: number) => {
-        // console.log(userId);
-        // setOpen(true)
-        // const res = await get(userId)
-        // if (res && res.status === 200) {
-        //     const newCurrentUser = res.data;
-        //     setCurrentUser(res.data);
-        //     form.setFieldsValue({
-        //         ...newCurrentUser,
-        //         day: newCurrentUser.dateOfBirth.split("-")[2],
-        //         month: newCurrentUser.dateOfBirth.split("-")[1],
-        //         year: newCurrentUser.dateOfBirth.split("-")[0],
-        //     })
-        //     setImageUrl(newCurrentUser.photoURL);
-        // }
+        setOpen(true)
+        const currentCoupon = couponList.find((item) => item.id === couponId);
+        if (currentCoupon) {
+            form.setFieldsValue({
+                ...currentCoupon,
+                startTime: dayjs(currentCoupon.startTime, 'YYYY-MM-DD HH:mm:ss'),
+                endTime: dayjs(currentCoupon.endTime, 'YYYY-MM-DD HH:mm:ss')
+            })
+        }
     }
-    const onFinish = async (values: CouponPostType) => {
+    const onFinish = async (values: CouponType) => {
         setPending(true);
         console.log(values);
-        const type = currentCoupon ? "update" : "create";
+        const type = values.id ? "update" : "create";
+        console.log(type);
 
         console.log(dayjs(values.startTime).format('YYYY-MM-DD HH:mm:ss'));
 
@@ -63,12 +55,12 @@ function CouponManagement() {
                 setOpen(false);
             }
         } else {
-            const couponId = currentCoupon?.id;
+            const couponId = values.id;
             const couponPost: CouponPostType = {
                 ...values, startTime: formatedStartTime, endTime: formatedEndTime
             }
             const resUpdateUser = await update(couponPost, couponId);
-            if (resUpdateUser.status === 204) {
+            if (resUpdateUser.status === 200) {
                 form.resetFields();
                 setOpen(false)
             }
@@ -131,6 +123,10 @@ function CouponManagement() {
         },
     ];
 
+    const confirm = () => {
+        form.submit()
+    }
+
     useEffect(() => {
         const fetchCoupons = async () => {
             const res = await getWithPagination(current - 1, pageSize);
@@ -169,9 +165,19 @@ function CouponManagement() {
             extra={
                 <Space>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button type="primary" onClick={() => form.submit()} disabled={pending} loading={pending}>
-                        Submit
-                    </Button>
+
+                    <Popconfirm
+                        title="Xac nhan"
+                        description="Ban co chac chan muon luu?"
+                        onConfirm={confirm}
+                        onOpenChange={() => console.log('open change')}
+                        disabled={pending}
+                    >
+                        <Button type="primary" >
+                            Xac nhan
+                        </Button>
+                    </Popconfirm>
+
                 </Space>
             }
         >
@@ -212,10 +218,6 @@ function CouponManagement() {
                         >
                             <DatePicker
                                 showTime
-                                onChange={(value, dateString) => {
-                                    console.log('Selected Time: ', value);
-                                    setStartTime(dateString)
-                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -227,10 +229,6 @@ function CouponManagement() {
                         >
                             <DatePicker
                                 showTime
-                                onChange={(value, dateString) => {
-                                    console.log('Selected Time: ', value);
-                                    setEndTime(dateString)
-                                }}
                             />
                         </Form.Item>
                     </Col>

@@ -1,40 +1,46 @@
-import { Button, Flex, Form, PaginationProps, Popconfirm, Table, TableColumnsType } from 'antd';
+import { Button, Descriptions, DescriptionsProps, Divider, Drawer, Flex, Form, PaginationProps, Popconfirm, Table, TableColumnsType } from 'antd';
 import { useEffect, useState } from 'react';
-import { OrderType } from '../../../types/OrderType';
+import { OrderDetailType, OrderType } from '../../../types/OrderType';
 import './OrderManagement.style.scss'
+import { getOrderWithPagination } from '../../../services/OrderService';
 function OrderManagement() {
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [pending, setPending] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>();
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
-    const [form] = Form.useForm();
-    const [currentStudent, setCurrentUser] = useState<OrderType>();
-    const [userList, setUserList] = useState<OrderType[]>([]);
-    const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const [orderList, setOrderList] = useState<OrderType[]>([]);
+
+    const [currentOrder, setCurrentOrder] = useState<OrderType>();
+
+    const handleShowDetailOrder = (orderId: number) => {
+        setOpen(true);
+        const order = orderList.find((order) => order.id === orderId)
+        setCurrentOrder(order);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
 
     useEffect(() => {
-        // const fetchUsers = async () => {
-        //     const res = await getWithPagination(current - 1, pageSize);
+        const fetchUsers = async () => {
+            const res = await getOrderWithPagination(current - 1, pageSize);
 
-        //     if (res && res.status === 200) {
-        //         console.log(res);
-        //         const content = res.data.content.map((user: UserType) => (
-        //             {
-        //                 ...user, key: user.id
-        //             }
-        //         ))
-        //         console.log(content)
-        //         setUserList(content);
-        //         setCurrent(res.data.pageNum + 1);
-        //         setPageSize(res.data.pageSize)
-        //         setTotalElements(res.data.totalElements)
-        //     }
-        // }
-        // fetchUsers()
-    }, [current, pageSize, isDataUpdated])
+            if (res && res.status === 200) {
+                console.log(res);
+                const content = res.data.content.map((order: OrderType) => (
+                    {
+                        ...order, key: order.id
+                    }
+                ))
+                setOrderList(content);
+                setCurrent(res.data.pageNum + 1);
+                setPageSize(res.data.pageSize)
+                setTotalElements(res.data.totalElements)
+            }
+        }
+        fetchUsers()
+    }, [current, pageSize])
 
 
     const columns: TableColumnsType<OrderType> = [
@@ -46,21 +52,21 @@ function OrderManagement() {
         {
             title: 'Student',
             dataIndex: 'student',
-            width: 250,
+            width: 150,
         },
         {
             title: 'Coupon',
             dataIndex: 'coupon',
-            width: 200,
+            width: 150,
         },
         {
             title: 'Created at',
             dataIndex: 'createdAt',
-            width: 200,
+            width: 300,
         },
         {
             title: 'Status',
-            dataIndex: 'updatedAt',
+            dataIndex: 'status',
             width: 100,
         },
         {
@@ -71,20 +77,46 @@ function OrderManagement() {
         {
             title: 'Action',
             dataIndex: 'key',
-            width: 300,
+            width: 100,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary">Edit</Button>
-                    <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this user?"
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button danger>Delete</Button>
-                    </Popconfirm>
+                    <Button type="primary" onClick={() => handleShowDetailOrder(record.id)}>Detail</Button>
                 </Flex>
             ),
+        },
+    ];
+
+
+    const columnsOrderDetails: TableColumnsType<OrderDetailType> = [
+        {
+            title: 'Id',
+            dataIndex: 'id',
+            width: 50,
+        },
+        {
+            title: 'Ten khoa hoc',
+            dataIndex: 'course_title',
+            width: 150,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <span>{record.course.title}</span>
+                </Flex>
+            ),
+        },
+        {
+            title: 'Anh khoa hoc',
+            dataIndex: 'course_image',
+            width: 150,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <img style={{ width: "30px", height: "30px", objectFit: "cover" }} src={record.course.image} alt="course-image" />
+                </Flex>
+            ),
+        },
+        {
+            title: 'Gia tien',
+            dataIndex: 'price',
+            width: 50,
         },
     ];
 
@@ -100,7 +132,25 @@ function OrderManagement() {
         <div className='order-header' >
             <span>Order</span>
         </div>
-        <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+        <Drawer
+            title="Thong tin don hang"
+            placement={"right"}
+            closable={true}
+            onClose={onClose}
+            open={open}
+            width={"50%"}
+        >
+            <Descriptions layout="vertical" bordered >
+                <Descriptions.Item label="Ma don hang">{currentOrder?.id}</Descriptions.Item>
+                <Descriptions.Item label="Email">{currentOrder?.student}</Descriptions.Item>
+                <Descriptions.Item label="Coupon">{currentOrder?.coupon}</Descriptions.Item>
+                <Descriptions.Item label="Thoi gian tao">{currentOrder?.createdAt}</Descriptions.Item>
+                <Descriptions.Item label="Tong tien">{currentOrder?.totalPrice}</Descriptions.Item>
+            </Descriptions>
+            <Divider> Chi tiet don hang </Divider>
+            <Table columns={columnsOrderDetails} dataSource={currentOrder?.orderDetails} />
+        </Drawer>
+        <Table columns={columns} dataSource={orderList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>;
 }
 
