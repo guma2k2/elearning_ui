@@ -105,6 +105,25 @@
                 margin-bottom: 15px;
             }
 
+            .payment-discount {
+                display: flex;
+                flex-direction: column;
+
+                .payment-old-price {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-size: 14px;
+                }
+
+                .payment-discount-price {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-size: 14px;
+                }
+            }
+
             .payment-right-total {
                 display: flex;
                 align-items: center;

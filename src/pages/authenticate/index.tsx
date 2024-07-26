@@ -9,14 +9,11 @@ function Authenticate() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     useEffect(() => {
-        console.log(window.location.href);
-
         const authCodeRegex = /code=([^&]+)/;
         const isMatch = window.location.href.match(authCodeRegex);
 
         if (isMatch) {
             const code = isMatch[1];
-            console.log(code);
             const fetchUserProfileByCode = async () => {
                 const res = await outboundUser(code);
                 const data = res.data as AuthType

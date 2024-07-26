@@ -1,6 +1,5 @@
-import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../store'
 import { LearningCourse } from '../../types/learning/LearningCourseType'
 import { getMyLearningByStudent } from '../../services/LearningService'
 import { ReviewLearningCourse } from '../../types/ReviewType'
@@ -47,7 +46,7 @@ export const learningCourseSlice = createSlice({
                     const newReview = action.payload.review;
                     if (learningCourse.id === learningCourseId) {
                         if (state.learningCourses) {
-                            state.learningCourses[index].review.rating = newReview.rating
+                            state.learningCourses[index].review.ratingStar = newReview.ratingStar
                             state.learningCourses[index].review.content = newReview.content
                         }
                     }

@@ -2,16 +2,19 @@ import { Button, Divider } from "antd";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
-import { Fragment } from "react";
+import { Dispatch, Fragment, SetStateAction } from "react";
 type PropType = {
+    setOpen: Dispatch<SetStateAction<boolean>>
 }
-function PopoverCart() {
+function PopoverCart(props: PropType) {
     const { carts } = useAppSelector((state: RootState) => state.carts);
     const navigate = useNavigate();
+    const { setOpen } = props
     const cartLength = carts ? carts.length : 0;
     const totalPrice = carts ? carts.reduce((total, item) => total + item.course.price, 0) : 0
     const handleRedirectToCartPage = () => {
         navigate("/cart")
+        setOpen(false);
     }
     return <div className="popover-cart-container">
         <div className="popover-cart-top" >

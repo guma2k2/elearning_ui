@@ -127,9 +127,17 @@
         text-align: center;
         gap: 24px;
 
+        .learnings {
+            cursor: pointer;
+
+            &:hover {
+                color: #5022c3;
+            }
+        }
+
         .cart {
             position: relative;
-
+            cursor: pointer;
 
             .icon-cart {
                 width: 22px;
@@ -156,6 +164,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
+            cursor: pointer;
         }
 
         .icon {

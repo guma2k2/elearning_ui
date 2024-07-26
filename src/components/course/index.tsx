@@ -16,7 +16,6 @@ function Course(props: PropType) {
         dispatch(deleteCart(cartId))
     }
 
-    console.log(cart.course.image);
 
     const handleSaveForLater = async () => {
         const cartId = cart.id as number;

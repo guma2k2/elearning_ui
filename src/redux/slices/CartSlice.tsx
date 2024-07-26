@@ -53,19 +53,16 @@ export const cartSlice = createSlice({
         }
     }, extraReducers: (builder) => {
         builder
-            .addCase(getCartsByUser.pending, (state, action) => {
-                console.log(action);
+            .addCase(getCartsByUser.pending, (state, _action) => {
                 state.isError = false;
                 state.isLoading = true;
             })
             .addCase(getCartsByUser.fulfilled, (state, action) => {
-                // console.log(action.payload);
                 state.carts = action.payload
                 state.isError = false;
                 state.isLoading = false
             })
-            .addCase(getCartsByUser.rejected, (state, action) => {
-                console.log(action);
+            .addCase(getCartsByUser.rejected, (state, _action) => {
                 state.isError = true;
                 state.isLoading = false;
             })

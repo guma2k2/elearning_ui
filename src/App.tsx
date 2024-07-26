@@ -82,7 +82,7 @@ function App() {
           element: <VnPayCallback />,
         },
         {
-          path: "/payment/checkout",
+          path: "/payment/checkout/",
           element: <Payment />,
         },
       ]

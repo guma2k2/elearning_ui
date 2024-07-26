@@ -7,6 +7,13 @@ export const getWithPagination = async (current: number, pageSize: number) => {
     return res;
 }
 
+export const getByCode = async (code: string) => {
+    const url = `/coupons/code/${code}`
+    const res = await instance.get(url);
+    return res;
+}
+
+
 
 export const save = async (couponPost: CouponPostType) => {
     const url = "/admin/coupons";
