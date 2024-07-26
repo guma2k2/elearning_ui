@@ -20,9 +20,7 @@ function Courses() {
         const fetchCourses = async () => {
             const res = await getCourseWithPagination(0, pageSize);
             if (res && res.status === 200) {
-                console.log(res);
                 const data = res.data.content as CourseType[]
-                console.log(data);
                 setCourses(data);
             }
         }
@@ -74,7 +72,6 @@ function Courses() {
                         {...settings}
                     >
                         {courses && courses.map((course, index) => {
-                            console.log(course);
                             return <Card key={index} course={course} />
                         })}
                     </Slider>

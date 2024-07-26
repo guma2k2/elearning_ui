@@ -89,29 +89,61 @@ li {
 
       .review-filter-container {
         display: flex;
+        gap: 40px;
 
         .review-filter-left {
-          flex: 2;
+          flex: 3;
 
           .review-filter-left-item {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            width: 220px;
 
-            .review-filter-left-progress {
-              font-size: 10px;
-              max-width: 75px;
+            .review-filter-left-rating {
+              flex: 1;
               display: flex;
               align-items: center;
+              gap: 5px;
+              cursor: pointer;
+
+              .review-filter-left-progress {
+                font-size: 10px;
+                max-width: 75px;
+                display: flex;
+                align-items: center;
+                border-radius: 0 !important;
+              }
+
+              .review-filter-left-rate {
+                font-size: 12px;
+              }
+
+              span {
+                text-align: center;
+              }
+
+
+
+              &.active {
+                opacity: .25;
+              }
             }
 
-            .review-filter-left-rate {
-              font-size: 12px;
+            .review-cancel-filter {
+              width: 50px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
+
           }
+
+
         }
 
         .review-filter-right {
-          flex: 5;
+          flex: 6;
           display: flex;
           flex-direction: column;
           width: 100%;

@@ -40,6 +40,10 @@ function Navbar() {
     const handleOpenLearning = (newOpen: boolean) => {
         setOpenLearning(newOpen);
     };
+
+    const handleHideCart = () => {
+        setOpen(false);
+    }
     const handleShowTopics = (childId: number) => {
         console.log(childId);
         let xCategoryTooltipPosition: number = 0;
@@ -204,7 +208,7 @@ function Navbar() {
                     <div className="cart" >
                         {isLoggin == true && <> <Popover
                             placement="bottomRight"
-                            content={PopoverCart}
+                            content={() => <PopoverCart setOpen={setOpen} />}
                             rootClassName="popover-carts"
                             trigger="click"
                             open={open}

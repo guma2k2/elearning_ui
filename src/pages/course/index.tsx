@@ -17,14 +17,14 @@ import { getReviewsByCourseId } from '../../services/ReviewService';
 import { ReviewGet } from '../../types/ReviewType';
 import { FaCirclePlay } from "react-icons/fa6";
 import { LiaCertificateSolid } from "react-icons/lia";
+import { LiaTimesSolid } from "react-icons/lia"
 function CourseDetail() {
     let { courseId } = useParams();
     const [reviews, setReviews] = useState<ReviewGet[]>([]);
 
     const [pageNumReview, setPageNumReview] = useState<number>(0)
 
-    console.log(courseId);
-
+    const [ratingSelected, setRatingSelected] = useState<number>(0);
 
     const [course, setCourse] = useState<CourseType>();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,10 +62,14 @@ function CourseDetail() {
     }, [courseId])
 
     const loadMoreData = async (ratingStar: number | undefined, pageNum: number | undefined, type: "more" | "rate") => {
-        const res = await getReviewsByCourseId(courseId, ratingStar, pageNum);
-        const reviews = res.data as ReviewGet[]
-        if (res.status === 200) {
-            setReviews((prev) => [...prev, ...reviews]);
+        // const res = await getReviewsByCourseId(courseId, ratingStar, pageNum);
+        // const reviews = res.data as ReviewGet[]
+        // if (res.status === 200) {
+        //     setReviews((prev) => [...prev, ...reviews]);
+        // }
+
+        if (ratingStar) {
+            setRatingSelected(ratingStar);
         }
     }
 
@@ -209,31 +213,47 @@ function CourseDetail() {
                 </div>
                 <div className="review-filter-container">
                     <div className="review-filter-left">
-                        <div className="review-filter-left-item" onClick={() => loadMoreData(5, 0, "rate")}>
-                            <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
-                            <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
-                            <span>69%</span>
+                        <div className="review-filter-left-item">
+                            <div className={`review-filter-left-rating ${ratingSelected == 5 ? "active" : ""}`} onClick={() => loadMoreData(5, 0, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                                <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
+                                <span>69%</span>
+                            </div>
+                            {ratingSelected === 5 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item" onClick={() => loadMoreData(4, 0, "rate")}>
-                            <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
-                            <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={4} />
-                            <span>69%</span>
+                        <div className="review-filter-left-item">
+                            <div className={`review-filter-left-rating ${ratingSelected == 4 ? "active" : ""}`} onClick={() => loadMoreData(4, 0, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                                <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
+                                <span>69%</span>
+                            </div>
+                            {ratingSelected === 4 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item" onClick={() => loadMoreData(3, 0, "rate")}>
-                            <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
-                            <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={3} />
-                            <span>69%</span>
+                        <div className="review-filter-left-item">
+                            <div className={`review-filter-left-rating ${ratingSelected == 3 ? "active" : ""}`} onClick={() => loadMoreData(3, 0, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                                <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
+                                <span>69%</span>
+                            </div>
+                            {ratingSelected === 3 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item" onClick={() => loadMoreData(2, 0, "rate")}>
-                            <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
-                            <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={2} />
-                            <span>69%</span>
+                        <div className="review-filter-left-item">
+                            <div className={`review-filter-left-rating ${ratingSelected == 2 ? "active" : ""}`} onClick={() => loadMoreData(2, 0, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                                <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
+                                <span>69%</span>
+                            </div>
+                            {ratingSelected === 2 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item" onClick={() => loadMoreData(1, 0, "rate")}>
-                            <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
-                            <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={1} />
-                            <span>69%</span>
+                        <div className="review-filter-left-item">
+                            <div className={`review-filter-left-rating ${ratingSelected == 1 ? "active" : ""}`} onClick={() => loadMoreData(1, 0, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                                <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
+                                <span>69%</span>
+                            </div>
+                            {ratingSelected === 1 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
                         </div>
+
                     </div>
                     <div className="review-filter-right">
                         <Review review={undefined} isFilter={true} />
