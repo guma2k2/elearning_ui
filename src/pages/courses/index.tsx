@@ -10,7 +10,22 @@ import Card from '../../components/card';
 import { Tooltip, TooltipRefProps } from 'react-tooltip'
 import { useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
+interface ArrowProps {
+    className?: string;
+    style?: React.CSSProperties;
+    onClick?: () => void;
+}
 
+function ArrowCustom(props: ArrowProps) {
+    const { className, style, onClick } = props;
+    return (
+        <div
+            className={className}
+            style={{ ...style, display: "flex", backgroundColor: "#6a6f73", borderRadius: "50%", alignItems: "center", justifyContent: "center", color: "white" }}
+            onClick={onClick}
+        />
+    );
+}
 function Courses() {
     const pageSize = 10;
     const [courses, setCourses] = useState<CourseType[]>([]);
@@ -31,6 +46,8 @@ function Courses() {
         infinite: false,
         slidesToShow: 5,
         slidesToScroll: 4,
+        nextArrow: <ArrowCustom />,
+        prevArrow: <ArrowCustom />
     };
     return (
         <>

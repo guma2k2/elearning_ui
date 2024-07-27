@@ -14,7 +14,8 @@ import PopoverCart from "../popover-cart"
 import PopoverUserProfile from "../popover-user-photo"
 import PopoverLearning from "../popover-learning"
 import PopoverSearch from "../popover-search"
-
+import { getCartsByUser } from '../../redux/slices/CartSlice';
+import { getLearningCourse } from '../../redux/slices/LearningCourseSlice';
 function Navbar() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -122,7 +123,11 @@ function Navbar() {
 
     useEffect(() => {
         dispatch(fetchCategoryParents());
-    }, [])
+        if (auth) {
+            dispatch(getCartsByUser());
+            dispatch(getLearningCourse())
+        }
+    }, [auth])
     return (
         <>
             <div className="navbar-top-container" >

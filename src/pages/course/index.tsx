@@ -1,7 +1,7 @@
 import { Button, Modal, Progress, Rate } from 'antd';
 import './Course.style.scss'
 import { MdOutlineKeyboardArrowRight, MdOutlineOndemandVideo } from "react-icons/md";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { get } from '../../services/CourseService';
 import { CourseType } from '../../types/CourseType';
@@ -14,14 +14,18 @@ import { IoPeopleSharp } from "react-icons/io5";
 import StarIcon from '../../assets/star.png'
 import Review from '../../components/review';
 import { getReviewsByCourseId } from '../../services/ReviewService';
-import { ReviewGet } from '../../types/ReviewType';
+import { PageReviewResponse, ReviewGet, ReviewPercent } from '../../types/ReviewType';
 import { FaCirclePlay } from "react-icons/fa6";
 import { LiaCertificateSolid } from "react-icons/lia";
 import { LiaTimesSolid } from "react-icons/lia"
 function CourseDetail() {
     let { courseId } = useParams();
-    const [reviews, setReviews] = useState<ReviewGet[]>([]);
 
+    const navigate = useNavigate();
+    const [reviews, setReviews] = useState<ReviewGet[]>([]);
+    const [reviewsCourse, setReviewsCourse] = useState<ReviewGet[]>([]);
+
+    const [reviewPercent, setReviewPercent] = useState<ReviewPercent>();
     const [pageNumReview, setPageNumReview] = useState<number>(0)
 
     const [ratingSelected, setRatingSelected] = useState<number>(0);
@@ -29,6 +33,12 @@ function CourseDetail() {
     const [course, setCourse] = useState<CourseType>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const getBreadcrumb = (): string[] => {
+        if (course) {
+            return course.breadcrumb.split("-");
+        }
+        return [];
+    }
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -40,7 +50,16 @@ function CourseDetail() {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+
+    const handleLearning = () => {
+        if (course) {
+            navigate(`/course/${course.slug}/learning`)
+        }
+        console.log("cc");
+    }
     useEffect(() => {
+        console.log(ratingSelected);
+
         const fetchCourseById = async () => {
             const res = await get(courseId);
             const currentCourse = res.data as CourseType
@@ -49,11 +68,27 @@ function CourseDetail() {
             }
         }
 
+
         const fetchReviewByCourseId = async () => {
             const res = await getReviewsByCourseId(courseId, undefined, undefined);
-            const reviews = res.data as ReviewGet[]
             if (res.status === 200) {
+                const pageReviewResponse = res.data as PageReviewResponse
+                const reviews = pageReviewResponse.content;
+                const percentFiveStar = pageReviewResponse.percentFiveStar;
+                const percentFourStar = pageReviewResponse.percentFourStar;
+                const percentThreeStar = pageReviewResponse.percentThreeStar;
+                const percentTwoStar = pageReviewResponse.percentTwoStar;
+                const percentOneStar = pageReviewResponse.percentOneStar;
                 setReviews(reviews);
+                setReviewsCourse(reviews)
+                const newReviewPercent: ReviewPercent = {
+                    percentFiveStar,
+                    percentFourStar,
+                    percentThreeStar,
+                    percentTwoStar,
+                    percentOneStar
+                }
+                setReviewPercent(newReviewPercent)
             }
         }
         fetchCourseById();
@@ -61,29 +96,63 @@ function CourseDetail() {
 
     }, [courseId])
 
-    const loadMoreData = async (ratingStar: number | undefined, pageNum: number | undefined, type: "more" | "rate") => {
-        // const res = await getReviewsByCourseId(courseId, ratingStar, pageNum);
-        // const reviews = res.data as ReviewGet[]
-        // if (res.status === 200) {
-        //     setReviews((prev) => [...prev, ...reviews]);
-        // }
+    const loadMoreData = async (ratingStar: number | undefined, type: "more" | "rate" | "reset") => {
+        let newPageNum: number = pageNumReview;
+        if (type == "rate") {
+            if (ratingStar) {
+                setRatingSelected(ratingStar);
+                setPageNumReview(0)
+                newPageNum = 0;
+            }
+        } else if (type == "more") {
+            setPageNumReview((prev) => prev + 1)
+            newPageNum = pageNumReview + 1;
 
-        if (ratingStar) {
-            setRatingSelected(ratingStar);
+        } else if (type == "reset") {
+            setPageNumReview(0)
+            newPageNum = 0;
         }
+        console.log(ratingStar);
+        const res = await getReviewsByCourseId(courseId, newPageNum, ratingStar);
+        console.log(res);
+        const pageReviewResponse = res.data as PageReviewResponse
+        const reviews = pageReviewResponse.content;
+        const pageNum = pageReviewResponse.pageNum;
+        const percentFiveStar = pageReviewResponse.percentFiveStar;
+        const percentFourStar = pageReviewResponse.percentFourStar;
+        const percentThreeStar = pageReviewResponse.percentThreeStar;
+        const percentTwoStar = pageReviewResponse.percentTwoStar;
+        const percentOneStar = pageReviewResponse.percentOneStar;
+        if (res.status === 200) {
+            if (pageNum !== 0) {
+                setReviews((prev) => [...prev, ...reviews]);
+            } else if (pageNum === 0) {
+                setReviews(reviews);
+            }
+            const newReviewPercent: ReviewPercent = {
+                percentFiveStar,
+                percentFourStar,
+                percentThreeStar,
+                percentTwoStar,
+                percentOneStar
+            }
+            setReviewPercent(newReviewPercent)
+        }
+
+
     }
 
     return <div className="course-container">
         <div className="header">
             <div className="left">
-                <div className="breadcrumb">CNTT & Phần mềm <MdOutlineKeyboardArrowRight />
-                    CNTT & Phần mềm khác <MdOutlineKeyboardArrowRight />
-                    Spring Framework</div>
+                <div className="breadcrumb">{getBreadcrumb()[0]}<MdOutlineKeyboardArrowRight />
+                    {getBreadcrumb()[1]} <MdOutlineKeyboardArrowRight />
+                    {getBreadcrumb()[2]}</div>
                 <div className="title">{course && course.title}</div>
                 <div className="headline">{course && course.headline}</div>
                 <div className="review">
                     <div className="rating-number">{course?.averageRating}</div>
-                    <Rate className="rating" allowHalf disabled defaultValue={4.6} />
+                    <Rate className="rating" allowHalf disabled value={course?.averageRating} />
                     <div className="review-number">({course?.ratingCount} xếp hạng)</div>
                 </div>
                 <div className="instructor-name">Được tạo bởi {course?.createdBy}</div>
@@ -92,12 +161,12 @@ function CourseDetail() {
         </div>
         <div className="content">
             <div className="left">
-                <div className="lessons-content">
+                {course && course.objectives && course.objectives.length > 0 && <div className="lessons-content">
                     <div className="lesson-header">Nội dung bài học</div>
                     <div className="lesson-content">
                         {course && course.objectives?.map((objective, index) => <div key={`objective-${index}`} className="lesson"><FaCheck /> <span>{objective}</span></div>)}
                     </div>
-                </div>
+                </div>}
                 <div className="course-content">
                     <div className="course-content-header-wrapper">
                         <h2 className="course-content-header-block">Nội dung khóa học</h2>
@@ -116,16 +185,23 @@ function CourseDetail() {
                             return <SectionForStudent key={`section-student-${index}`} section={sec} index={index + 1}></SectionForStudent>
                         })}
                     </div>
+                    {course && course.requirements && course.requirements.length > 0 && <div className='requirement-container'>
+                        <h2 className="requirement-header">
+                            Yeu cau
+                        </h2>
+                        <ul className="requirement-item">
+                            {course.requirements.map((item, index) => <li key={`requirement-course-detail-${index}`}><span>{item}</span></li>)}
+                        </ul>
+                    </div>}
                     <div className="intructor-course-container">
                         <h2 className="instructor-header">
                             Giảng viên
                         </h2>
-                        <span>Jonas Schmedtmann</span>
-                        {/* <span>{course?.user?.fullName}</span> */}
+                        <span>{course?.user?.fullName}</span>
 
                         <div className="instructor-course-wrapper">
                             <img src="https://img-b.udemycdn.com/user/200_H/7799204_2091_5.jpg" alt="instructor-image" />
-                            {/* <img src={course?.user?.photo} alt="instructor-image" /> */}
+                            <img src={course?.user?.photo} alt="instructor-image" />
 
                             <div className="instructor-course-right">
                                 <div className="intructor-course-right-item">
@@ -162,11 +238,19 @@ function CourseDetail() {
                             <span>25K xếp hạng</span>
                         </div>
                         <div className="review-wrapper">
-                            {reviews && reviews.length > 0 && reviews.map((review) => <Review review={review} key={`review-of-course-${review.id}`} isFilter={false} />)}
+                            {reviewsCourse && reviewsCourse.length > 0 && reviewsCourse.map((review) => <Review review={review} key={`review-of-course-${review.id}`} isFilter={false} />)}
                         </div>
                         <Button onClick={showModal} className='btn-review-showmore'>Hiện thêm đánh giá</Button>
 
                     </div>
+
+                    {course && course.description &&
+                        <div className='desc-container'>
+                            <h2 className="desc-header">
+                                Mo ta
+                            </h2>
+                            <div dangerouslySetInnerHTML={{ __html: course.description }}></div>
+                        </div>}
                 </div>
             </div>
             <div className="right">
@@ -177,7 +261,7 @@ function CourseDetail() {
                     <div className="course-detail-action">
                         <span className="course-action-price">{course?.free == true ? `${course.price} d` : "Mien phi"}</span>
                         {course?.learning == false && <Button className='btn-add-to-cart'>Thêm vào giỏ hàng</Button>}
-                        <Button className='btn-buy-now'>{course?.learning == true ? "Chuyen den khoa hoc" : course?.free == true ? "Dang ki khoa hoc" : "Mua khoa hoc"}</Button>
+                        <Button className='btn-buy-now' onClick={handleLearning}>{course?.learning == true ? "Chuyen den khoa hoc" : course?.free == true ? "Dang ki khoa hoc" : "Mua khoa hoc"}</Button>
                     </div>
                     <div className="course-info">
                         <div className="course-info-level">
@@ -213,62 +297,66 @@ function CourseDetail() {
                 </div>
                 <div className="review-filter-container">
                     <div className="review-filter-left">
-                        <div className="review-filter-left-item">
-                            <div className={`review-filter-left-rating ${ratingSelected == 5 ? "active" : ""}`} onClick={() => loadMoreData(5, 0, "rate")}>
-                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                        <div className={`review-filter-left-item ${(ratingSelected != 5 && ratingSelected != 0) ? "active" : ""}`}>
+                            <div className="review-filter-left-rating" onClick={() => loadMoreData(5, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={reviewPercent?.percentFiveStar} size="small" showInfo={false} />
                                 <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
-                                <span>69%</span>
+                                <span>{reviewPercent?.percentFiveStar}%</span>
                             </div>
-                            {ratingSelected === 5 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
+                            {ratingSelected === 5 && <LiaTimesSolid onClick={() => {
+                                setRatingSelected(0);
+                                loadMoreData(undefined, "reset")
+                            }} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item">
-                            <div className={`review-filter-left-rating ${ratingSelected == 4 ? "active" : ""}`} onClick={() => loadMoreData(4, 0, "rate")}>
-                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                        <div className={`review-filter-left-item ${(ratingSelected != 4 && ratingSelected != 0) ? "active" : ""}`}>
+                            <div className="review-filter-left-rating" onClick={() => loadMoreData(4, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={reviewPercent?.percentFourStar} size="small" showInfo={false} />
                                 <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
-                                <span>69%</span>
+                                <span>{reviewPercent?.percentFourStar}%</span>
                             </div>
-                            {ratingSelected === 4 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
+                            {ratingSelected === 4 && <LiaTimesSolid onClick={() => {
+                                setRatingSelected(0);
+                                loadMoreData(undefined, "reset")
+                            }} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item">
-                            <div className={`review-filter-left-rating ${ratingSelected == 3 ? "active" : ""}`} onClick={() => loadMoreData(3, 0, "rate")}>
-                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                        <div className={`review-filter-left-item ${(ratingSelected != 3 && ratingSelected != 0) ? "active" : ""}`}>
+                            <div className="review-filter-left-rating" onClick={() => loadMoreData(3, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={reviewPercent?.percentThreeStar} size="small" showInfo={false} />
                                 <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
-                                <span>69%</span>
+                                <span>{reviewPercent?.percentThreeStar} %</span>
                             </div>
-                            {ratingSelected === 3 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
+                            {ratingSelected === 3 && <LiaTimesSolid onClick={() => {
+                                setRatingSelected(0);
+                                loadMoreData(undefined, "reset")
+                            }} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item">
-                            <div className={`review-filter-left-rating ${ratingSelected == 2 ? "active" : ""}`} onClick={() => loadMoreData(2, 0, "rate")}>
-                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                        <div className={`review-filter-left-item ${(ratingSelected != 2 && ratingSelected != 0) ? "active" : ""}`}>
+                            <div className="review-filter-left-rating" onClick={() => loadMoreData(2, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={reviewPercent?.percentTwoStar} size="small" showInfo={false} />
                                 <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
-                                <span>69%</span>
+                                <span>{reviewPercent?.percentTwoStar}%</span>
                             </div>
-                            {ratingSelected === 2 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
+                            {ratingSelected === 2 && <LiaTimesSolid onClick={() => {
+                                setRatingSelected(0);
+                                loadMoreData(undefined, "reset")
+                            }} className='review-cancel-filter' />}
                         </div>
-                        <div className="review-filter-left-item">
-                            <div className={`review-filter-left-rating ${ratingSelected == 1 ? "active" : ""}`} onClick={() => loadMoreData(1, 0, "rate")}>
-                                <Progress className='review-filter-left-progress' percent={69} size="small" showInfo={false} />
+                        <div className={`review-filter-left-item ${(ratingSelected != 1 && ratingSelected != 0) ? "active" : ""}`}>
+                            <div className="review-filter-left-rating" onClick={() => loadMoreData(1, "rate")}>
+                                <Progress className='review-filter-left-progress' percent={reviewPercent?.percentOneStar} size="small" showInfo={false} />
                                 <Rate className='review-filter-left-rate' allowHalf disabled defaultValue={5} />
-                                <span>69%</span>
+                                <span>{reviewPercent?.percentOneStar}%</span>
                             </div>
-                            {ratingSelected === 1 && <LiaTimesSolid onClick={() => setRatingSelected(0)} className='review-cancel-filter' />}
+                            {ratingSelected === 1 && <LiaTimesSolid onClick={() => {
+                                setRatingSelected(0);
+                                loadMoreData(undefined, "reset")
+                            }} className='review-cancel-filter' />}
                         </div>
 
                     </div>
                     <div className="review-filter-right">
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Review review={undefined} isFilter={true} />
-                        <Button onClick={() => loadMoreData(5, 0, "more")} className='btn-review-modal-showmore'>Hiện thêm đánh giá</Button>
+                        {reviews && reviews.length > 0 && reviews.map((review) => <Review review={review} key={`review-of-course-all-${review.id}`} isFilter={true} />)}
+                        <Button onClick={() => loadMoreData(ratingSelected, "more")} className='btn-review-modal-showmore'>Hiện thêm đánh giá</Button>
                     </div>
 
                 </div>

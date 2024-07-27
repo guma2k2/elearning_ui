@@ -9,7 +9,7 @@ type Props = {
 function Card(props: Props) {
     const { course } = props;
     return (
-        <Link className='card-container' to={"/course/:id"} data-tooltip-id={`my-tooltip-${course.id}`} >
+        <Link className='card-container' to={`/courses/${course.id}`} data-tooltip-id={`my-tooltip-${course.id}`} >
             <img className='course-image' src={course.image} alt="course image" />
             <h3>{course.title}</h3>
             <span className='course-instructor'>in28Minutes Official</span>

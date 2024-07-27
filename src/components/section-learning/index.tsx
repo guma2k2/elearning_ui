@@ -9,7 +9,8 @@ type PropType = {
 }
 function SectionLearning(probs: PropType) {
     const { section, index } = probs
-    const [toggle, setToggle] = useState<boolean>(false);
+    const selectionId = 2;
+    const [toggle, setToggle] = useState<boolean>(section.id == selectionId);
     const handleToggle = () => {
         setToggle((prev) => !prev);
     }

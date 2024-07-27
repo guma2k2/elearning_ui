@@ -3,6 +3,11 @@ import instance from "../utils/axiosCustomize";
 
 export const getReviewsByCourseId = async (courseId: number | string | undefined, pageNum: number | undefined, ratingStar: number | undefined) => {
     const url = `reviews/search/${courseId}`
+    if (ratingStar == 0) {
+        ratingStar = undefined;
+    }
+    console.log(ratingStar);
+    console.log(url);
     const res = await instance.get(url, {
         params: {
             pageNum: pageNum ? pageNum : 0,
@@ -32,6 +37,8 @@ export const getWithPagination = async (current: number, pageSize: number) => {
     const res = await instance.get(url);
     return res;
 }
+
+
 export const updateStatus = async (status: boolean, id: number) => {
     const url = `/admin/reviews/${id}/status/${status}`
     const res = await instance.put(url);

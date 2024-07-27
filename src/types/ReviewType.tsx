@@ -24,3 +24,23 @@ export type ReviewGet = {
     course: CourseGetType
 }
 
+export type PageReviewResponse = {
+    percentFiveStar: number
+    percentFourStar: number
+    percentThreeStar: number
+    percentTwoStar: number
+    percentOneStar: number
+    pageNum: number
+    pageSize: number
+    totalElements: number
+    totalPages: number
+    content: ReviewGet[]
+}
+
+export type ReviewPercent = {
+    percentFiveStar: number
+    percentFourStar: number
+    percentThreeStar: number
+    percentTwoStar: number
+    percentOneStar: number
+}

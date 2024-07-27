@@ -94,11 +94,13 @@ li {
         .review-filter-left {
           flex: 3;
 
+
           .review-filter-left-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 220px;
+            min-width: 220px;
+            margin-bottom: 5px;
 
             .review-filter-left-rating {
               flex: 1;
@@ -125,9 +127,7 @@ li {
 
 
 
-              &.active {
-                opacity: .25;
-              }
+
             }
 
             .review-cancel-filter {
@@ -135,6 +135,10 @@ li {
               display: flex;
               align-items: center;
               justify-content: center;
+            }
+
+            &.active {
+              opacity: .25;
             }
 
           }
