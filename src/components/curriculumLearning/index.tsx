@@ -10,10 +10,10 @@ type PropType = {
 function CurriculumLearning(probs: PropType) {
     const { curriculum } = probs;
     console.log(curriculum.id);
-
+    const type = "lecture";
     // const { curriculumId, type } = useAppSelector((state: RootState) => state.learning);
     return (
-        <div className={`section-learning-curriculum-container ${curriculum.id} ${curriculum.id === 3 ? "active" : ""}`}>
+        <div className={`section-learning-curriculum-container ${curriculum.id === 3 && curriculum.type == "lecture" ? "active" : ""}`}>
             <div className="section-learning-curriculum-left">
                 <h3 className="section-learning-curriculum-title">
                     {curriculum.index}. {curriculum.title}

@@ -25,7 +25,9 @@ export type CourseType = {
     createdBy: string,
     sections: SectionType[],
     user?: UserProfile,
-    learning?: boolean
+    learning?: boolean,
+    slug: string,
+    breadcrumb: string
 }
 
 export type CourseGetType = {
@@ -50,7 +52,7 @@ export type CourseListGetType = {
 
 
 export type SectionType = {
-    id?: number
+    id: number
     title: string
     number: number
     objective: string

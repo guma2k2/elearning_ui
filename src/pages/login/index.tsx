@@ -8,9 +8,8 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 import { login } from '../../redux/slices/AuthenticationSlice';
 import { useEffect } from 'react';
-import { getCartsByUser } from '../../redux/slices/CartSlice';
-import { ROLE_ADMIN, ROLE_INSTRUCTOR } from '../../utils/Constants';
-import { getLearningCourse } from '../../redux/slices/LearningCourseSlice';
+import { ROLE_ADMIN, ROLE_INSTRUCTOR } from '../../utils/Constants'
+
 
 function Login() {
 
@@ -46,12 +45,8 @@ function Login() {
             if (auth) {
                 const role = auth.user.role as string;
                 if (role === ROLE_ADMIN || role === ROLE_INSTRUCTOR) {
-                    console.log("get carts, learnings.............");
                     navigate("/admin")
                 } else {
-                    console.log("get carts, learnings.............");
-                    dispatch(getCartsByUser());
-                    dispatch(getLearningCourse())
                     navigate("/")
                 }
             }

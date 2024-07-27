@@ -32,12 +32,12 @@ function Learning() {
                 })
             })
             // clone data
-            currentCourse.type = "quiz";
+            currentCourse.type = "lecture";
             currentCourse.curriculumId = 1;
             currentCourse.sectionId = 1;
 
             currentCourse.course.sections.forEach((sec) => {
-                if (sec.id = currentCourse.sectionId) {
+                if (sec.id == currentCourse.sectionId) {
                     sec.curriculums.forEach((cur) => {
                         if (cur.id == currentCourse.curriculumId) {
                             setSelection(cur);
@@ -45,6 +45,7 @@ function Learning() {
                     })
                 }
             })
+            console.log(currentCourse);
             if (res.status === 200) {
                 setLearning(currentCourse);
             }
@@ -95,18 +96,25 @@ function Learning() {
                         <div className="learning-quiz-btn-answer">
                             <Button disabled={selectingAnswer == -1} onClick={handleAnswer} className='btn-answer'>TRẢ LỜI</Button>
                         </div>
-                        {(isAnswer == true && selection && selection.type == "quiz" && selection.questions) && selection.questions[0].answers[selectingAnswer].reason
-                            && <div className='learning-quiz-explain'>
-                                <h2 className="learning-quiz-explain-header">Giải thích</h2>
-                                <div className='learning-quiz-explain' dangerouslySetInnerHTML={{ __html: selection.questions[0].answers[selectingAnswer].reason }}></div>
-                            </div>}
+                        {isAnswer && selection && selection.type === "quiz" && selection.questions &&
+                            selection.questions[0].answers[selectingAnswer].reason && (
+                                <div className="learning-quiz-explain">
+                                    <h2 className="learning-quiz-explain-header">Giải thích</h2>
+                                    <div
+                                        className="learning-quiz-explain"
+                                        dangerouslySetInnerHTML={{
+                                            __html: selection.questions[0].answers[selectingAnswer].reason || "",
+                                        }}
+                                    ></div>
+                                </div>
+                            )}
                     </div>}
                 </div>
                 <div className="learning-right">
                     <div className="learning-right-header">Nội dung khóa học</div>
                     <div className="learning-right-container">
                         {learning?.course && learning.course.sections.map((sec, index) => {
-                            return <SectionLearning section={sec} index={index} key={`sec-${sec.id}`} />
+                            return <SectionLearning section={sec} index={index} key={`sec-learning-${sec.id}`} />
                         })}
                     </div>
                 </div>
