@@ -16,22 +16,29 @@
             align-items: center;
 
             .learning-top-icon {
-                width: 60px;
+                width: 50px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                padding-right: 10px;
 
                 .learning-top-caret {
                     font-size: 30px;
                 }
+            }
 
-
+            .learning-udemy-logo {
+                width: 30px;
+                height: 30px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin-right: 10px;
             }
 
             span {
                 color: white;
                 font-weight: bold;
-                font-size: 13px;
+                font-size: 14px;
             }
 
             img {
