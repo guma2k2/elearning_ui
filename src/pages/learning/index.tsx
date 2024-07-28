@@ -1,88 +1,113 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import './index.style.scss'
-import { getCourseBySlug } from '../../services/CourseService';
 import { LearningType } from '../../types/LearningType';
 import { useEffect, useState } from 'react';
-import UdemyLogo from "../../assets/logo-udemy.svg"
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
 import { Button, Progress } from 'antd';
 import SectionLearning from '../../components/section-learning';
 import { ILecture, IQuiz } from '../../types/CourseType';
 import AnswerLearning from '../../components/answer-learning';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { RootState } from '../../redux/store';
+import { fetchCourseBySlug } from '../../redux/slices/LearningSlice';
 function Learning() {
     const { slug } = useParams();
-    const [learning, setLearning] = useState<LearningType>();
-    const [selection, setSelection] = useState<ILecture | IQuiz>();
-
+    const { learning, isLoading } = useAppSelector((state: RootState) => state.learning);
+    const dispatch = useAppDispatch();
     const [selectingAnswer, setSelectingAnswer] = useState<number>(-1);
     const [isAnswer, setIsAnswer] = useState<boolean>(false);
 
+    const getSelection = (): (ILecture | IQuiz | undefined) => {
+        if (learning) {
+            learning.course.sections.forEach((sec) => {
+                if (sec.id == learning.sectionId) {
+                    sec.curriculums.forEach((cur) => {
+                        if (cur.id == learning.curriculumId) {
+                            return cur;
+                        }
+                    })
+                }
+            })
+        }
+        return undefined;
+    }
+    const selection = getSelection();
+    const getCurrenCurriculum = (): (ILecture | IQuiz | undefined) => {
+        if (learning) {
+            const curricumCurrentId = learning.curriculumId;
+            const sectionCurrentId = learning.sectionId;
+
+            console.log(curricumCurrentId);
+            console.log(sectionCurrentId);
+
+            const section = learning.course.sections.find(sec => sec.id === sectionCurrentId);
+            if (section) {
+                return section.curriculums.find(cur => cur.id === curricumCurrentId);
+            }
+        }
+        return undefined;
+    }
+    const getLectureFinishedCount = (): number => {
+        if (learning) {
+            let count: number = 0;
+            learning.course.sections.forEach((sec) => {
+                sec.curriculums.forEach((cur) => {
+                    if (cur.finished == true) {
+                        count++;
+                    }
+                })
+            })
+            return count;
+        }
+        return 0;
+    }
+
+    const getPecentFinished = (): number => {
+        if (learning) {
+            const total = learning?.course.totalLectureCourse;
+            return (getLectureFinishedCount() / total) * 100
+        }
+        return 0;
+    }
 
     const handleAnswer = () => {
         setIsAnswer(true);
     }
     useEffect(() => {
-        const fetchCourseById = async () => {
-            const res = await getCourseBySlug(slug);
-            const currentCourse = res.data as LearningType
-            let start: number = 1
-            currentCourse.course.sections.forEach((section) => {
-                section.curriculums.forEach((curriclum) => {
-                    curriclum.index = start++;
-                })
-            })
-            // clone data
-            currentCourse.type = "lecture";
-            currentCourse.curriculumId = 1;
-            currentCourse.sectionId = 1;
-
-            currentCourse.course.sections.forEach((sec) => {
-                if (sec.id == currentCourse.sectionId) {
-                    sec.curriculums.forEach((cur) => {
-                        if (cur.id == currentCourse.curriculumId) {
-                            setSelection(cur);
-                        }
-                    })
-                }
-            })
-            console.log(currentCourse);
-            if (res.status === 200) {
-                setLearning(currentCourse);
-            }
-        }
-        fetchCourseById();
+        dispatch(fetchCourseBySlug(slug));
 
     }, [slug])
 
+    console.log(getCurrenCurriculum());
     return (
         <div className='learning-container'>
             <div className="learning-top">
                 <div className="learning-top-title">
-                    <div className="learning-top-icon">
+                    <Link to={"/"} className="learning-top-icon">
                         <RxCaretLeft className='learning-top-caret' />
-                    </div>
-                    <img src={UdemyLogo} alt="udemylogo" />
-                    <span>Làm việc với Terminal & Ubuntu</span>
+                    </Link>
+                    <img src="https://fullstack.edu.vn/assets/f8-icon-lV2rGpF0.png" alt="udemylogo" className='learning-udemy-logo' />
+                    <span>{learning?.course.title}</span>
                 </div>
                 <div className="learning-top-tracking">
-                    <Progress className='learning-progress' type="circle" percent={99} size={100} />
-                    <span>5/40 bài học</span>
+                    <Progress className='learning-progress' type="circle" percent={getPecentFinished()} size={100} />
+                    <span>{getLectureFinishedCount()}/{learning?.course.totalLectureCourse} bài học</span>
                 </div>
             </div>
             <div className="learning-wrapper">
                 <div className="learning-left">
-                    {learning?.type == "lecture" && <>    <video width={"100%"} height={500} controls className='learning-video'>
+                    {learning?.type == "lecture" && <> <video width={"100%"} height={500} controls className='learning-video'>
                         <source src='https://res.cloudinary.com/di6h4mtfa/video/upload/v1708086787/40eae44e-10cc-4750-b7fa-b5df6561d9a8.mp4' type='video/mp4' />
                     </video>
                         <div className="learning-curriculum-info">
-                            <h2 className='learning-curriculum-title'>Lời khuyên trước khóa học</h2>
-                            <div className='learning-curriculum-time'>Cập nhật tháng 11 năm 2022</div>
+                            <h2 className='learning-curriculum-title'>{getCurrenCurriculum()?.title}</h2>
+                            <div className='learning-curriculum-time'>Cập nhật {getCurrenCurriculum()?.updatedAt}</div>
                             <div className='learning-curriculum-footer'>Made with  Powered by F8</div>
                         </div>
                     </>}
                     {learning?.type == "quiz" && <div className='learning-quiz-container'>
-                        <h1 className="learning-quiz-title">Ôn tập toán tử so sánh</h1>
-                        <div className="learning-quiz-updated-time">Cập nhật tháng 6 năm 2022</div>
+                        <h1 className="learning-quiz-title">{getCurrenCurriculum()?.title}</h1>
+                        <div className="learning-quiz-updated-time">Cập nhật {getCurrenCurriculum()?.updatedAt}</div>
                         <div className="learning-quiz-question-content">
                             {selection && selection.type == "quiz" && selection.questions && <div dangerouslySetInnerHTML={{ __html: selection.questions[0].title }}></div>}
                         </div>

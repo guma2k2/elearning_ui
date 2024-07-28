@@ -64,12 +64,16 @@ export interface ICurriculum {
     title: string
     number: number
     index?: number
+    updatedAt: string
+    finished: boolean
 }
 export interface ILecture extends ICurriculum {
     type: "lecture"
     videoId?: string
     lectureDetails?: string
     duration?: number
+    formattedDuration: string,
+    watchingSecond: number
 }
 
 export interface IQuiz extends ICurriculum {
