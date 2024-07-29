@@ -7,8 +7,3 @@ export const createLearningQuiz = async (learningQuizPost: LearningQuizPost) => 
     return res;
 }
 
-export const update = async (learningQuizPost: LearningQuizPost, quizId: number) => {
-    const url = `/learning-quizzes/quiz/${quizId}`;
-    const res = await instance.put(url, learningQuizPost);
-    return res;
-}

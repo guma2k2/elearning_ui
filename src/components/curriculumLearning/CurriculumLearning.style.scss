@@ -36,10 +36,7 @@
         background-color: #edeff1;
     }
 
-
-}
-
-.active {
-    background-color: #f0512333;
-    pointer-events: none;
+    &.active {
+        background-color: #f0512333;
+    }
 }

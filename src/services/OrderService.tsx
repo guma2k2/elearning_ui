@@ -14,6 +14,12 @@ export const getOrderWithPagination = async (current: number, pageSize: number) 
     return res;
 }
 
+export const getOrdersByUser = async () => {
+    const url = "/orders/user"
+    const res = await instance.get(url);
+    return res;
+}
+
 export const updateOrderStatus = async (orderId: number, status: string) => {
     const url = `/orders/${orderId}/status/${status}`;
     const res = await instance.put(url);

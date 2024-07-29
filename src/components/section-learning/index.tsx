@@ -1,16 +1,17 @@
 import { RxCaretDown, RxCaretUp } from 'react-icons/rx'
 import './SectionLearning.style.scss'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CurriculumLearning from '../curriculumLearning';
 import { SectionType } from '../../types/CourseType';
 import { useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 type PropType = {
     section: SectionType
-    index: number
+    index: number,
+    watchingSecond: number
 }
 function SectionLearning(probs: PropType) {
-    const { section, index } = probs
+    const { section, index, watchingSecond } = probs
     const { learning } = useAppSelector((state: RootState) => state.learning);
 
     const selectionId = learning ? learning.sectionId : -1;
@@ -34,6 +35,10 @@ function SectionLearning(probs: PropType) {
         }
         return 0;
     }
+    useEffect(() => {
+        const selectionId = learning ? learning.sectionId : -1;
+        setToggle(section.id == selectionId)
+    }, [learning])
     return (
         <div className="section-learning-container">
             <div className="section-learning-wrapper" onClick={handleToggle}>
@@ -53,7 +58,11 @@ function SectionLearning(probs: PropType) {
             </div>
             {toggle === true && <div className="section-learning-curriculum-wrapper">
                 {section.curriculums.length > 0 && section.curriculums.map((cur) => {
-                    return <CurriculumLearning sectionId={section.id} curriculum={cur} key={`cur-learning-${cur.type}-${cur.id}`} />
+                    return <CurriculumLearning
+                        watchingSecond={watchingSecond}
+                        sectionId={section.id}
+                        curriculum={cur}
+                        key={`cur-learning-${cur.type}-${cur.id}`} />
                 })}
             </div>}
         </div>

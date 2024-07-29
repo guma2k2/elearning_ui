@@ -101,7 +101,7 @@ function MyLearningCourse(props: PropType) {
         <div className="my-learning-course-bottom">
             <div className="my-learning-course-progress-text">Hoàn thành {learingCourse.percentFinished}%</div>
             <div className="my-learning-course-rating" onClick={showModal}>
-                <Rate allowHalf disabled value={learingCourse.review ? learingCourse.review.rating : 2} className="my-learning-course-rating-icon" />
+                <Rate allowHalf disabled value={learingCourse.review ? learingCourse.review.ratingStar : 2} className="my-learning-course-rating-icon" />
                 <div className="my-learning-course-rating-text">Xep hang cua ban</div>
 
             </div>
@@ -116,7 +116,7 @@ function MyLearningCourse(props: PropType) {
                 style={{ width: "100%" }}
                 initialValues={{
                     'courseId': learingCourse.course.id,
-                    'ratingStar': learingCourse.review ? learingCourse.review.rating : 5,
+                    'ratingStar': learingCourse.review ? learingCourse.review.ratingStar : 5,
                     'content': learingCourse.review ? learingCourse.review.content : "",
                 }}
             >
