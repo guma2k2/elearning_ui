@@ -200,7 +200,6 @@ function CourseDetail() {
                         <span>{course?.user?.fullName}</span>
 
                         <div className="instructor-course-wrapper">
-                            <img src="https://img-b.udemycdn.com/user/200_H/7799204_2091_5.jpg" alt="instructor-image" />
                             <img src={course?.user?.photo} alt="instructor-image" />
 
                             <div className="instructor-course-right">

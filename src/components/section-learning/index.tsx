@@ -19,6 +19,29 @@ function SectionLearning(probs: PropType) {
     const handleToggle = () => {
         setToggle((prev) => !prev);
     }
+    const getTotalDurationOfSection = (): string => {
+        if (section) {
+            let totalDurationNum: number = 0;
+            section.curriculums.forEach((cur) => {
+                if (cur.type == "lecture") {
+                    if (cur.duration) {
+                        totalDurationNum += cur.duration;
+                    }
+                }
+            })
+            const hours = Math.floor(totalDurationNum / 3600);
+            const minutes = Math.floor((totalDurationNum % 3600) / 60);
+            const seconds = totalDurationNum % 60;
+
+            // Pad the hours, minutes, and seconds with leading zeros if needed
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(seconds).padStart(2, '0');
+
+            return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+        }
+        return ""
+    }
     const getCurriculumFinishedCountBySection = (): number => {
         if (learning) {
             let count: number = 0;
@@ -53,7 +76,7 @@ function SectionLearning(probs: PropType) {
                 <div className="section-learning-bottom">
                     <span>{getCurriculumFinishedCountBySection()}/{section?.curriculums.length}</span>
                     <span>|</span>
-                    <span>4:20</span>
+                    <span>{getTotalDurationOfSection()}</span>
                 </div>
             </div>
             {toggle === true && <div className="section-learning-curriculum-wrapper">

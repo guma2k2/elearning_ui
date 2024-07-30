@@ -54,7 +54,7 @@ export const learningSlice = createSlice({
             const sectionId = payload.sectionId;
             const type = payload.curriculum.type;
             const curriculum = payload.curriculum;
-            console.log(curriculum);
+            // console.log(curriculum);
             if (state.learning) {
                 state.learning.course.sections.forEach((sec) => {
                     if (sec.id === sectionId) {
@@ -99,18 +99,18 @@ export const learningSlice = createSlice({
     }, extraReducers: (builder) => {
         builder
             .addCase(fetchCourseBySlug.pending, (state, action) => {
-                console.log(action);
+                // console.log(action);
                 state.isError = false;
                 state.isLoading = true;
             })
             .addCase(fetchCourseBySlug.fulfilled, (state, action) => {
-                console.log(action);
+                // console.log(action);
                 state.learning = action.payload
                 state.isError = false;
                 state.isLoading = false;
             })
-            .addCase(fetchCourseBySlug.rejected, (state, action) => {
-                console.log(action);
+            .addCase(fetchCourseBySlug.rejected, (state, _action) => {
+                // console.log(action);
                 state.isError = true;
                 state.isLoading = false;
             })

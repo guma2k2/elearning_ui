@@ -58,7 +58,6 @@ function CurriculumLearning(probs: PropType) {
                 const res = await createLearningQuiz(learningQuizPost);
                 if (res.status == 204) {
                     console.log("updated");
-
                 }
             }
 
@@ -119,7 +118,7 @@ function CurriculumLearning(probs: PropType) {
                 </h3>
                 <div className="section-learning-curriculum-time">
                     <IoIosPlayCircle className='section-learning-curriculum-type' />
-                    <span>{curriculum.type == "lecture" ? curriculum.formattedDuration : ""}</span>
+                    <span>{curriculum.type == "lecture" ? curriculum.formattedDuration : "00:30"}</span>
                 </div>
             </div>
             <div className="section-learning-curriculum-right">

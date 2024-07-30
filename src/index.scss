@@ -403,42 +403,41 @@ li {
     display: flex;
     flex-direction: column;
 
-    .popover-search-course-titles {
+    .popover-search-header {
       display: flex;
       flex-direction: column;
-      margin-bottom: 10px;
+      gap: 10px;
 
-      .popover-search-course-title {
+      .popover-search-header-top {
         display: flex;
         align-items: center;
-        height: 48px;
-        gap: 20px;
-        padding: 8px 0;
+        justify-content: flex-start;
+        gap: 10px;
+      }
 
-        .popover-search-course-title-left {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+      .popover-search-header-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
-          .popover-icon-search {
-            font-size: 20px;
-            color: #2d2f31;
+        h5 {
+          font-size: 14px;
+        }
+
+        span {
+          font-size: 14px;
+          color: #0000008a;
+
+          &:hover {
+            color: #f05123;
+            cursor: pointer;
           }
         }
+      }
 
-        .popover-search-course-title-right {
-          font-size: 16px;
-          font-size: 700;
-          line-height: 1.4;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        &:hover {
-          cursor: pointer;
-          background-color: #f7f9fa;
-        }
+      .popover-search-header-divider {
+        margin: 0;
+        margin-bottom: 10px;
       }
     }
 

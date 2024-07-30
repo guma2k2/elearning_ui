@@ -18,8 +18,6 @@ function Login() {
     const navigate = useNavigate();
 
     const onFinish: FormProps<LoginRequest>['onFinish'] = async (values) => {
-        console.log(values);
-        console.log("is login...");
         dispatch(login(values));
     };
     const onFinishFailed = () => {

@@ -39,6 +39,8 @@ export const authSlice = createSlice({
             if (state.auth) {
                 state.auth = undefined
             }
+            const cookies = new Cookies();
+            cookies.remove('token', { path: '/' });
             state.isLoading = false
             state.isError = false
             state.isLoggin = false

@@ -5,11 +5,16 @@ import { useEffect, useRef, useState } from 'react';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
 import { Button, Progress } from 'antd';
 import SectionLearning from '../../components/section-learning';
-import { ILecture, IQuiz } from '../../types/CourseType';
+import { ICurriculum, ILecture, IQuiz } from '../../types/CourseType';
 import AnswerLearning from '../../components/answer-learning';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 import { LearningSelection, LearningWatchingSecond, fetchCourseBySlug, updateSelection, updateWatchingSecond } from '../../redux/slices/LearningSlice';
+import { LearningLecturePost } from '../../types/learning/LearningLectureType';
+import { createLearningLecture } from '../../services/LearningLectureService';
+import { LearningQuizPost } from '../../types/learning/LearningQuizType';
+import { createLearningQuiz } from '../../services/LearningQuizService';
+import { CurriculumType } from '../../components/curriculum/CurriculumType';
 function Learning() {
     const { slug } = useParams();
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -56,7 +61,8 @@ function Learning() {
     const getPecentFinished = (): number => {
         if (learning) {
             const total = learning?.course.totalLectureCourse;
-            return (getLectureFinishedCount() / total) * 100
+            const percentage = (getLectureFinishedCount() / total) * 100;
+            return Math.floor(percentage);
         }
         return 0;
     }
@@ -65,7 +71,51 @@ function Learning() {
         setIsAnswer(true);
     }
 
-    const handleUpdateSelection = (type: "prev" | "next") => {
+    const isFirstCurriculum = (): boolean => {
+        if (learning) {
+            if (learning.course.sections.length === 0) {
+                return true;
+            }
+            for (let indexSection = 0; indexSection < learning.course.sections.length; indexSection++) {
+                const sec = learning.course.sections[indexSection];
+                for (let indexCur = 0; indexCur < sec.curriculums.length; indexCur++) {
+                    const cur = sec.curriculums[indexCur];
+                    if (indexSection === 0 && indexCur === 0 && cur.id === learning.curriculumId) {
+                        console.log("true");
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    const isLastCurriculum = (): boolean => {
+        if (learning) {
+            if (learning.course.sections.length === 0) {
+                return true;
+            }
+
+            const totalSectionCount = learning.course.sections.length;
+
+            for (let indexSection = 0; indexSection < totalSectionCount; indexSection++) {
+                const sec = learning.course.sections[indexSection];
+                const totalCurCount = sec.curriculums.length;
+
+                for (let indexCur = 0; indexCur < totalCurCount; indexCur++) {
+                    const cur = sec.curriculums[indexCur];
+                    if (indexSection === totalSectionCount - 1 && cur.id === learning.curriculumId && indexCur === totalCurCount - 1) {
+                        console.log("true");
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    const handleUpdateSelection = async (type: "prev" | "next") => {
         if (type == 'prev') {
             if (learning) {
                 learning.course.sections.forEach((sec, indexSection) => {
@@ -79,6 +129,7 @@ function Learning() {
                                     type: prevCur.type
                                 }
                                 dispatch(updateSelection(selection))
+                                updateAccessCurriculum(cur);
                                 return;
                             } else if (cur.id == learning.curriculumId && indexCur == 0) {
                                 const curCountOfPrevSection = learning.course.sections[indexSection - 1].curriculums.length;
@@ -90,6 +141,7 @@ function Learning() {
                                     type: prevCur.type
                                 }
                                 dispatch(updateSelection(selection))
+                                updateAccessCurriculum(cur);
                                 return;
                             }
 
@@ -102,13 +154,18 @@ function Learning() {
                                     type: prevCur.type
                                 }
                                 dispatch(updateSelection(selection))
+                                updateAccessCurriculum(cur);
                                 return;
                             } else if (cur.id == learning.curriculumId && indexCur == 0) {
+                                console.log("cannt prev");
                                 return;
                             }
                         }
                     })
                 })
+
+
+
             }
         } else if (type == "next") {
             if (learning) {
@@ -125,6 +182,7 @@ function Learning() {
                                     type: nextCur.type
                                 }
                                 dispatch(updateSelection(selection))
+                                updateAccessCurriculum(cur);
                                 return;
                             } else if (cur.id == learning.curriculumId && indexCur == (curCountOfSection - 1)) {
                                 const nextSec = learning.course.sections[indexSection + 1];
@@ -135,6 +193,7 @@ function Learning() {
                                     type: nextCur.type
                                 }
                                 dispatch(updateSelection(selection))
+                                updateAccessCurriculum(cur);
                                 return;
                             }
 
@@ -147,6 +206,7 @@ function Learning() {
                                     type: nextCur.type
                                 }
                                 dispatch(updateSelection(selection))
+                                updateAccessCurriculum(cur);
                                 return;
                             } else if (cur.id == learning.curriculumId && indexCur < (curCountOfSection - 1)) {
                                 return;
@@ -154,6 +214,43 @@ function Learning() {
                         }
                     })
                 })
+            }
+        }
+
+
+    }
+
+    const updateAccessCurriculum = async (cur: ILecture | IQuiz) => {
+        if (cur) {
+            if (cur.type == "lecture") {
+                console.log(watchingSecond);
+                const learningLecturePost: LearningLecturePost = {
+                    lectureId: cur.id,
+                    watchingSecond: cur.watchingSecond,
+                    finished: cur.finished
+                }
+                const res = await createLearningLecture(learningLecturePost);
+                if (res.status == 204) {
+                    console.log("updated");
+
+                    if (learning) {
+                        const learningWatching: LearningWatchingSecond = {
+                            sectionId: learning.sectionId,
+                            curriculumId: learning.curriculumId,
+                            watchingSecond: watchingSecond
+                        }
+                        dispatch(updateWatchingSecond(learningWatching));
+                    }
+                }
+            } else {
+                const learningQuizPost: LearningQuizPost = {
+                    quizId: cur.id,
+                    finished: cur.finished
+                }
+                const res = await createLearningQuiz(learningQuizPost);
+                if (res.status == 204) {
+                    console.log("updated");
+                }
             }
         }
     }
@@ -208,7 +305,7 @@ function Learning() {
         };
     }, [learning])
 
-    console.log(watchingSecond);
+    // console.log(isFirstCurriculum());
 
 
     return (
@@ -290,11 +387,11 @@ function Learning() {
                 </div>
             </div>
             <div className="learning-bottom">
-                <Button className='btn-learning-prev' onClick={() => handleUpdateSelection("prev")}>
+                <Button disabled={isFirstCurriculum()} className='btn-learning-prev' onClick={() => handleUpdateSelection("prev")}>
                     <RxCaretLeft className='learning-bottom-caret' />
                     <span>BÀI TRƯỚC</span>
                 </Button>
-                <Button className='btn-learning-next' onClick={() => handleUpdateSelection("next")}>
+                <Button disabled={isLastCurriculum()} className='btn-learning-next' onClick={() => handleUpdateSelection("next")}>
                     <span>BÀI TIẾP THEO</span>
                     <RxCaretRight className='learning-bottom-caret' />
                 </Button>
