@@ -1,31 +1,17 @@
+import { Divider } from "antd";
 import { IoIosSearch } from "react-icons/io";
 function PopoverSearch() {
     return <div className="popover-search-container">
-        <div className="popover-search-course-titles">
-            <div className="popover-search-course-title">
-                <div className="popover-search-course-title-left">
-                    <IoIosSearch className="popover-icon-search" />
-                </div>
-                <span className="popover-search-course-title-right">
-                    Node Js
-                </span>
+        <div className="popover-search-header">
+            <div className="popover-search-header-top">
+                <IoIosSearch />
+                <span>Kết quả cho 'java'</span>
             </div>
-            <div className="popover-search-course-title">
-                <div className="popover-search-course-title-left">
-                    <IoIosSearch className="popover-icon-search" />
-                </div>
-                <span className="popover-search-course-title-right">
-                    Node Js
-                </span>
+            <div className="popover-search-header-bottom">
+                <h5>KHÓA HỌC</h5>
+                <span>Xem thêm</span>
             </div>
-            <div className="popover-search-course-title">
-                <div className="popover-search-course-title-left">
-                    <IoIosSearch className="popover-icon-search" />
-                </div>
-                <span className="popover-search-course-title-right">
-                    Node Js
-                </span>
-            </div>
+            <Divider className="popover-search-header-divider" />
         </div>
         <div className="popover-search-course-wrapper">
             <div className="popover-search-course">

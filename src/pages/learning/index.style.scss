@@ -110,6 +110,10 @@
                     word-spacing: normal;
                     word-wrap: break-word;
                     line-height: 1.5;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 10px;
                 }
 
                 .learning-quiz-select-title {
@@ -124,6 +128,15 @@
 
                     .btn-answer {
                         width: 115px;
+                        height: 32px;
+                        font-weight: 700;
+                        background-color: #0093fc;
+                        color: white;
+                        text-transform: uppercase;
+                        border-radius: 99px;
+                    }
+
+                    .btn-next-question {
                         height: 32px;
                         font-weight: 700;
                         background-color: #0093fc;

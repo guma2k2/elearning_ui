@@ -226,8 +226,7 @@ function Navbar() {
                     </div>
 
                     {isLoggin == true && <>
-                        <div className="notification"><MdOutlineNotifications className="icon" /></div>
-
+                        {/* <div className="notification"><MdOutlineNotifications className="icon" /></div> */}
                         <Popover
                             content={PopoverUserProfile}
                             rootClassName="popover-profiles"
