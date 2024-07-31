@@ -1,4 +1,4 @@
-import { Button, Modal, Progress, Rate } from 'antd';
+import { Button, Input, Modal, Progress, Rate } from 'antd';
 import './Course.style.scss'
 import { MdOutlineKeyboardArrowRight, MdOutlineOndemandVideo } from "react-icons/md";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,6 +18,10 @@ import { PageReviewResponse, ReviewGet, ReviewPercent } from '../../types/Review
 import { FaCirclePlay } from "react-icons/fa6";
 import { LiaCertificateSolid } from "react-icons/lia";
 import { LiaTimesSolid } from "react-icons/lia"
+import { CouponType } from '../../types/CouponType';
+import { getByCode } from '../../services/CouponService';
+import { AxiosError } from 'axios';
+import { ErrorType } from '../../types/ErrorType';
 function CourseDetail() {
     let { courseId } = useParams();
 
@@ -33,6 +37,10 @@ function CourseDetail() {
     const [course, setCourse] = useState<CourseType>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [coupon, setCoupon] = useState<CouponType>();
+    const [errorMessage, setErrorMessage] = useState<string>();
+    const [disabledDiscount, setDisabledDiscount] = useState<boolean>(false);
+    const [couponValue, setCouponValue] = useState<string>("");
     const getBreadcrumb = (): string[] => {
         if (course) {
             return course.breadcrumb.split("-");
@@ -55,7 +63,38 @@ function CourseDetail() {
         if (course) {
             navigate(`/course/${course.slug}/learning`)
         }
-        console.log("cc");
+    }
+    const handleCancelCoupon = () => {
+        setCoupon(undefined);
+        setDisabledDiscount(false)
+        setCouponValue("");
+    }
+
+    const handleSearchCoupon = async () => {
+        try {
+            const res = await getByCode(couponValue);
+            console.log(res);
+
+            if (res.status === 200) {
+                // Handle decrease total price
+                console.log(res.data);
+                const data = res.data as CouponType;
+                setDisabledDiscount(true);
+                setCoupon(data);
+                setErrorMessage("");
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                setErrorMessage(message);
+            }
+        }
+    }
+    const handleChangeCouponValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const counponVal = e.target.value;
+        setCouponValue(counponVal);
     }
     useEffect(() => {
         console.log(ratingSelected);
@@ -71,6 +110,7 @@ function CourseDetail() {
 
         const fetchReviewByCourseId = async () => {
             const res = await getReviewsByCourseId(courseId, undefined, undefined);
+            console.log(res);
             if (res.status === 200) {
                 const pageReviewResponse = res.data as PageReviewResponse
                 const reviews = pageReviewResponse.content;
@@ -96,6 +136,15 @@ function CourseDetail() {
 
     }, [courseId])
 
+    const handleRedirectToPaymentPage = () => {
+        if (course) {
+            if (coupon) {
+                navigate(`/payment/checkout/course/${course.id}?discountPercent=${coupon.discountPercent}`)
+            } else {
+                navigate(`/payment/checkout/course/${course.id}`)
+            }
+        }
+    }
     const loadMoreData = async (ratingStar: number | undefined, type: "more" | "rate" | "reset") => {
         let newPageNum: number = pageNumReview;
         if (type == "rate") {
@@ -141,6 +190,8 @@ function CourseDetail() {
 
 
     }
+    console.log(course);
+
 
     return <div className="course-container">
         <div className="header">
@@ -228,7 +279,7 @@ function CourseDetail() {
                         </div>
                     </div>
 
-                    <div className="review-course-container">
+                    {reviewsCourse && reviewsCourse.length > 0 && <div className="review-course-container">
                         <div className="review-header">
                             <div className="review-total-rating">
                                 <img src={StarIcon} alt="star icon" />
@@ -241,7 +292,7 @@ function CourseDetail() {
                         </div>
                         <Button onClick={showModal} className='btn-review-showmore'>Hiện thêm đánh giá</Button>
 
-                    </div>
+                    </div>}
 
                     {course && course.description &&
                         <div className='desc-container'>
@@ -258,9 +309,12 @@ function CourseDetail() {
                 </div>
                 <div className="course-detail">
                     <div className="course-detail-action">
-                        <span className="course-action-price">{course?.free == true ? `${course.price} d` : "Mien phi"}</span>
+                        <span className="course-action-price">{course?.free == false ? `${course.price} d` : "Mien phi"}</span>
                         {course?.learning == false && <Button className='btn-add-to-cart'>Thêm vào giỏ hàng</Button>}
-                        <Button className='btn-buy-now' onClick={handleLearning}>{course?.learning == true ? "Chuyen den khoa hoc" : course?.free == true ? "Dang ki khoa hoc" : "Mua khoa hoc"}</Button>
+                        {course?.learning == true && <Button className='btn-buy-now' onClick={handleLearning}>Chuyen den khoa hoc</Button>}
+                        {course?.learning == false && course?.free == true && <Button className='btn-buy-now' onClick={handleLearning}>Dang ki khoa hoc</Button>}
+                        {course?.learning == false && course?.free == false && <Button className='btn-buy-now' onClick={handleRedirectToPaymentPage}>Mua khoa hoc</Button>}
+
                     </div>
                     <div className="course-info">
                         <div className="course-info-level">
@@ -278,6 +332,27 @@ function CourseDetail() {
                         <div className="course-info-benefit">
                             <FaBatteryFull />
                             <span>Học mọi lúc mọi nơi</span>
+                        </div>
+                        <div className="course-coupon-container">
+                            <h3 className='coupon-header'>Áp dụng coupon</h3>
+                            {coupon && <div className="coupon-used">
+                                <div className="coupon-used-left">
+                                    <ul>
+                                        <li>
+                                            Đã áp dụng <b>{coupon.code}</b>
+                                        </li>
+                                        <li>Coupon của Udemy</li>
+                                    </ul>
+                                </div>
+                                <span className="coupon-used-right" onClick={handleCancelCoupon}>
+                                    <LiaTimesSolid />
+                                </span>
+                            </div>}
+                            <div className="coupon-input">
+                                <Input disabled={disabledDiscount} className='coupon-input' placeholder='Nhap khuyen mai' value={couponValue} onChange={handleChangeCouponValue} />
+                                <Button disabled={disabledDiscount} onClick={handleSearchCoupon} className='coupon-btn'>Ap dung</Button>
+                            </div>
+                            {errorMessage && errorMessage !== "" && <span className='coupon-error'>{errorMessage}</span>}
                         </div>
                     </div>
                 </div>

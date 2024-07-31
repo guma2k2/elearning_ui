@@ -274,6 +274,67 @@
                         align-items: center;
                         gap: 10px;
                     }
+
+                    .course-coupon-container {
+                        .coupon-header {
+                            text-align: center;
+                            margin: 20px 0;
+                        }
+
+                        .coupon-used {
+                            border: 1px dashed #d1d7dc;
+                            padding: 15px 10px;
+                            width: 100%;
+                            height: 48px;
+                            display: flex;
+                            align-items: center;
+                            margin-bottom: 10px;
+
+                            .coupon-used-left {
+                                flex: 1;
+                                font-size: 12px;
+                                color: var(--color-gray-300);
+                            }
+
+                            .coupon-used-right {
+                                width: 45px;
+                                height: 48px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+
+                                &:hover {
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+
+                        .coupon-error {
+                            color: red;
+                            font-size: 12px;
+                        }
+
+                        .coupon-input {
+                            display: flex;
+                            align-items: center;
+
+                            .coupon-input {
+                                flex: 8;
+                                border-radius: 0;
+                                padding: 10px 15px;
+                                height: 34px;
+                            }
+
+                            .coupon-btn {
+                                flex: 2;
+                                border-radius: 0;
+                                height: 34px;
+                                background-color: #a435f0;
+                                color: white;
+                                font-weight: 700;
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -1,5 +1,5 @@
 .navbar-bottom-container {
-    max-width: 100%;
+    max-width: 100vw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,7 +18,7 @@
     }
 
     .subnav-tooltip {
-        min-width: 1440px;
+        min-width: 100vw;
         left: 0px !important;
         z-index: 1 !important;
         height: 48px;

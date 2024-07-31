@@ -34,6 +34,7 @@ export type CourseGetType = {
     id: number,
     title: string,
     image: string
+    price: number
 }
 
 export type CourseListGetType = {
@@ -44,9 +45,10 @@ export type CourseListGetType = {
     image?: string
     isPublish?: boolean
     price: number
-    totalHours: number
+    totalDurationCourse: string
     totalLectures: number
     averageRating: number
+    ratingCount: number
     createdBy: string
 }
 

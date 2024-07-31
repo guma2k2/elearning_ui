@@ -1,61 +1,31 @@
 import { Card, DatePicker, DatePickerProps } from "antd"
+import { useEffect, useState } from "react"
 import './Dashboard.style.scss'
-import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, Legend, YAxis, Tooltip, Bar, Rectangle, Label } from "recharts";
-const data = [
-    {
-        name: 'Th 1',
-        total: 4000,
-    },
-    {
-        name: 'Th 2',
-        total: 3000,
-    },
-    {
-        name: 'Th 3',
-        total: 2000,
-    },
-    {
-        name: 'Th 4',
-        total: 2780,
-    },
-    {
-        name: 'Th 5',
-        total: 1890,
-    },
-    {
-        name: 'Th 6',
-        total: 2390,
-    },
-    {
-        name: 'Th 7',
-        total: 3490,
-    },
-    {
-        name: 'Th 8',
-        total: 3000,
-    },
-    {
-        name: 'Th 9',
-        total: 2000,
-    },
-    {
-        name: 'Th 10',
-        total: 2780,
-    },
-    {
-        name: 'Th 11',
-        total: 1890,
-    },
-    {
-        name: 'Th 12',
-        total: 2390,
-    }
-];
-
+import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, Legend, YAxis, Tooltip, Bar, Rectangle } from "recharts";
+import { getStatisticByTime } from "../../../services/StatisticService";
+type statisticType = {
+    name: string,
+    total: number
+}
 function Dashboard() {
+    const [year, setYear] = useState<number>();
+    const [statisticByYear, setStatisticByYear] = useState<statisticType[]>();
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
         console.log(date, dateString);
     };
+
+    const fetchStatisticByTime = async (time: string) => {
+        const res = await getStatisticByTime(time);
+        if (res.status === 200) {
+            const data = res.data;
+            setStatisticByYear(data);
+        }
+
+    }
+    useEffect(() => {
+        let time: string = "";
+        fetchStatisticByTime(time);
+    }, [year])
 
     return (
         <div className="dashboard-container">
@@ -86,7 +56,7 @@ function Dashboard() {
                     <BarChart
                         width={500}
                         height={300}
-                        data={data}
+                        data={statisticByYear}
                         margin={{
                             top: 5,
                             right: 30,

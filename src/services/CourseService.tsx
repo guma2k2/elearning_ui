@@ -31,11 +31,25 @@ export const getCourseBySlug = async (courseSlug: string | undefined) => {
     return res;
 }
 
+
+export const getCourseByMultiQuery = async (query: string) => {
+    let url = "/courses/search";
+    if (query && query != "") {
+        url += "?" + query;
+    }
+    console.log(url);
+
+    const res = await instance.get(url);
+    return res;
+}
+
 export const updateStatus = async (status: boolean, id: number) => {
     const url = `/admin/courses/${id}/status/${status}`
     const res = await instance.put(url);
     return res;
 }
+
+
 
 
 

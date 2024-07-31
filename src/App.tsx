@@ -33,6 +33,7 @@ import OrderManagement from "./pages/admin/order";
 import StudentManagement from "./pages/admin/student";
 import ReviewManagement from "./pages/admin/review";
 import OrderHistory from "./pages/order-history";
+import PaymentCourse from "./pages/payment/PaymentCourse";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -89,6 +90,9 @@ function App() {
         {
           path: "/payment/checkout/",
           element: <Payment />,
+        }, {
+          path: "/payment/checkout/course/:id",
+          element: <PaymentCourse />,
         },
       ]
     },
