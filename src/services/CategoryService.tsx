@@ -27,3 +27,10 @@ export const get = async (catId: number) => {
     const res = await instance.get(url);
     return res;
 }
+
+
+export const getByName = async (catName: string) => {
+    const url = `/category/name/${catName}`
+    const res = await instance.get(url);
+    return res;
+}

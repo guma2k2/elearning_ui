@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import './Courses.style.scss'
 import { CourseType } from '../../types/CourseType';
 import { getCourseWithPagination } from '../../services/CourseService';
@@ -10,6 +10,7 @@ import Card from '../../components/card';
 import { Tooltip, TooltipRefProps } from 'react-tooltip'
 import { useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
+import { useNavigate } from 'react-router-dom';
 interface ArrowProps {
     className?: string;
     style?: React.CSSProperties;
@@ -28,9 +29,13 @@ function ArrowCustom(props: ArrowProps) {
 }
 function Courses() {
     const pageSize = 10;
+    const navigate = useNavigate();
     const [courses, setCourses] = useState<CourseType[]>([]);
     const { categoryParents } = useAppSelector((state: RootState) => state.categories);
 
+    const handleRedirectToFilterPage = (catName: string) => {
+        navigate(`/courses/search?catName=${catName}`)
+    }
     useEffect(() => {
         const fetchCourses = async () => {
             const res = await getCourseWithPagination(0, pageSize);
@@ -50,10 +55,11 @@ function Courses() {
         prevArrow: <ArrowCustom />
     };
     return (
-        <>
+        <Fragment>
             <div className="navbar-bottom-container">
                 {categoryParents?.map((item, index) => {
                     return <div key={item.id}
+                        onClick={() => handleRedirectToFilterPage(item.name)}
                         className="navbar-bottom-item"
                         data-tooltip-id="tooltip-navbar-bottom"
                         data-tooltip-content={index.toString()}
@@ -72,7 +78,7 @@ function Courses() {
                             const index: number = content ? parseInt(content) : -1;
                             const childrens: CategoryType[] = categoryParents ? categoryParents[index].childrens : [];
                             const html = childrens.length > 0 && childrens.map((child) => {
-                                return <div key={child.id} className="navbar-bottom-item"><span>{child.name}</span></div>
+                                return <div onClick={() => handleRedirectToFilterPage(child.name)} key={child.id} className="navbar-bottom-item"><span>{child.name}</span></div>
                             })
                             return <div className="wrapper" >{html}</div>;
                         }
@@ -94,7 +100,7 @@ function Courses() {
                     </Slider>
                 </div>
             </div>
-        </>
+        </Fragment>
 
     )
 }
