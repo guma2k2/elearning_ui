@@ -28,22 +28,23 @@ function getItem(
     } as MenuItem;
 }
 
-const items: MenuItem[] = [
-    getItem('Dashboard', '1', <Link to={"/admin"}><PieChartOutlined /></Link>),
-    getItem('User', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>),
-    getItem('Category', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>),
-    getItem('Topic', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>),
-    getItem('Course', '5', <Link to={"/admin/courses"}><DesktopOutlined /></Link>),
-    getItem('Coupon', '6', <Link to={"/admin/coupons"}><DesktopOutlined /></Link>),
-    getItem('Order', '7', <Link to={"/admin/orders"}><DesktopOutlined /></Link>),
-    getItem('Review', '8', <Link to={"/admin/reviews"}><DesktopOutlined /></Link>),
-    getItem('Student', '9', <Link to={"/admin/students"}><DesktopOutlined /></Link>),
 
-];
 
 const App: React.FC = () => {
-    const [collapsed, setCollapsed] = useState(false);
     const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
+    const items: MenuItem[] = [
+        getItem('Dashboard', '1', <Link to={"/admin"}><PieChartOutlined /></Link>),
+        auth?.user.role === "ROLE_ADMIN" ? getItem('User', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Category', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Topic', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>) : null,
+        getItem('Course', '5', <Link to={"/admin/courses"}><DesktopOutlined /></Link>),
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Coupon', '6', <Link to={"/admin/coupons"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Order', '7', <Link to={"/admin/orders"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Review', '8', <Link to={"/admin/reviews"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Student', '9', <Link to={"/admin/students"}><DesktopOutlined /></Link>) : null,
+
+    ];
+    const [collapsed, setCollapsed] = useState(false);
 
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -55,7 +56,6 @@ const App: React.FC = () => {
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-
                 <div className="demo-logo-vertical" style={{ height: "80px", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }} >
                     F8 ADMIN
                 </div>
@@ -63,7 +63,8 @@ const App: React.FC = () => {
             </Sider>
             <Layout >
                 <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }}>
-                    <div className="header-admin-info" style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end", marginRight: "20px" }}>
+                    <div className="header-admin-info" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginRight: "20px", gap: "20px" }}>
+                        <span>{auth?.user.role}</span>
                         <Popover
                             content={PopoverUserProfile}
                             rootClassName="popover-profiles"
@@ -72,7 +73,10 @@ const App: React.FC = () => {
                             placement="bottomLeft"
                             onOpenChange={handleOpenProfileChange}
                         >
-                            <img src={auth?.user.photoURL} alt="Photo" className="profile" />
+                            <img src={auth?.user.photoURL} alt="Photo" className="profile" style={{
+                                width: "30px",
+                                height: "30px", objectFit: "cover", borderRadius: "50%"
+                            }} />
                         </Popover>
                     </div>
                 </Header>
