@@ -1,0 +1,21 @@
+.statistic-product-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .statistic-header {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .statistic-product-input {
+            width: fit-content;
+            margin-bottom: 20px;
+        }
+    }
+
+    .statistic-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+}

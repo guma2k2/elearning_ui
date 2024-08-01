@@ -16,6 +16,8 @@ import PopoverLearning from "../popover-learning"
 import PopoverSearch from "../popover-search"
 import { getCartsByUser } from '../../redux/slices/CartSlice';
 import { getLearningCourse } from '../../redux/slices/LearningCourseSlice';
+import { CourseGetType } from "../../types/CourseType";
+import { getCourseByMultiQuery } from "../../services/CourseService";
 function Navbar() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -29,9 +31,35 @@ function Navbar() {
     const childCategoryTooltipRef = useRef<TooltipRefProps>(null)
     const categoryRef = useRef<HTMLDivElement>(null)
     const [open, setOpen] = useState<boolean>(false);
+    const [openSearch, setOpenSearch] = useState<boolean>(false);
     const [openProfile, setOpenProfile] = useState<boolean>(false);
     const [openLearning, setOpenLearning] = useState<boolean>(false);
+    const [keyword, setKeyword] = useState<string>("");
+    const [courses, setCourses] = useState<CourseGetType[]>();
 
+    const handleChangeKeyword = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value;
+        console.log(newKeyword);
+        setOpenSearch(true);
+        if (newKeyword) {
+            const params = `keyword=${newKeyword}`;
+            const res = await getCourseByMultiQuery(params);
+            console.log(res);
+            if (res.status == 200) {
+                const data = res.data.content as CourseGetType[];
+                setCourses(data);
+            }
+        }
+        setKeyword(newKeyword);
+    }
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            if (keyword && keyword.length > 0) {
+                let url = `/courses/search?keyword=${keyword}`;
+                navigate(url);
+            }
+        }
+    };
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);
     };
@@ -40,6 +68,10 @@ function Navbar() {
     };
     const handleOpenLearning = (newOpen: boolean) => {
         setOpenLearning(newOpen);
+    };
+
+    const handleOpenSearch = (newOpen: boolean) => {
+        setOpenSearch(newOpen);
     };
 
     const handleHideCart = () => {
@@ -186,13 +218,14 @@ function Navbar() {
 
                     <Popover
                         placement="bottom"
-                        content={PopoverSearch}
+                        content={() => <PopoverSearch courses={courses} keyword={keyword} />}
                         rootClassName="popover-search"
-                        open={results.length > 0}
+                        open={openSearch}
+                        onOpenChange={handleOpenSearch}
                     >
                         <div className="search" >
                             <div className="button"><MdSearch className="icon" /></div>
-                            <input type="text" placeholder="Tìm kiếm khóa học" />
+                            <input onKeyDown={handleKeyPress} type="text" placeholder="Tìm kiếm khóa học" value={keyword} onChange={handleChangeKeyword} />
                         </div>
                     </Popover>
                 </div>

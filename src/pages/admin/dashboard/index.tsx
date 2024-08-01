@@ -1,79 +1,60 @@
-import { Card, DatePicker, DatePickerProps } from "antd"
+import { Card, DatePickerProps, Tabs, TabsProps } from "antd"
 import { useEffect, useState } from "react"
 import './Dashboard.style.scss'
-import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, Legend, YAxis, Tooltip, Bar, Rectangle } from "recharts";
-import { getStatisticByTime } from "../../../services/StatisticService";
-type statisticType = {
-    name: string,
-    total: number
-}
+import StatisticYear from "./statistic-year";
+import StatisticMonth from "./statistic-month";
+import { getDashboard } from "../../../services/StatisticService";
+import { DashboardType } from "../../../types/StatisticType";
+import StatisticProduct from "./statistic-product";
+
 function Dashboard() {
-    const [year, setYear] = useState<number>();
-    const [statisticByYear, setStatisticByYear] = useState<statisticType[]>();
-    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
-    };
-
-    const fetchStatisticByTime = async (time: string) => {
-        const res = await getStatisticByTime(time);
-        if (res.status === 200) {
-            const data = res.data;
-            setStatisticByYear(data);
+    const [dashboard, setDashboard] = useState<DashboardType>();
+    const items: TabsProps['items'] = [
+        {
+            key: '1',
+            label: 'Theo năm',
+            children: <StatisticYear />,
+        },
+        {
+            key: '2',
+            label: 'Theo tháng',
+            children: <StatisticMonth />,
+        },
+        {
+            key: '3',
+            label: 'Theo khóa học',
+            children: <StatisticProduct />,
         }
+    ];
 
+    const fetchDashboard = async () => {
+        const res = await getDashboard();
+        if (res.status == 200) {
+            const data = res.data as DashboardType
+            setDashboard(data);
+        }
     }
     useEffect(() => {
-        let time: string = "";
-        fetchStatisticByTime(time);
-    }, [year])
-
+        fetchDashboard();
+    }, [])
     return (
         <div className="dashboard-container">
             <h1 className="dashboard-header">THỐNG KÊ</h1>
             <div className="dashboard-card-container">
                 <Card title="Đơn hàng" bordered={false} style={{ width: 300 }}>
-                    <p>10</p>
+                    <p>{dashboard?.totalOrders}</p>
                 </Card>
                 <Card title="Đánh giá" bordered={false} style={{ width: 300 }}>
-                    <p>10</p>
+                    <p>{dashboard?.totalReviews}</p>
                 </Card>
                 <Card title="Khóa học" bordered={false} style={{ width: 300 }}>
-                    <p>10</p>
+                    <p>{dashboard?.totalReviews}</p>
                 </Card>
                 <Card title="Học sinh" bordered={false} style={{ width: 300 }}>
-                    <p>10</p>
+                    <p>{dashboard?.totalStudents}</p>
                 </Card>
             </div>
-            <div className="dashboard-input-year">
-                <span>Chọn năm</span>
-                <DatePicker onChange={onChange} picker="year" />
-            </div>
-            <div className="dashboard-chart-container">
-                <div className="dashboard-chart-header">
-                    Biểu đồ doanh thu theo từng tháng trong năm
-                </div>
-                <ResponsiveContainer width="100%" height="80%" >
-                    <BarChart
-                        width={500}
-                        height={300}
-                        data={statisticByYear}
-                        margin={{
-                            top: 5,
-                            right: 30,
-                            left: 20,
-                            bottom: 5,
-                        }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" >
-                        </XAxis>
-                        <YAxis />
-                        <Tooltip />
-                        <Legend verticalAlign="top" margin={{ bottom: 50 }} />
-                        <Bar dataKey="total" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
+            <Tabs defaultActiveKey="1" items={items} />
         </div>
     )
 }
