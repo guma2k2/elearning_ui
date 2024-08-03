@@ -1,4 +1,4 @@
-import { Button, Descriptions, DescriptionsProps, Divider, Drawer, Flex, Form, PaginationProps, Popconfirm, Table, TableColumnsType } from 'antd';
+import { Button, Descriptions, DescriptionsProps, Divider, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Table, TableColumnsType } from 'antd';
 import { useEffect, useState } from 'react';
 import { OrderDetailType, OrderType } from '../../../types/OrderType';
 import './OrderManagement.style.scss'
@@ -131,6 +131,10 @@ function OrderManagement() {
     return <div className="order-management-container">
         <div className='order-header' >
             <span>Order</span>
+        </div>
+        <div className="order-search">
+            <Input className='order-search-input' />
+            <Button className='order-search-btn'>Search</Button>
         </div>
         <Drawer
             title="Thong tin don hang"

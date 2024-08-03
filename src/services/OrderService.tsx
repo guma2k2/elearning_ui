@@ -26,4 +26,11 @@ export const updateOrderStatus = async (orderId: number, status: string) => {
     return res;
 }
 
+export const getBestSellerCourse = async () => {
+    const url = "/orders/beseller-courses"
+    const res = await instance.get(url);
+    return res;
+}
+
+
 export const OrderStatus: string = "SUCCESS" || "PENDING" || "CANCEL"

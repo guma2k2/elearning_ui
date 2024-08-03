@@ -2,6 +2,7 @@
 export type AuthType = {
     id: number;
     photoURL?: string
+    photo?: string
     email: string;
     firstName: string;
     active: boolean
@@ -25,6 +26,15 @@ export type LoginRequest = {
 export type RegisterRequest = {
     firstName: string,
     lastName: string,
+    email: string,
+    password: string
+}
+
+export type ForgotPasswordRequest = {
+    email: string
+}
+
+export type UpdatePasswordRequest = {
     email: string,
     password: string
 }

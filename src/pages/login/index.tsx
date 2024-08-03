@@ -126,7 +126,7 @@ function Login() {
                 <div className="bottom">
                     <div className="forgot-password-form">
                         <div className="forgot-password">
-                            <span>hoặc <a href="avc.com">Quên mật khẩu</a></span>
+                            <span>hoặc <Link to={"/forgotpassword"}>Quên mật khẩu</Link></span>
                         </div>
                     </div>
                     <span className="separator">

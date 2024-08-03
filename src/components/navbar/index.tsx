@@ -57,6 +57,7 @@ function Navbar() {
             if (keyword && keyword.length > 0) {
                 let url = `/courses/search?keyword=${keyword}`;
                 navigate(url);
+                setOpenSearch(false)
             }
         }
     };

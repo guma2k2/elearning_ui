@@ -7,6 +7,12 @@ export const getCourseWithPagination = async (current: number, pageSize: number)
     return res;
 }
 
+export const getCourseByCategory = async (catId: number) => {
+    const url = `/courses/category/${catId}`
+    const res = await instance.get(url);
+    return res;
+}
+
 export const createCourse = async (coursePost: CourseType) => {
     const url = "/admin/courses";
     const res = await instance.post(url, coursePost);

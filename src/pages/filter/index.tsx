@@ -110,22 +110,23 @@ function Filter() {
                     name="validate_other"
                     onValuesChange={handleOnValuesChange}
                     form={form}
+                    initialValues={{ sortBy: "none" }}
                 >
                     <div className='filter-btn'>
                         <Button onClick={handleReset} htmlType="reset" className='filter-btn-reset'>
                             <IoFilter />
                             <span>Reset</span>
                         </Button>
-                        <Form.Item
-                            name="select"
+                        {/* <Form.Item
+                            name="sortBy"
                             className='filter-select-sort'
                         >
-                            <span className='filter-label-sort'>Sap xep theo</span>
-                            <Select className='filer-selection'  >
+                            <Select className='filer-selection'>
                                 <Option value="china">China</Option>
                                 <Option value="usa">U.S.A</Option>
+                                <Option value="none">Sap xep theo</Option>
                             </Select>
-                        </Form.Item>
+                        </Form.Item> */}
                     </div>
                     {category && category.childrens.length > 0 && <div className="filter-form-item">
                         <Divider className='filter-form-devider' />

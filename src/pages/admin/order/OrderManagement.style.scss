@@ -12,4 +12,16 @@
             font-weight: 600;
         }
     }
+
+    .order-search {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .order-search-input {
+            width: 300px;
+        }
+
+        .order-search-btn {}
+    }
 }

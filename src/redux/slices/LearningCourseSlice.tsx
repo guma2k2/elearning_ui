@@ -44,6 +44,7 @@ export const learningCourseSlice = createSlice({
                 state.learningCourses.forEach((learningCourse, index) => {
                     const learningCourseId = action.payload.id;
                     const newReview = action.payload.review;
+                    console.log(action.payload);
                     if (learningCourse.id === learningCourseId) {
                         if (state.learningCourses) {
                             state.learningCourses[index].review.ratingStar = newReview.ratingStar

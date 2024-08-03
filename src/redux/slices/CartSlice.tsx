@@ -14,7 +14,6 @@ export const getCartsByUser = createAsyncThunk(
     async () => {
         const response = await getCarts();
         const data = response.data as CartType[];
-        console.log(data);
         return data;
     },
 )
@@ -27,8 +26,23 @@ export const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        addToCart: (state, action) => {
-
+        addToCartAction: (state, action: PayloadAction<CartType>) => {
+            let isAdded: boolean = false;
+            const payload = action.payload;
+            if (state.carts) {
+                state.carts.forEach((cart) => {
+                    if (cart.id == payload.id) {
+                        isAdded = true;
+                    }
+                })
+            }
+            if (!isAdded) {
+                if (state.carts) {
+                    state.carts.push(payload);
+                } else {
+                    state.carts = [payload];
+                }
+            }
         },
         deleteCart: (state, action) => {
             const cartId = action.payload as number
@@ -69,6 +83,6 @@ export const cartSlice = createSlice({
     },
 })
 
-export const { deleteCart, resetCart, updateCart } = cartSlice.actions
+export const { deleteCart, resetCart, updateCart, addToCartAction } = cartSlice.actions
 
 export default cartSlice.reducer

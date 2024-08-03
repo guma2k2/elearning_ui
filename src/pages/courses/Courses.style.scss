@@ -64,5 +64,15 @@
                 z-index: 10000;
             }
         }
+
+        .courses-learning-wrapper {
+            display: flex;
+            width: 100%;
+            gap: 10px;
+
+            .courses-learning-item {
+                width: calc(20% - 10px);
+            }
+        }
     }
 }

@@ -18,4 +18,16 @@
             justify-content: center;
         }
     }
+
+    .topic-search {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .topic-search-input {
+            width: 300px;
+        }
+
+        .topic-search-btn {}
+    }
 }

@@ -22,8 +22,16 @@ import { CouponType } from '../../types/CouponType';
 import { getByCode } from '../../services/CouponService';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { RootState } from '../../redux/store';
+import { addToCart } from '../../services/CartService';
+import { CartType } from '../../types/CartType';
+import { addToCartAction } from '../../redux/slices/CartSlice';
 function CourseDetail() {
     let { courseId } = useParams();
+    const dispatch = useAppDispatch();
+    const { isLoggin } = useAppSelector((state: RootState) => state.auth);
+    const { carts } = useAppSelector((state: RootState) => state.carts);
 
     const navigate = useNavigate();
     const [reviews, setReviews] = useState<ReviewGet[]>([]);
@@ -69,7 +77,18 @@ function CourseDetail() {
         setDisabledDiscount(false)
         setCouponValue("");
     }
+    const handleAddToCart = async () => {
+        if (isLoggin == false) {
+            navigate("/login")
+            return;
+        }
+        const res = await addToCart(course?.id);
+        if (res.status == 200) {
+            const data = res.data as CartType
+            dispatch(addToCartAction(data));
+        }
 
+    }
     const handleSearchCoupon = async () => {
         try {
             const res = await getByCode(couponValue);
@@ -96,47 +115,70 @@ function CourseDetail() {
         const counponVal = e.target.value;
         setCouponValue(counponVal);
     }
+    const handleRedirectToCarts = () => {
+        navigate("/cart")
+    }
+    const fetchCourseById = async () => {
+        const res = await get(courseId);
+
+        if (res.status === 200) {
+            const currentCourse = res.data as CourseType
+
+            setCourse(currentCourse);
+        }
+    }
+
+    const checkIsAddedToCart = (): boolean => {
+        let isAdded: boolean = false;
+        if (isLoggin) {
+            if (carts && carts.length > 0) {
+                carts.forEach((cart) => {
+                    if (course && cart.course.id == course.id) {
+                        isAdded = true;
+                    }
+                })
+            }
+        }
+
+        return isAdded;
+    }
+
+
+    const fetchReviewByCourseId = async () => {
+        const res = await getReviewsByCourseId(courseId, undefined, undefined);
+        console.log(res);
+        if (res.status === 200) {
+            const pageReviewResponse = res.data as PageReviewResponse
+            const reviews = pageReviewResponse.content;
+            const percentFiveStar = pageReviewResponse.percentFiveStar;
+            const percentFourStar = pageReviewResponse.percentFourStar;
+            const percentThreeStar = pageReviewResponse.percentThreeStar;
+            const percentTwoStar = pageReviewResponse.percentTwoStar;
+            const percentOneStar = pageReviewResponse.percentOneStar;
+            setReviews(reviews);
+            setReviewsCourse(reviews)
+            const newReviewPercent: ReviewPercent = {
+                percentFiveStar,
+                percentFourStar,
+                percentThreeStar,
+                percentTwoStar,
+                percentOneStar
+            }
+            setReviewPercent(newReviewPercent)
+        }
+    }
     useEffect(() => {
         console.log(ratingSelected);
-
-        const fetchCourseById = async () => {
-            const res = await get(courseId);
-            const currentCourse = res.data as CourseType
-            if (res.status === 200) {
-                setCourse(currentCourse);
-            }
-        }
-
-
-        const fetchReviewByCourseId = async () => {
-            const res = await getReviewsByCourseId(courseId, undefined, undefined);
-            console.log(res);
-            if (res.status === 200) {
-                const pageReviewResponse = res.data as PageReviewResponse
-                const reviews = pageReviewResponse.content;
-                const percentFiveStar = pageReviewResponse.percentFiveStar;
-                const percentFourStar = pageReviewResponse.percentFourStar;
-                const percentThreeStar = pageReviewResponse.percentThreeStar;
-                const percentTwoStar = pageReviewResponse.percentTwoStar;
-                const percentOneStar = pageReviewResponse.percentOneStar;
-                setReviews(reviews);
-                setReviewsCourse(reviews)
-                const newReviewPercent: ReviewPercent = {
-                    percentFiveStar,
-                    percentFourStar,
-                    percentThreeStar,
-                    percentTwoStar,
-                    percentOneStar
-                }
-                setReviewPercent(newReviewPercent)
-            }
-        }
         fetchCourseById();
         fetchReviewByCourseId();
 
     }, [courseId])
 
     const handleRedirectToPaymentPage = () => {
+        if (isLoggin == false) {
+            navigate("/login")
+            return;
+        }
         if (course) {
             if (coupon) {
                 navigate(`/payment/checkout/course/${course.id}?discountPercent=${coupon.discountPercent}`)
@@ -190,8 +232,6 @@ function CourseDetail() {
 
 
     }
-    console.log(course);
-
 
     return <div className="course-container">
         <div className="header">
@@ -310,7 +350,8 @@ function CourseDetail() {
                 <div className="course-detail">
                     <div className="course-detail-action">
                         <span className="course-action-price">{course?.free == false ? `${course.price} d` : "Mien phi"}</span>
-                        {course?.learning == false && <Button className='btn-add-to-cart'>Thêm vào giỏ hàng</Button>}
+                        {course?.learning == false && checkIsAddedToCart() == false && <Button className='btn-add-to-cart' onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>}
+                        {course?.learning == false && isLoggin == true && checkIsAddedToCart() == true && <Button className='btn-add-to-cart' onClick={handleRedirectToCarts}>Chuyển đến giỏ hàng</Button>}
                         {course?.learning == true && <Button className='btn-buy-now' onClick={handleLearning}>Chuyen den khoa hoc</Button>}
                         {course?.learning == false && course?.free == true && <Button className='btn-buy-now' onClick={handleLearning}>Dang ki khoa hoc</Button>}
                         {course?.learning == false && course?.free == false && <Button className='btn-buy-now' onClick={handleRedirectToPaymentPage}>Mua khoa hoc</Button>}

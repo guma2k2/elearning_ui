@@ -1,0 +1,102 @@
+.instructor-profile-container {
+    margin: 40px auto;
+    display: flex;
+    gap: 30px;
+    max-width: 920px;
+
+    .instructor-profile-left {
+        width: 600px;
+
+        .intructor-profile-heading {
+            color: #6a6f73;
+            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0;
+            font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+        }
+
+        .instructor-profile-name {
+            font-family: 'Times New Roman', Georgia, Times, serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            font-weight: 700;
+            font-size: 40px;
+            line-height: 1.15;
+            letter-spacing: -.4px;
+        }
+
+        .instructor-profile-headline {
+            padding: 8px 0;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0;
+            font-size: 16px;
+            font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+        }
+
+        .instructor-profile-stat-container {
+            margin-top: 16px;
+            display: flex;
+            gap: 15px;
+
+            .instructor-profile-stat-item {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                .instructor-profile-stat-title {
+                    color: #6a6f73;
+                    font-weight: 700;
+                    line-height: 1.2;
+                    letter-spacing: 0;
+                    font-size: 14px;
+                    font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+                }
+
+                .instructor-profile-stat-number {
+                    font-weight: 700;
+                    line-height: 1.2;
+                    letter-spacing: 0;
+                    font-size: 24px;
+                    max-width: 36em;
+                    font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+                }
+            }
+        }
+
+        .instructor-profile-course-container {
+            margin-top: 20px;
+
+            .instructor-profile-course-heading {
+                padding-bottom: 24px;
+                font-weight: 700;
+                line-height: 1.2;
+                letter-spacing: 0;
+                font-size: 19px;
+                max-width: 36em;
+                font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            }
+
+            .instructor-profile-course-wrapper {
+                display: flex;
+                gap: 10px;
+                width: 100%;
+                flex-wrap: wrap;
+
+                .instructor-profile-course-item {
+                    width: calc(50% - 10px);
+
+                }
+            }
+        }
+    }
+
+    .instructor-profile-right {
+        img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    }
+}

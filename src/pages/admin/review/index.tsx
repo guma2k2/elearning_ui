@@ -1,4 +1,4 @@
-import { Flex, PaginationProps, Switch, Table, TableColumnsType } from 'antd';
+import { Button, Flex, Input, PaginationProps, Switch, Table, TableColumnsType } from 'antd';
 import { useEffect, useState } from 'react';
 import { ReviewGet } from '../../../types/ReviewType';
 import { getWithPagination, updateStatus } from '../../../services/ReviewService';
@@ -102,6 +102,10 @@ function ReviewManagement() {
     return <div className="review-management-container">
         <div className='review-header' >
             <span>Review</span>
+        </div>
+        <div className="review-search">
+            <Input className='review-search-input' />
+            <Button className='review-search-btn'>Search</Button>
         </div>
         <Table columns={columns} dataSource={reviewList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>;

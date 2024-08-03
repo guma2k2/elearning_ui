@@ -6,6 +6,7 @@ import { logOut } from "../../redux/slices/AuthenticationSlice";
 import { resetCart } from "../../redux/slices/CartSlice";
 import { resetLearningCoures } from "../../redux/slices/LearningCourseSlice";
 import { RootState } from "../../redux/store";
+import { Fragment } from "react";
 function PopoverUserProfile() {
     const dispatch = useAppDispatch();
     const { auth } = useAppSelector((state: RootState) => state.auth);
@@ -29,12 +30,14 @@ function PopoverUserProfile() {
                 <span className="user-profile-email">{auth?.user.email}</span>
             </div>
         </div>
-        <Divider className="popover-profile-devider" />
-        <div className="popover-user-profile-middle">
-            <Link className="popover-profile-link-redirect" to={"/cart"}> <span>Giỏ hàng của tôi</span> </Link>
-            <Link className="popover-profile-link-redirect" to={"/my-learning"}> <span>Học tập</span> </Link>
-            <Link className="popover-profile-link-redirect" to={"/purchase-history"}> <span>Lịch sử mua hàng</span> </Link>
-        </div>
+        {auth?.user.role != "ROLE_ADMIN" && <Fragment>
+            <Divider className="popover-profile-devider" />
+            <div className="popover-user-profile-middle">
+                <Link className="popover-profile-link-redirect" to={"/cart"}> <span>Giỏ hàng của tôi</span> </Link>
+                <Link className="popover-profile-link-redirect" to={"/my-learning"}> <span>Học tập</span> </Link>
+                <Link className="popover-profile-link-redirect" to={"/purchase-history"}> <span>Lịch sử mua hàng</span> </Link>
+            </div>
+        </Fragment>}
         <Divider className="popover-profile-devider" />
         <div className="popover-user-profile-bottom">
             <Link className="popover-profile-link-redirect" to={"/profile"}> <span>Cài đặt</span> </Link>

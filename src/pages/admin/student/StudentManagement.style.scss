@@ -12,4 +12,16 @@
             font-weight: 600;
         }
     }
+
+    .student-search {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .student-search-input {
+            width: 300px;
+        }
+
+        .student-search-btn {}
+    }
 }

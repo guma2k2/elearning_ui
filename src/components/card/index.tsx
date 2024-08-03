@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
-import { CourseType } from '../../types/CourseType'
+import { CourseListGetType, CourseType } from '../../types/CourseType'
 import './Card.style.scss'
 import { Rate } from 'antd';
 
 type Props = {
-    course: CourseType
+    course: CourseType | CourseListGetType
 }
 function Card(props: Props) {
     const { course } = props;
     return (
-        <Link className='card-container' to={`/courses/${course.id}`} data-tooltip-id={`my-tooltip-${course.id}`} >
+        <Link className='card-container' to={`/courses/${course.id}`}  >
             <img className='course-image' src={course.image} alt="course image" />
             <h3>{course.title}</h3>
             <span className='course-instructor'>in28Minutes Official</span>

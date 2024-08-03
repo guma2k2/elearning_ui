@@ -171,6 +171,10 @@ function Category() {
                 <span>Category</span>
                 <Button onClick={showDrawer} type="primary">Add category</Button>
             </div>
+            <div className="category-search">
+                <Input className='category-search-input' />
+                <Button className='category-search-btn'>Search</Button>
+            </div>
             <Drawer
                 title="Create a new category"
                 width={720}
