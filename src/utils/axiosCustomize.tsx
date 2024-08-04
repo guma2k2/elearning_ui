@@ -7,6 +7,7 @@ const cookies = new Cookies();
 
 // Retrieve the token from cookies
 const token = cookies.get('token');
+console.log(token);
 
 const instance = axios.create({
     baseURL,

@@ -169,11 +169,11 @@ function Category() {
         <div className="category-container">
             <div className='category-header' >
                 <span>Category</span>
-                <Button onClick={showDrawer} type="primary">Add category</Button>
+                <Button onClick={showDrawer} type="primary">Thêm category</Button>
             </div>
             <div className="category-search">
                 <Input className='category-search-input' />
-                <Button className='category-search-btn'>Search</Button>
+                <Button className='category-search-btn'>Tìm kiếm</Button>
             </div>
             <Drawer
                 title="Create a new category"

@@ -37,32 +37,32 @@ function OrderHistory() {
 
     const columns: TableColumnsType<OrderType> = [
         {
-            title: 'Id',
+            title: 'Mã đơn hàng',
             dataIndex: 'id',
-            width: 50,
+            width: 130,
         },
         {
-            title: 'Coupon',
+            title: 'Khuyến mãi',
             dataIndex: 'coupon',
             width: 150,
         },
         {
-            title: 'Created at',
+            title: 'Thời giao tạo',
             dataIndex: 'createdAt',
-            width: 300,
+            width: 250,
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'status',
             width: 100,
         },
         {
-            title: 'Total price',
+            title: 'Tổng tiền',
             dataIndex: 'totalPrice',
             width: 200,
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'key',
             width: 100,
             render: (_text, record) => (
@@ -108,10 +108,10 @@ function OrderHistory() {
     ];
 
     return <div className="order-history-container">
-        <h2 className="order-history-header">Lich su mua</h2>
+        <h2 className="order-history-header">Lịch sử mua hàng</h2>
         <div className="order-history-wrapper">
             <Drawer
-                title="Thong tin don hang"
+                title="Thông tin đơn hàng"
                 placement={"right"}
                 closable={true}
                 onClose={onClose}

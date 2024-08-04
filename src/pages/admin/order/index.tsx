@@ -45,12 +45,12 @@ function OrderManagement() {
 
     const columns: TableColumnsType<OrderType> = [
         {
-            title: 'Id',
+            title: 'Mã đơn hàng',
             dataIndex: 'id',
             width: 50,
         },
         {
-            title: 'Student',
+            title: 'Học sinh',
             dataIndex: 'student',
             width: 150,
         },

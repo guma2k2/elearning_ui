@@ -19,7 +19,7 @@ function ForgotPassword() {
         </div>
         <div className="right">
             <h2 className="header">
-                Forgot password
+                Quên mật khẩu
             </h2>
             <div className="form">
                 <Form
@@ -64,7 +64,7 @@ function ForgotPassword() {
                         }}
                     >
                         <Button type="primary" htmlType="submit" style={{ width: "100%", height: "48px", borderRadius: "0", fontSize: "16px" }}>
-                            Xac nhan email
+                            Xác nhận
                         </Button>
                     </Form.Item>
                 </Form>
