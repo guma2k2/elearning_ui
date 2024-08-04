@@ -98,7 +98,7 @@ export const learningSlice = createSlice({
 
     }, extraReducers: (builder) => {
         builder
-            .addCase(fetchCourseBySlug.pending, (state, action) => {
+            .addCase(fetchCourseBySlug.pending, (state, _action) => {
                 // console.log(action);
                 state.isError = false;
                 state.isLoading = true;

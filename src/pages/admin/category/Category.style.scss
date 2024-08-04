@@ -18,4 +18,16 @@
             justify-content: center;
         }
     }
+
+    .category-search {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .category-search-input {
+            width: 300px;
+        }
+
+        .category-search-btn {}
+    }
 }

@@ -164,6 +164,10 @@ function Topic() {
                 <span>Topic</span>
                 <Button onClick={showDrawer} type="primary">Add topic</Button>
             </div>
+            <div className="topic-search">
+                <Input className='topic-search-input' />
+                <Button className='topic-search-btn'>Search</Button>
+            </div>
             <Drawer
                 title="Create a new topic"
                 width={720}

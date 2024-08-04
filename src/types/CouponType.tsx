@@ -1,5 +1,3 @@
-import { DatePickerProps } from "antd"
-
 export type CouponType = {
     id: number,
     discountPercent: number,

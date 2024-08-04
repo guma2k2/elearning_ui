@@ -31,13 +31,13 @@ function Course(props: PropType) {
                     <h2 className="course-title">{cart.course.title}</h2>
                     <div className="intructor-name">{cart.course.createdBy}</div>
                     <div className="review">
-                        <div className="rating-number">4</div>
-                        <Rate className="rating" disabled defaultValue={4} />
-                        <div className="review-number">(3.502 xếp hạng)</div>
+                        <div className="rating-number">{cart.course.averageRating}</div>
+                        <Rate className="rating" disabled defaultValue={cart.course.averageRating} />
+                        <div className="review-number">({cart.course.ratingCount} xếp hạng)</div>
                     </div>
                     <div className="desc">
-                        <div className="total-hours">Tổng số 36.5 giờ</div>
-                        <div className="total-lectures">250 bài giảng</div>
+                        <div className="total-hours">Tổng số {cart.course.totalDurationCourse}</div>
+                        <div className="total-lectures">{cart.course.totalLectures} bài giảng</div>
                         <div className="level">{cart.course.level}</div>
                     </div>
                 </div>

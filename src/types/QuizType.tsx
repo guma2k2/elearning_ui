@@ -1,4 +1,4 @@
-import { Question } from "./CourseType"
+import { QuestionType } from "./CourseType"
 
 export type QuizPost = {
     id?: number
@@ -6,5 +6,5 @@ export type QuizPost = {
     number: number
     description?: string
     sectionId: number
-    questions?: Question[]
+    questions?: QuestionType[]
 }

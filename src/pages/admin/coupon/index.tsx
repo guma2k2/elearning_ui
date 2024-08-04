@@ -152,6 +152,10 @@ function CouponManagement() {
             <span>Coupon</span>
             <Button onClick={showDrawer} type="primary" className="coupon-btn-add">Add coupon</Button>
         </div>
+        <div className="coupon-search">
+            <Input className='coupon-search-input' />
+            <Button className='coupon-search-btn'>Search</Button>
+        </div>
         <Drawer
             title="Create a new coupon"
             width={720}

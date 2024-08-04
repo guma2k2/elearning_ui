@@ -22,3 +22,11 @@ export const updateCartBuyLaterById = async (cartId: number | undefined) => {
     return res;
 }
 
+
+
+export const addToCart = async (courseId: number | undefined) => {
+    const url = `/carts/add-to-cart/course/${courseId}`
+    const res = await instance.post(url);
+    return res;
+}
+

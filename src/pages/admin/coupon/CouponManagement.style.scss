@@ -18,4 +18,16 @@
             justify-content: center;
         }
     }
+
+    .coupon-search {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .coupon-search-input {
+            width: 300px;
+        }
+
+        .coupon-search-btn {}
+    }
 }

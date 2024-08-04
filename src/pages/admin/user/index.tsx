@@ -134,7 +134,7 @@ function User() {
             title: 'Action',
             dataIndex: 'key',
             width: 300,
-            render: (text, record) => (
+            render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Button type="primary" onClick={() => handleUpdateUser(record.id)}>Edit</Button>
                     <Popconfirm
@@ -256,6 +256,11 @@ function User() {
             <div className='user-header' >
                 <span>User</span>
                 <Button onClick={showDrawer} type="primary">Add user</Button>
+
+            </div>
+            <div className="user-search">
+                <Input className='user-search-input' />
+                <Button className='user-search-btn'>Search</Button>
             </div>
             <Drawer
                 title="Create a new user"

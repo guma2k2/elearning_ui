@@ -42,6 +42,7 @@ export type CourseListGetType = {
     title: string
     level?: string
     headline?: string
+    slug: string
     image?: string
     isPublish?: boolean
     price: number

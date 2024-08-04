@@ -1,24 +1,24 @@
 .filter-container {
     display: flex;
-    padding: 48px 42px;
-    gap: 10px;
+    padding: 40px 42px;
+    gap: 15px;
 
     .filter-left {
-        flex: 3;
+        flex: 2;
 
         .filter-form {
             min-width: 100%;
             display: flex;
             flex-direction: column;
             align-items: start;
+            padding-right: 40px;
             gap: 15px;
 
             .filter-btn {
                 display: flex;
-                align-items: center;
-                justify-content: flex-start;
                 gap: 10px;
                 margin: 0;
+                min-width: 100%;
 
                 .filter-btn-reset {
                     color: var(--color-gray-500);
@@ -28,7 +28,6 @@
                     align-items: center;
                     justify-content: center;
                     gap: 10px;
-                    height: 62px;
                     border-radius: 0;
 
                     span {
@@ -39,9 +38,9 @@
 
                 .filter-select-sort {
                     display: flex;
-                    align-items: flex-start;
+                    align-items: center;
+                    justify-content: center;
                     flex-direction: column;
-                    margin-top: 15px;
 
                     .filter-label-sort {
                         font-size: 16px;
@@ -49,7 +48,6 @@
 
                     .filer-selection {
                         border-radius: 0;
-                        height: 50px;
                         width: 300px;
                     }
                 }
@@ -58,10 +56,10 @@
             .filter-form-item {
                 display: flex;
                 flex-direction: column;
-                min-width: 100%;
+                min-width: 400px;
 
                 .filter-form-devider {
-                    min-width: 100%;
+                    width: 200px !important;
                     margin: 0;
                     background-color: #d1d7dd;
                 }
@@ -105,7 +103,7 @@
 
     .filter-right {
         flex: 7;
-        margin-top: 130px;
+        margin-top: 50px;
         display: flex;
         flex-direction: column;
         gap: 20px;

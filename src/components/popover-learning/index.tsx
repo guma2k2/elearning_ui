@@ -10,15 +10,18 @@ function PopoverLearning() {
     const navigateToMyLearning = () => {
         navigate("/my-learning")
     }
+    const handleRedirectToCourseLearning = (slug: string) => {
+        let url = `/course/${slug}/learning`
+        navigate(url);
+    }
     return <div className="popover-learning-container">
         <div className="popover-learning-header">
             <h3 className="popover-mylearning">Khóa học của tôi</h3>
             <Button className="popover-learning-btn-viewall" onClick={navigateToMyLearning}>Xem tất cả</Button>
         </div>
         <div className="popover-learning-courses-wrapper">
-
             {learningCourses && learningCourses.map((item) => {
-                return <div className="popover-learning-course" key={`learning-course-popover-${item.id}`}>
+                return <div className="popover-learning-course" key={`learning-course-popover-${item.id}`} onClick={() => handleRedirectToCourseLearning(item.course.slug)}>
                     <div className="popover-learning-course-left">
                         <img src={item.course.image} alt="course-image" />
                     </div>

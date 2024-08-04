@@ -21,6 +21,12 @@ export const get = async (userId: number) => {
     return res;
 }
 
+export const getUserProfile = async (userId: number) => {
+    const url = `/users/${userId}`
+    const res = await instance.get(url);
+    return res;
+}
+
 
 export const getWithPagination = async (current: number, pageSize: number) => {
     const url = `/admin/users/paging?pageNum=${current}&pageSize=${pageSize}`

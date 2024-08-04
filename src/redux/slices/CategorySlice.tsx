@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, } from '@reduxjs/toolkit'
+// import type { PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 import { getCategoryParents } from '../../services/CategoryService'
 interface CategoryState {
@@ -13,6 +13,8 @@ export const fetchCategoryParents = createAsyncThunk(
     async () => {
         const response = await getCategoryParents();
         const data = response.data as CategoryListGetType[];
+        console.log(data);
+
         return data;
     },
 )
@@ -26,12 +28,12 @@ export const categorySlice = createSlice({
     name: 'category',
     initialState,
     reducers: {
-        updateDataStatus: (state) => {
+        updateDataStatus: (_state) => {
 
         },
     }, extraReducers: (builder) => {
         builder
-            .addCase(fetchCategoryParents.pending, (state, action) => {
+            .addCase(fetchCategoryParents.pending, (state, _action) => {
                 state.isError = false;
                 state.isLoading = true;
             })
@@ -40,7 +42,7 @@ export const categorySlice = createSlice({
                 state.isError = false;
                 state.isLoading = false;
             })
-            .addCase(fetchCategoryParents.rejected, (state, action) => {
+            .addCase(fetchCategoryParents.rejected, (state, _action) => {
                 state.isError = true;
                 state.isLoading = false;
             })

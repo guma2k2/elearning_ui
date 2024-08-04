@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StudentType } from '../../../types/StudentType';
-import { Table, Flex, Switch, TableColumnsType, PaginationProps } from 'antd';
+import { Table, Flex, Switch, TableColumnsType, PaginationProps, Input, Button } from 'antd';
 import UserPhoto from "../../../assets/userPhoto.png"
 import './StudentManagement.style.scss'
 import { getWithPagination, updateStatus } from '../../../services/StudentService';
@@ -96,6 +96,10 @@ function StudentManagement() {
     return <div className="student-management-container">
         <div className='student-header' >
             <span>Student</span>
+        </div>
+        <div className="student-search">
+            <Input className='student-search-input' />
+            <Button className='student-search-btn'>Search</Button>
         </div>
         <Table columns={columns} dataSource={studentList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>

@@ -34,6 +34,9 @@ import StudentManagement from "./pages/admin/student";
 import ReviewManagement from "./pages/admin/review";
 import OrderHistory from "./pages/order-history";
 import PaymentCourse from "./pages/payment/PaymentCourse";
+import InstructorProfile from "./pages/instructor-profile";
+import ForgotPassword from "./pages/forgotpassword";
+import UpdatePassword from "./pages/forgotpassword/UpdatePassword";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -49,7 +52,7 @@ function App() {
         },
         {
           path: "/purchase-history",
-          element: <OrderHistory />,
+          element: <ProtectedRoute> <OrderHistory /></ProtectedRoute>,
         },
         {
           path: "/login",
@@ -57,7 +60,11 @@ function App() {
         },
         {
           path: "/profile",
-          element: <Profile />,
+          element: <ProtectedRoute> <Profile /></ProtectedRoute>,
+        },
+        {
+          path: "/user/:id",
+          element: <InstructorProfile />,
         },
         {
           path: "/my-learning",
@@ -68,12 +75,20 @@ function App() {
           element: <Register />,
         },
         {
+          path: "/forgotpassword",
+          element: <ForgotPassword />,
+        },
+        {
+          path: "/password-confirm",
+          element: <UpdatePassword />,
+        },
+        {
           path: "/cart",
           element: <ProtectedRoute><Cart /> </ProtectedRoute>,
         },
         {
           path: "/courses/:courseId",
-          element: <ProtectedRoute><CourseDetail /> </ProtectedRoute>,
+          element: <CourseDetail />,
         },
         {
           path: "/courses/search",
@@ -89,18 +104,18 @@ function App() {
         },
         {
           path: "/payment/checkout/",
-          element: <Payment />,
+          element: <ProtectedRoute><Payment /></ProtectedRoute>,
         }, {
           path: "/payment/checkout/course/:id",
-          element: <PaymentCourse />,
+          element: <ProtectedRoute> <PaymentCourse /></ProtectedRoute>,
         },
       ]
     },
     {
       path: "/admin",
       errorElement: <NotFound />,
-      // element: <ProtectedRoute><AdminPage /> </ProtectedRoute>,
-      element: <AdminPage />,
+      element: <ProtectedRoute><AdminPage /> </ProtectedRoute>,
+      // element: <AdminPage />,
       children: [
         {
           index: true,

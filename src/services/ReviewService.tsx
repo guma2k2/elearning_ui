@@ -6,8 +6,6 @@ export const getReviewsByCourseId = async (courseId: number | string | undefined
     if (ratingStar == 0) {
         ratingStar = undefined;
     }
-    console.log(ratingStar);
-    console.log(url);
     const res = await instance.get(url, {
         params: {
             pageNum: pageNum ? pageNum : 0,

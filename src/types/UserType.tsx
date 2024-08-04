@@ -1,3 +1,4 @@
+import { CourseListGetType } from "./CourseType";
 
 export type UserType = {
     id: number;
@@ -29,9 +30,11 @@ export type UserGetDetailType = {
 export type UserProfile = {
     id: number,
     fullName: string,
+    headline?: string
     photo: string,
     averageRating: number,
     numberOfReview: number,
     numberOfStudent: number,
-    numberOfCourse: number
+    numberOfCourse: number,
+    courses?: CourseListGetType[]
 }
