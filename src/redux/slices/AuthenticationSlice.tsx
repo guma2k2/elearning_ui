@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import Cookies from 'universal-cookie';
 import { RootState } from '../store'
 import { jwtDecode } from "jwt-decode";
-import { LoginRequest, LoginResponse } from '../../types/AuthType'
+import { AuthType, LoginRequest, LoginResponse } from '../../types/AuthType'
 import { loginUser } from "../../services/AuthService"
 interface AuthState {
     auth?: LoginResponse
@@ -34,6 +34,12 @@ export const authSlice = createSlice({
             const payload = action.payload as LoginResponse
             state.auth = payload;
             state.isLoggin = true;
+        },
+        updateUserProfile: (state, action) => {
+            const payload = action.payload as AuthType
+            if (state.auth) {
+                state.auth.user = payload
+            }
         },
         logOut: (state) => {
             if (state.auth) {
@@ -75,7 +81,7 @@ export const authSlice = createSlice({
     },
 })
 
-export const { saveUserProfile, logOut } = authSlice.actions
+export const { saveUserProfile, logOut, updateUserProfile } = authSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.courses

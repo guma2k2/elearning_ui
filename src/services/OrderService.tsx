@@ -8,8 +8,13 @@ export const save = async (orderPost: OrderPostDto) => {
 }
 
 
-export const getOrderWithPagination = async (current: number, pageSize: number) => {
-    const url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}`
+export const getOrderWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
+    let url: string = ""
+    if (keyword != null) {
+        url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}&keyword=${keyword}`
+    } else {
+        url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}`
+    }
     const res = await instance.get(url);
     return res;
 }

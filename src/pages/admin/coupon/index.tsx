@@ -79,44 +79,44 @@ function CouponManagement() {
 
     const columns: TableColumnsType<CouponType> = [
         {
-            title: 'Id',
+            title: 'Mã khuyến mãi',
             dataIndex: 'id',
-            width: 50,
+            width: 200,
         },
         {
-            title: 'Discount percent',
+            title: 'Phần trăm khuyến mãi',
             dataIndex: 'discountPercent',
-            width: 150,
+            width: 250,
         },
         {
-            title: 'Code',
+            title: 'Mã',
             dataIndex: 'code',
             width: 200,
         },
         {
-            title: 'Start time',
+            title: 'Thời gian bắt đầu',
             dataIndex: 'startTime',
-            width: 200,
-        },
-        {
-            title: 'End time',
-            dataIndex: 'endTime',
-            width: 200,
-        },
-        {
-            title: 'Action',
-            dataIndex: 'key',
             width: 300,
+        },
+        {
+            title: 'Thời gian kết thúc',
+            dataIndex: 'endTime',
+            width: 300,
+        },
+        {
+            title: 'Hành động',
+            dataIndex: 'key',
+            width: 250,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary" onClick={() => handleUpdateCoupon(record.id)}>Edit</Button>
+                    <Button type="primary" onClick={() => handleUpdateCoupon(record.id)}>Cập nhật</Button>
                     <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this user?"
-                        okText="Yes"
-                        cancelText="No"
+                        title="Xóa khuyến mãi này?"
+                        description="Bạn có chắc chắn xóa khuyến mãi này?"
+                        okText="Có"
+                        cancelText="Không"
                     >
-                        <Button danger>Delete</Button>
+                        <Button danger>Xóa</Button>
                     </Popconfirm>
                 </Flex>
             ),
@@ -149,15 +149,15 @@ function CouponManagement() {
     }, [current, pageSize, isDataUpdated])
     return <div className="coupon-management-container">
         <div className='coupon-header' >
-            <span>Coupon</span>
-            <Button onClick={showDrawer} type="primary" className="coupon-btn-add">Add coupon</Button>
+            <span>Khuyến mãi</span>
+            <Button onClick={showDrawer} type="primary" className="coupon-btn-add">Thêm khuyến mãi</Button>
         </div>
         <div className="coupon-search">
             <Input className='coupon-search-input' />
-            <Button className='coupon-search-btn'>Search</Button>
+            <Button className='coupon-search-btn'>Tìm kiếm</Button>
         </div>
         <Drawer
-            title="Create a new coupon"
+            title="Tạo khuyến mãi"
             width={720}
             onClose={onClose}
             open={open}
@@ -168,17 +168,17 @@ function CouponManagement() {
             }}
             extra={
                 <Space>
-                    <Button onClick={onClose}>Cancel</Button>
+                    <Button onClick={onClose}>Hủy</Button>
 
                     <Popconfirm
-                        title="Xac nhan"
-                        description="Ban co chac chan muon luu?"
+                        title="Xác nhận"
+                        description="Bạn có chắc chắn muốn lưu?"
                         onConfirm={confirm}
                         onOpenChange={() => console.log('open change')}
                         disabled={pending}
                     >
                         <Button type="primary" >
-                            Xac nhan
+                            Xác nhận
                         </Button>
                     </Popconfirm>
 
@@ -196,19 +196,19 @@ function CouponManagement() {
                     <Col span={12}>
                         <Form.Item
                             name="discountPercent"
-                            label="Discount percent"
-                            rules={[{ required: true, message: 'Please enter user name' }]}
+                            label="Phần trăm khuyến mãi"
+                            rules={[{ required: true, message: 'Phần trăm khuyến mãi không được để trống' }]}
                         >
-                            <Input type="number" placeholder="Please enter discount percent" />
+                            <Input type="number" placeholder="Nhập phần trăm khuyến mãi" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             name="code"
                             label="Code"
-                            rules={[{ required: true, message: 'Please enter code' }]}
+                            rules={[{ required: true, message: 'Mã không được để trống' }]}
                         >
-                            <Input placeholder="Please enter user name" />
+                            <Input placeholder="Nhập mã" />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -217,19 +217,20 @@ function CouponManagement() {
                     <Col span={12}>
                         <Form.Item
                             name="startTime"
-                            label="Start time"
-                            rules={[{ required: true, message: 'Please enter user name' }]}
+                            label="Thời gian bắt đầu"
+                            rules={[{ required: true, message: 'Thời gian bắt đầu không được để trống' }]}
                         >
                             <DatePicker
                                 showTime
+
                             />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             name="endTime"
-                            label="End time"
-                            rules={[{ required: true, message: 'Please enter end time' }]}
+                            label="Thời gian kết thúc"
+                            rules={[{ required: true, message: 'Thời gian kết thúc không được để trống' }]}
                         >
                             <DatePicker
                                 showTime

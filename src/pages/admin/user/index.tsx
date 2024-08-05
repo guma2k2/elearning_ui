@@ -65,10 +65,10 @@ function User() {
     const [currentUser, setCurrentUser] = useState<UserGetDetailType>();
     const [userList, setUserList] = useState<UserType[]>([]);
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const [keyword, setKeyword] = useState<string>("");
     useEffect(() => {
         const fetchUsers = async () => {
-            const res = await getWithPagination(current - 1, pageSize);
-
+            const res = await getWithPagination(current - 1, pageSize, null);
             if (res && res.status === 200) {
                 console.log(res);
                 const content = res.data.content.map((user: UserType) => (
@@ -89,13 +89,13 @@ function User() {
 
     const columns: TableColumnsType<UserType> = [
         {
-            title: 'Id',
+            title: 'Mã người dùng',
             dataIndex: 'id',
-            width: 50,
+            width: 200,
         }, {
-            title: 'Photo',
+            title: 'Ảnh ',
             dataIndex: 'photo',
-            width: 150,
+            width: 100,
             render: (text, record) => {
                 console.log(text);
 
@@ -106,44 +106,44 @@ function User() {
             }
         },
         {
-            title: 'Email',
+            title: 'Địa chỉ email',
             dataIndex: 'email',
             width: 250,
         },
         {
-            title: 'First name',
+            title: 'Họ',
             dataIndex: 'firstName',
             width: 200,
         },
         {
-            title: 'Last name',
+            title: 'Tên',
             dataIndex: 'lastName',
             width: 200,
         },
         {
-            title: 'Gender',
+            title: 'Giới tính',
             dataIndex: 'gender',
             width: 100,
         },
         {
-            title: 'Role',
+            title: 'Vai trò',
             dataIndex: 'role',
             width: 100,
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'key',
             width: 300,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary" onClick={() => handleUpdateUser(record.id)}>Edit</Button>
+                    <Button type="primary" onClick={() => handleUpdateUser(record.id)}>Cập nhật</Button>
                     <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this user?"
-                        okText="Yes"
-                        cancelText="No"
+                        title="Xóa người dùng này?"
+                        description="Bạn có chắc chắn xóa người dùng này?"
+                        okText="Có"
+                        cancelText="Không"
                     >
-                        <Button danger>Delete</Button>
+                        <Button danger>Xóa</Button>
                     </Popconfirm>
                 </Flex>
             ),
@@ -193,7 +193,7 @@ function User() {
         let photo = "";
         if (checkIsUploadFile) {
             var formData = new FormData();
-            formData.append("photo", values.photo[0].originFileObj);
+            formData.append("photo", values.photo[0].ori);
             formData.append("type", "photo");
             const res = await uploadFile(formData);
             if (res.status === 200) {
@@ -244,6 +244,27 @@ function User() {
             });
         }
     };
+    const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value;
+        setKeyword(newKeyword)
+    }
+
+    const handleSearch = async () => {
+        const res = await getWithPagination(current - 1, pageSize, keyword);
+        if (res && res.status === 200) {
+            console.log(res);
+            const content = res.data.content.map((user: UserType) => (
+                {
+                    ...user, key: user.id
+                }
+            ))
+            console.log(content)
+            setUserList(content);
+            setCurrent(res.data.pageNum + 1);
+            setPageSize(res.data.pageSize)
+            setTotalElements(res.data.totalElements)
+        }
+    }
 
     const uploadButton = (
         <button style={{ border: 0, background: 'none' }} type="button">
@@ -254,13 +275,12 @@ function User() {
     return (
         <div className='user-container'>
             <div className='user-header' >
-                <span>User</span>
-                <Button onClick={showDrawer} type="primary">Add user</Button>
-
+                <span>Người dùng</span>
+                <Button className='user-btn-add' onClick={showDrawer} type="primary">Thêm người dùng</Button>
             </div>
             <div className="user-search">
-                <Input className='user-search-input' />
-                <Button className='user-search-btn'>Search</Button>
+                <Input placeholder='Tìm kiếm theo email' className='user-search-input' onChange={handleChangeKeyword} value={keyword} />
+                <Button className='user-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
             </div>
             <Drawer
                 title="Create a new user"

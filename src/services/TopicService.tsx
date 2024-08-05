@@ -1,8 +1,13 @@
 import { TopicType } from "../pages/admin/topic/TopicType";
 import instance from "../utils/axiosCustomize";
 
-export const getTopicWithPagination = async (current: number, pageSize: number) => {
-    const url = `/admin/topic/paging?pageNum=${current}&pageSize=${pageSize}`
+export const getTopicWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
+    let url: string = ""
+    if (keyword != null) {
+        url = `/admin/topic/paging?pageNum=${current}&pageSize=${pageSize}&keyword=${keyword}`
+    } else {
+        url = `/admin/topic/paging?pageNum=${current}&pageSize=${pageSize}`
+    }
     const res = await instance.get(url);
     return res;
 }

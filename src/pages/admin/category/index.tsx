@@ -17,6 +17,7 @@ function Category() {
     const [totalElements, setTotalElements] = useState<number>(1);
     const [currentCatId, setCurrentCatId] = useState<number | undefined>();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const [keyword, setKeyword] = useState<string>("");
     const [form] = Form.useForm();
     const handleUpdateStatusCateogry = async (checked: boolean, id: number) => {
         const res = await get(id)
@@ -37,22 +38,22 @@ function Category() {
     }
     const columns: TableColumnsType<CategoryType> = [
         {
-            title: 'Id',
+            title: 'Mã danh mục',
             dataIndex: 'id',
-            width: 50,
+            width: 200,
         },
         {
-            title: 'Name',
+            title: 'Tên danh mục',
             dataIndex: 'name',
-            width: 150,
+            width: 200,
         },
         {
-            title: 'Description',
+            title: 'Mô tả',
             dataIndex: 'description',
             width: 250,
         },
         {
-            title: 'Publish',
+            title: 'Trạng thái',
             dataIndex: 'isPublish',
             width: 100,
             render: (_text, record) => (
@@ -62,29 +63,29 @@ function Category() {
             ),
         },
         {
-            title: 'Created at',
+            title: 'Ngày tạo',
             dataIndex: 'createdAt',
             width: 300,
         },
         {
-            title: 'Updated At',
+            title: 'Ngày cập nhật',
             dataIndex: 'updatedAt',
             width: 300,
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'key',
-            width: 300,
+            width: 250,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary" onClick={() => handleUpdateCategory(record.id)}>Edit</Button>
+                    <Button type="primary" onClick={() => handleUpdateCategory(record.id)}>Cập nhật</Button>
                     <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this user?"
-                        okText="Yes"
-                        cancelText="No"
+                        title="Xóa danh mục này?"
+                        description="Bạn có chắc chắn muốn xóa danh mục này"
+                        okText="Có"
+                        cancelText="Không"
                     >
-                        <Button danger>Delete</Button>
+                        <Button danger>Xóa</Button>
                     </Popconfirm>
                 </Flex>
             ),
@@ -139,10 +140,30 @@ function Category() {
         setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         setPending(false)
     }
+    const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value;
+        setKeyword(newKeyword)
+    }
+    const handleSearch = async () => {
+        const res = await getWithPagination(current - 1, pageSize, keyword);
+        if (res && res.status === 200) {
+            console.log(res);
+            const content = res.data.content.map((cat: CategoryType) => (
+                {
+                    ...cat, key: cat.id
+                }
+            ))
+            console.log(content)
+            setCategories(content);
+            setCurrent(res.data.pageNum + 1);
+            setPageSize(res.data.pageSize)
+            setTotalElements(res.data.totalElements)
+        }
+    }
 
     useEffect(() => {
         const fetchCategories = async () => {
-            const res = await getWithPagination(current - 1, pageSize);
+            const res = await getWithPagination(current - 1, pageSize, null);
             if (res && res.status === 200) {
                 console.log(res);
                 const content = res.data.content.map((cat: CategoryType) => (
@@ -168,15 +189,15 @@ function Category() {
     return (
         <div className="category-container">
             <div className='category-header' >
-                <span>Category</span>
-                <Button onClick={showDrawer} type="primary">Thêm category</Button>
+                <span>Danh mục</span>
+                <Button onClick={showDrawer} type="primary">Thêm danh mục</Button>
             </div>
             <div className="category-search">
-                <Input className='category-search-input' />
-                <Button className='category-search-btn'>Tìm kiếm</Button>
+                <Input className='category-search-input' onChange={handleChangeKeyword} value={keyword} />
+                <Button className='category-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
             </div>
             <Drawer
-                title="Create a new category"
+                title="Tạo mới danh mục"
                 width={720}
                 onClose={onClose}
                 open={open}
@@ -187,9 +208,9 @@ function Category() {
                 }}
                 extra={
                     <Space>
-                        <Button onClick={onClose}>Cancel</Button>
+                        <Button onClick={onClose}>Hủy</Button>
                         <Button type="primary" onClick={() => form.submit()} loading={pending} >
-                            Submit
+                            Xác nhận
                         </Button>
                     </Space>
                 }
@@ -205,10 +226,10 @@ function Category() {
                         <Col span={24}>
                             <Form.Item
                                 name="name"
-                                label="Name"
-                                rules={[{ required: true, message: 'Please enter name of category' }]}
+                                label="Tên danh mục"
+                                rules={[{ required: true, message: 'Tên danh mục không được bỏ trống' }]}
                             >
-                                <Input placeholder="Please enter name" />
+                                <Input placeholder="Nhập tên danh mục" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -216,7 +237,7 @@ function Category() {
                         <Col span={24}>
                             <Form.Item
                                 name="description"
-                                label="Description"
+                                label="Mô tả"
                             >
                                 <TextArea rows={4} cols={24} />
                             </Form.Item>
@@ -226,10 +247,10 @@ function Category() {
                         <Col span={24}>
                             <Form.Item
                                 name="parentId"
-                                label="Parent"
+                                label="Danh mục cha"
                             >
                                 <Select  >
-                                    <Select.Option value={""}>Set parent</Select.Option>
+                                    <Select.Option value={""}>Chọn danh mục cha</Select.Option>
                                     {categoryParents && categoryParents.map((cat) => {
                                         return <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
                                     })}
@@ -240,7 +261,7 @@ function Category() {
 
                     <Row gutter={16}>
                         <Col span={24}>
-                            <Form.Item name="isPublish" label="Publish" valuePropName="checked">
+                            <Form.Item name="isPublish" label="Trạng thái" valuePropName="checked">
                                 <Switch />
                             </Form.Item>
                         </Col>

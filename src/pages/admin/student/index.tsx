@@ -10,16 +10,38 @@ function StudentManagement() {
     const [totalElements, setTotalElements] = useState<number>(1);
     const [studentList, setStudentList] = useState<StudentType[]>([]);
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>();
-
+    const [keyword, setKeyword] = useState<string>("");
     const handleUpdateStatus = async (checked: boolean, id: number) => {
         const res = await updateStatus(checked, id);
         if (res.status === 204) {
             setIsDataUpdated((prev) => !prev);
         }
     }
+    const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value;
+        setKeyword(newKeyword)
+    }
+
+    const handleSearch = async () => {
+        const res = await getWithPagination(current - 1, pageSize, null);
+
+        if (res && res.status === 200) {
+            console.log(res);
+            const content = res.data.content.map((student: StudentType) => (
+                {
+                    ...student, key: student.id
+                }
+            ))
+            console.log(content)
+            setStudentList(content);
+            setCurrent(res.data.pageNum + 1);
+            setPageSize(res.data.pageSize)
+            setTotalElements(res.data.totalElements)
+        }
+    }
     useEffect(() => {
-        const fetchUsers = async () => {
-            const res = await getWithPagination(current - 1, pageSize);
+        const fetchStudent = async () => {
+            const res = await getWithPagination(current - 1, pageSize, null);
 
             if (res && res.status === 200) {
                 console.log(res);
@@ -35,17 +57,17 @@ function StudentManagement() {
                 setTotalElements(res.data.totalElements)
             }
         }
-        fetchUsers()
+        fetchStudent()
     }, [current, pageSize, isDataUpdated])
 
 
     const columns: TableColumnsType<StudentType> = [
         {
-            title: 'Id',
+            title: 'Mã học sinh',
             dataIndex: 'id',
-            width: 50,
+            width: 200,
         }, {
-            title: 'Photo',
+            title: 'Ảnh đại diện',
             dataIndex: 'photo',
             width: 150,
             render: (text, record) => {
@@ -58,22 +80,22 @@ function StudentManagement() {
             }
         },
         {
-            title: 'Email',
+            title: 'Địa chỉ email',
             dataIndex: 'email',
             width: 250,
         },
         {
-            title: 'First name',
+            title: 'Họ',
             dataIndex: 'firstName',
             width: 200,
         },
         {
-            title: 'Last name',
+            title: 'Tên',
             dataIndex: 'lastName',
             width: 200,
         },
         {
-            title: 'Active',
+            title: 'Trạng thái',
             dataIndex: 'active',
             width: 100,
             render: (_text, record) => (
@@ -95,11 +117,11 @@ function StudentManagement() {
 
     return <div className="student-management-container">
         <div className='student-header' >
-            <span>Student</span>
+            <span>Học sinh</span>
         </div>
         <div className="student-search">
-            <Input className='student-search-input' />
-            <Button className='student-search-btn'>Search</Button>
+            <Input className='student-search-input' placeholder='Nhập email học sinh' onChange={handleChangeKeyword} value={keyword} />
+            <Button className='student-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
         </div>
         <Table columns={columns} dataSource={studentList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>
