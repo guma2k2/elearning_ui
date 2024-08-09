@@ -2,12 +2,16 @@ import { Button, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Select, 
 import { useEffect, useState } from 'react'
 import './Course.style.scss'
 import { CourseType } from '../../../types/CourseType';
-import { createCourse, getCourseWithPagination, updateStatus } from '../../../services/CourseService';
+import { createCourse, deleteCourse, getCourseWithPagination, updateStatus } from '../../../services/CourseService';
 import { SearchOutlined } from '@ant-design/icons';
 import { getCategoryParents } from '../../../services/CategoryService';
 import { TopicType } from '../topic/TopicType';
 import { getTopicsByCategoryId } from '../../../services/TopicService';
 import { Link } from 'react-router-dom';
+import { AxiosError } from 'axios';
+import { ErrorType } from '../../../types/ErrorType';
+import { RootState } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/hooks';
 type TreeData = {
     title: string;
     value: string;
@@ -16,6 +20,8 @@ type TreeData = {
 
 
 function Course() {
+    const { auth } = useAppSelector((state: RootState) => state.auth);
+
     const [open, setOpen] = useState<boolean>(false);
     const [courses, setCourses] = useState<CourseType[]>([]);
     const [current, setCurrent] = useState<number>(1);
@@ -33,6 +39,21 @@ function Course() {
             setIsDataUpdated((prev) => !prev);
         }
     }
+    const handleDelete = async (id: number) => {
+        try {
+            const res = await deleteCourse(id);
+            if (res.status == 204) {
+                setIsDataUpdated((prev) => !prev);
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message)
+            }
+        }
+    }
     const columns: TableColumnsType<CourseType> = [
         {
             title: 'Mã khóa học',
@@ -43,6 +64,7 @@ function Course() {
             title: 'Tiêu đề khóa học',
             dataIndex: 'title',
             width: 150,
+
         },
         {
             title: 'Công khai',
@@ -76,6 +98,7 @@ function Course() {
                         description="Bạn có chắc chắn muốn xóa khóa học này?"
                         okText="Có"
                         cancelText="Không"
+                        onConfirm={() => handleDelete(record.id)}
                     >
                         <Button danger>Xóa</Button>
                     </Popconfirm>
@@ -83,7 +106,47 @@ function Course() {
             ),
         },
     ];
-
+    const columnsForInstuctor: TableColumnsType<CourseType> = [
+        {
+            title: 'Mã khóa học',
+            dataIndex: 'id',
+            width: 200,
+        },
+        {
+            title: 'Tiêu đề',
+            dataIndex: 'title',
+            width: 150,
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            width: 300,
+        },
+        {
+            title: 'Ngày cập nhật',
+            dataIndex: 'updatedAt',
+            width: 300,
+        },
+        {
+            title: 'Hành động',
+            dataIndex: 'key',
+            width: 250,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Button type="primary"><Link to={`edit/${record.id}`}>Edit</Link></Button>
+                    <Popconfirm
+                        title="Xóa khóa học này?"
+                        description="Bạn có chắc chắn muốn xóa khóa học này?"
+                        okText="Có"
+                        cancelText="Không"
+                        onConfirm={() => handleDelete(record.id)}
+                    >
+                        <Button danger>Xóa</Button>
+                    </Popconfirm>
+                </Flex>
+            ),
+        },
+    ];
     const handleChangePage = (page: PaginationProps) => {
         if (page.current && page.pageSize) {
             console.log(page.current);
@@ -125,15 +188,26 @@ function Course() {
         setTopics(res.data)
     }
     const handleFinish = async (value: CourseType) => {
-        console.log(value);
-        const res = await createCourse(value);
-        if (res.status == 201) {
-            // setConfirmLoading(false);
-            setIsDataUpdated((prev) => !prev)
-            // handleShowMessage("success", "Save course success", null, dispatch);
-            form.resetFields()
-            setOpen(false);
+        try {
+            console.log(value);
+            const res = await createCourse(value);
+            if (res.status == 201) {
+                // setConfirmLoading(false);
+                setIsDataUpdated((prev) => !prev)
+                // handleShowMessage("success", "Save course success", null, dispatch);
+                form.resetFields()
+                setOpen(false);
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message)
+            }
         }
+
+
     }
 
     const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,6 +235,7 @@ function Course() {
     useEffect(() => {
         const fetchCourses = async () => {
             const res = await getCourseWithPagination(current - 1, pageSize, null);
+            console.log(res);
             if (res && res.status === 200) {
                 console.log(res);
                 const content = res.data.content.map((course: CourseType) => (
@@ -209,7 +284,7 @@ function Course() {
                     onFinish={handleFinish}
                     form={form}
                 >
-                    <Form.Item label="Title" name="Tiêu đề khóa học">
+                    <Form.Item label="Tiêu đề" name="title">
                         <Input />
                     </Form.Item>
                     <Form.Item label="Danh mục" name="categoryId" >
@@ -241,7 +316,7 @@ function Course() {
                         <Button style={{ height: 48, fontSize: "16px" }} onClick={showModel} type="primary">Tạo khóa học</Button>
                     </div>
                 </div>
-                <Table columns={columns} dataSource={courses} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+                <Table columns={auth?.user.role == "ROLE_ADMIN" ? columns : columnsForInstuctor} dataSource={courses} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
             </div>
         </>
 

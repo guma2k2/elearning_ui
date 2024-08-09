@@ -7,7 +7,7 @@ function ForgotPassword() {
     const onFinish: FormProps<ForgotPasswordRequest>['onFinish'] = async (values) => {
         const res = await forgotPassword(values);
         if (res.status == 204) {
-
+            alert("Please check email to change password")
         }
     };
     const onFinishFailed = () => {

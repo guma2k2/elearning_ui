@@ -28,7 +28,7 @@ function CurriculumList(probs: Probs) {
     return (
         <div className="curriculumlist-container">
             <div className="header">
-                <h2>Curriculum</h2>
+                <h2>Chương trình giảng dạy</h2>
             </div>
             <div className="wrapper">
                 {sections && probs.course?.sections.map((section, index) => {

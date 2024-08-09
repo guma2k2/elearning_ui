@@ -1,15 +1,43 @@
 import { Button, Form, FormProps, Input } from "antd";
+import { ConfirmPassword, UpdatePasswordRequest } from "../../types/AuthType";
+import { updatePassword } from "../../services/AuthService";
+import { AxiosError } from "axios";
+import { ErrorType } from "../../types/ErrorType";
 
 
-type ConfirmPassword = {
-    password: string,
-    confirmPassword: string
-}
+
 function UpdatePassword() {
-    const onFinish: FormProps<ConfirmPassword>['onFinish'] = async (_values) => {
-        // if (res.status == 204) {
+    const onFinish: FormProps<ConfirmPassword>['onFinish'] = async (values) => {
+        const pass = values.password;
+        const confirmPass = values.confirmPassword;
+        if (pass != confirmPass) {
+            alert("Password and confirm password is not the same");
+        } else {
+            const searchParams = new URLSearchParams(location.search);
+            const email = searchParams.get('email');
+            if (email) {
+                try {
+                    const updateRequest: UpdatePasswordRequest = {
+                        email: email,
+                        password: pass
+                    }
+                    const res = await updatePassword(updateRequest);
+                    if (res.status == 204) {
+                        alert("update password successful");
+                    }
+                } catch (error: AxiosError | any) {
+                    if (error.response) {
+                        console.log(error.response.data);
+                        const data = error.response.data as ErrorType;
+                        const message = data.details;
+                        alert(message)
+                    }
+                }
 
-        // }
+            }
+
+        }
+
     };
     const onFinishFailed = () => {
         console.log('Failed:');
@@ -56,7 +84,7 @@ function UpdatePassword() {
                             },
                         ]}
                     >
-                        <Input style={{ width: "100%", height: "50px" }} />
+                        <Input.Password style={{ width: "100%", height: "50px" }} />
                     </Form.Item>
                     <Form.Item<ConfirmPassword>
                         label="ConfirmPassword"
@@ -72,7 +100,7 @@ function UpdatePassword() {
                             },
                         ]}
                     >
-                        <Input style={{ width: "100%", height: "50px" }} />
+                        <Input.Password style={{ width: "100%", height: "50px" }} />
                     </Form.Item>
                     <Form.Item
                         wrapperCol={{

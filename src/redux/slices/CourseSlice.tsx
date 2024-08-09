@@ -89,6 +89,8 @@ export const courseSlice = createSlice({
                                 cur.title = newCurriculum.title;
                                 cur.number = newCurriculum.number;
                                 cur.lectureDetails = newCurriculum.lectureDetails;
+                                cur.duration = newCurriculum.duration
+                                cur.videoId = newCurriculum.videoId
                             }
                         })
                     } else if (newCurriculum.type === 'quiz') {
@@ -143,6 +145,7 @@ export const courseSlice = createSlice({
                 state.currentCourse.isPublish = payload.isPublish;
                 state.currentCourse.categoryId = payload.categoryId;
                 state.currentCourse.topicId = payload.topicId;
+                state.currentCourse.price = payload.price
             }
         }
 

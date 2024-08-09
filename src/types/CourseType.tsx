@@ -45,6 +45,7 @@ export type CourseListGetType = {
     slug: string
     image?: string
     isPublish?: boolean
+    free?: boolean
     price: number
     totalDurationCourse: string
     totalLectures: number

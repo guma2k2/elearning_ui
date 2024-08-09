@@ -1,14 +1,16 @@
 import { Button, Col, DatePicker, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Row, Space, Table, TableColumnsType } from "antd";
 import { CouponPostType, CouponType } from "../../../types/CouponType";
 import { useEffect, useState } from 'react';
-import { getWithPagination, save, update } from "../../../services/CouponService";
+import { deleteCoupon, getWithPagination, save, update } from "../../../services/CouponService";
 import dayjs from 'dayjs';
 import './CouponManagement.style.scss'
+import { AxiosError } from "axios";
+import { ErrorType } from "../../../types/ErrorType";
 function CouponManagement() {
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [pending, setPending] = useState(false);
     const [current, setCurrent] = useState<number>(1);
+    const [currentCouponId, setCurrentCouponId] = useState<number | null>();
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
     const [form] = Form.useForm();
@@ -21,9 +23,11 @@ function CouponManagement() {
     const onClose = () => {
         setOpen(false);
         form.resetFields();
+        setCurrentCouponId(null);
     };
     const handleUpdateCoupon = async (couponId: number) => {
         setOpen(true)
+        setCurrentCouponId(couponId);
         const currentCoupon = couponList.find((item) => item.id === couponId);
         if (currentCoupon) {
             form.setFieldsValue({
@@ -35,34 +39,63 @@ function CouponManagement() {
     }
     const onFinish = async (values: CouponType) => {
         setPending(true);
-        console.log(values);
+        // console.log(values);
         const type = values.id ? "update" : "create";
-        console.log(type);
+        // console.log(type);
 
-        console.log(dayjs(values.startTime).format('YYYY-MM-DD HH:mm:ss'));
+        // console.log(dayjs(values.startTime).format('YYYY-MM-DD HH:mm:ss'));
 
 
         const formatedStartTime = dayjs(values.startTime).format('YYYY-MM-DD HH:mm:ss');
         const formatedEndTime = dayjs(values.endTime).format('YYYY-MM-DD HH:mm:ss');
         if (type === "create") {
-            const couponPost: CouponPostType = {
-                ...values, startTime: formatedStartTime, endTime: formatedEndTime
+            try {
+                const couponPost: CouponPostType = {
+                    ...values, startTime: formatedStartTime, endTime: formatedEndTime
+                }
+                console.log(couponPost);
+
+                const resSaveUser = await save(couponPost);
+                console.log(resSaveUser);
+                if (resSaveUser.status === 201) {
+                    form.resetFields();
+                    setOpen(false);
+                    alert("Add successful");
+                }
+
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    setPending(false)
+                    alert(message)
+                }
             }
-            const resSaveUser = await save(couponPost);
-            console.log(resSaveUser);
-            if (resSaveUser.status === 201) {
-                form.resetFields();
-                setOpen(false);
-            }
+
         } else {
-            const couponId = values.id;
-            const couponPost: CouponPostType = {
-                ...values, startTime: formatedStartTime, endTime: formatedEndTime
-            }
-            const resUpdateUser = await update(couponPost, couponId);
-            if (resUpdateUser.status === 200) {
-                form.resetFields();
-                setOpen(false)
+            try {
+                const couponId = values.id;
+                const couponPost: CouponPostType = {
+                    ...values, startTime: formatedStartTime, endTime: formatedEndTime
+                }
+                console.log(couponPost);
+
+                const resUpdateUser = await update(couponPost, couponId);
+                if (resUpdateUser.status === 200) {
+                    form.resetFields();
+                    setOpen(false)
+                    alert("Update successful");
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    setPending(false)
+                    alert(message)
+
+                }
             }
         }
         setIsDataUpdated((isDataUpdated) => !isDataUpdated)
@@ -70,10 +103,26 @@ function CouponManagement() {
     };
     const handleChangePage = (page: PaginationProps) => {
         if (page.current && page.pageSize) {
-            console.log(page.current);
-            console.log(page.pageSize);
+            // console.log(page.current);
+            // console.log(page.pageSize);
             setCurrent(page.current)
             setPageSize(page.pageSize)
+        }
+    }
+    const handleDelete = async (id: number) => {
+        try {
+            const res = await deleteCoupon(id);
+            if (res.status == 204) {
+                setIsDataUpdated((prev) => !prev);
+                alert("Delete successful")
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message)
+            }
         }
     }
 
@@ -115,6 +164,7 @@ function CouponManagement() {
                         description="Bạn có chắc chắn xóa khuyến mãi này?"
                         okText="Có"
                         cancelText="Không"
+                        onConfirm={() => handleDelete(record.id)}
                     >
                         <Button danger>Xóa</Button>
                     </Popconfirm>
@@ -132,7 +182,7 @@ function CouponManagement() {
             const res = await getWithPagination(current - 1, pageSize);
 
             if (res && res.status === 200) {
-                console.log(res);
+                // console.log(res);
                 const content = res.data.content.map((coupon: CouponType) => (
                     {
                         ...coupon, key: coupon.id
@@ -157,7 +207,7 @@ function CouponManagement() {
             <Button className='coupon-search-btn'>Tìm kiếm</Button>
         </div>
         <Drawer
-            title="Tạo khuyến mãi"
+            title={`${currentCouponId ? "Cập nhật khuyến mãi" : "Tạo mới khuyến mãi"}`}
             width={720}
             onClose={onClose}
             open={open}
@@ -174,7 +224,7 @@ function CouponManagement() {
                         title="Xác nhận"
                         description="Bạn có chắc chắn muốn lưu?"
                         onConfirm={confirm}
-                        onOpenChange={() => console.log('open change')}
+                        // onOpenChange={() => console.log('open change')}
                         disabled={pending}
                     >
                         <Button type="primary" >
@@ -190,7 +240,7 @@ function CouponManagement() {
                     name="id"
                     style={{ display: "none" }}
                 >
-                    <Input placeholder="Please enter user name" type='hidden' />
+                    <Input type='hidden' />
                 </Form.Item>
                 <Row gutter={16}>
                     <Col span={12}>

@@ -11,7 +11,16 @@ function OrderHistory() {
     const handleShowDetailOrder = (orderId: number) => {
         setOpen(true);
         const order = orderList.find((order) => order.id === orderId)
-        setCurrentOrder(order);
+        if (order) {
+            const content = order.orderDetails.map((item: OrderDetailType) => (
+                {
+                    ...item, key: item.id
+                }
+            ));
+            setCurrentOrder({
+                ...order, orderDetails: content
+            });
+        }
     };
 
     const onClose = () => {
@@ -76,12 +85,12 @@ function OrderHistory() {
 
     const columnsOrderDetails: TableColumnsType<OrderDetailType> = [
         {
-            title: 'Id',
+            title: 'Mã chi tiết',
             dataIndex: 'id',
             width: 50,
         },
         {
-            title: 'Ten khoa hoc',
+            title: 'Tiêu đề khóa học',
             dataIndex: 'course_title',
             width: 150,
             render: (_text, record) => (
@@ -91,7 +100,7 @@ function OrderHistory() {
             ),
         },
         {
-            title: 'Anh khoa hoc',
+            title: 'Ảnh khóa học',
             dataIndex: 'course_image',
             width: 150,
             render: (_text, record) => (
@@ -119,13 +128,13 @@ function OrderHistory() {
                 width={"50%"}
             >
                 <Descriptions layout="vertical" bordered >
-                    <Descriptions.Item label="Ma don hang">{currentOrder?.id}</Descriptions.Item>
+                    <Descriptions.Item label="Mã đơn hàng">{currentOrder?.id}</Descriptions.Item>
                     <Descriptions.Item label="Email">{currentOrder?.student}</Descriptions.Item>
-                    <Descriptions.Item label="Coupon">{currentOrder?.coupon}</Descriptions.Item>
-                    <Descriptions.Item label="Thoi gian tao">{currentOrder?.createdAt}</Descriptions.Item>
-                    <Descriptions.Item label="Tong tien">{currentOrder?.totalPrice}</Descriptions.Item>
+                    <Descriptions.Item label="Khuyến mãi">{currentOrder?.coupon}</Descriptions.Item>
+                    <Descriptions.Item label="Thời gian tạo">{currentOrder?.createdAt}</Descriptions.Item>
+                    <Descriptions.Item label="Tổng tiền">{currentOrder?.totalPrice}</Descriptions.Item>
                 </Descriptions>
-                <Divider> Chi tiet don hang </Divider>
+                <Divider> Chi tiết đơn hàng </Divider>
                 <Table columns={columnsOrderDetails} dataSource={currentOrder?.orderDetails} />
             </Drawer>
             <Table columns={columns} dataSource={orderList} scroll={{ x: 1000 }} />

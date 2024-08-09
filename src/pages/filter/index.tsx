@@ -18,7 +18,7 @@ function Filter() {
     const [filter, setFilter] = useState<string>();
     const [pageNum, setPageNum] = useState<number>(0);
     const [courses, setCourses] = useState<CourseListGetType[]>();
-    const [totalPages, setTotalPages] = useState<number>(0);
+    const [totalElements, setTotalElements] = useState<number>(0);
     const [form] = Form.useForm();
     const [category, setCategory] = useState<CategoryListGetType>()
 
@@ -90,14 +90,15 @@ function Filter() {
             query += `&${filter}`;
         }
         if (pageNum) {
-            query += `&pageNum=${pageNum}`;
+            query += `&pageNum=${pageNum - 1}`;
         }
         const res = await getCourseByMultiQuery(query);
 
         if (res.status == 200) {
+            console.log(res.data);
             const data = res.data;
-            const totalPages = data.totalPages;
-            setTotalPages(totalPages);
+            const total = data.totalElements;
+            setTotalElements(total);
             const content = data.content as CourseListGetType[];
             setCourses(content);
         }
@@ -243,7 +244,7 @@ function Filter() {
 
                 </div>
 
-                <Pagination current={pageNum} total={totalPages} onChange={handleChangeCurrent} />
+                <Pagination current={pageNum} total={totalElements} pageSize={5} onChange={handleChangeCurrent} />
             </div>
         </div>
     )

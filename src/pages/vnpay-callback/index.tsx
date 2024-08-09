@@ -3,10 +3,17 @@ import { useEffect, useState } from "react";
 import { PaymentPost } from "../../types/PaymentType";
 import { savePayment } from "../../services/PaymentService";
 import { OrderStatus, updateOrderStatus } from "../../services/OrderService";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../redux/hooks";
+import { getLearningCourse } from "../../redux/slices/LearningCourseSlice";
+import { AxiosError } from "axios";
+import { ErrorType } from "../../types/ErrorType";
 
 function VnPayCallback() {
-
+    const dispatch = useAppDispatch();
     const [responseCode, setResponseCode] = useState<string>();
+    const navigate = useNavigate();
+    const [orderId, setOrderId] = useState<number>();
     useEffect(() => {
         console.log(window.location.href);
         const currentUrl = window.location.href;
@@ -23,7 +30,7 @@ function VnPayCallback() {
         const orderId = urlParams.get('vnp_OrderInfo') as string;
         const bankCode = urlParams.get('vnp_BankCode') as string;
         const vnp_ResponseCode = urlParams.get('vnp_ResponseCode') as string;
-
+        setOrderId(parseInt(orderId))
         const paymentPost: PaymentPost = {
             amount, bankCode, bankTranNo, cartType, payDate, orderId
         }
@@ -35,28 +42,49 @@ function VnPayCallback() {
     }, []);
 
     const createPayment = async (paymentPost: PaymentPost, orderId: string) => {
-        const res = await savePayment(paymentPost);
-        if (res.status == 200) {
-            console.log("save payment success");
-            const orderIdNum = parseInt(orderId);
+        try {
+            const res = await savePayment(paymentPost);
+            if (res.status == 200) {
+                dispatch(getLearningCourse())
+                console.log("save payment success");
+                const orderIdNum = parseInt(orderId);
+                const resOfUpdateOrderStatus = await updateOrderStatus(orderIdNum, "SUCCESS");
+                if (resOfUpdateOrderStatus.status == 204) {
+                    console.log("update order status success");
+                }
 
-
-            const resOfUpdateOrderStatus = await updateOrderStatus(orderIdNum, "SUCCESS");
-            if (resOfUpdateOrderStatus.status == 204) {
-                console.log("update order status success");
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                const orderIdNum = parseInt(orderId);
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                // alert(message);
+                const resOfUpdateOrderStatus = await updateOrderStatus(orderIdNum, "CANCEL");
+                if (resOfUpdateOrderStatus.status == 204) {
+                    console.log("update order status cancel");
+                }
             }
         }
+
+    }
+    const handleRedirectToOrderHistory = () => {
+        navigate("/purchase-history")
+    }
+    const handleRedirectToHome = () => {
+        navigate("/")
     }
     return <div className="vnpay-callback-container">
         {responseCode == "00" && <Result
             status="success"
-            title="Successfully Purchased Cloud Server ECS!"
-            subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+            title="Thanh toán thành công"
+            subTitle={`Mã đơn hàng: ${orderId}`}
             extra={[
-                <Button type="primary" key="console">
-                    Go Console
+                <Button type="primary" key="console" onClick={handleRedirectToOrderHistory}>
+                    Về trang lịch sử mua hàng
                 </Button>,
-                <Button key="buy">Buy Again</Button>,
+                <Button key="buy" onClick={handleRedirectToHome}>Mua tiếp</Button>,
             ]}
         />}
         {responseCode != "00" && <Result

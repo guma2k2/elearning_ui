@@ -25,6 +25,10 @@
             flex-direction: column;
             gap: 5px;
 
+            .course-free {
+                max-width: 100px;
+            }
+
             .title {
                 min-height: 28px;
                 padding-bottom: 8px;

@@ -281,12 +281,18 @@ li {
           font-size: 16px;
           font-weight: 600;
           color: #292929;
+          display: inline-block;
+          max-width: 150px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
 
         .user-profile-email {
-          width: 100%;
           font-size: 12px;
           color: #757575;
+          display: inline-block;
+          max-width: 150px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;

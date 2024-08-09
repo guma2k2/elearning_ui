@@ -2,9 +2,11 @@ import { Button, Col, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Ro
 import { useEffect, useState } from "react";
 import './Category.style.scss'
 import TextArea from "antd/es/input/TextArea";
-import { get, getWithPagination, save, update } from "../../../services/CategoryService";
+import { deleteCategory, get, getWithPagination, save, update } from "../../../services/CategoryService";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { fetchCategoryParents } from "../../../redux/slices/CategorySlice";
+import { AxiosError } from "axios";
+import { ErrorType } from "../../../types/ErrorType";
 
 function Category() {
     const [open, setOpen] = useState<boolean>(false);
@@ -15,7 +17,7 @@ function Category() {
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
-    const [currentCatId, setCurrentCatId] = useState<number | undefined>();
+    const [currentCatId, setCurrentCatId] = useState<number | null>();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("");
     const [form] = Form.useForm();
@@ -34,6 +36,22 @@ function Category() {
             const resOfUpdate = await update(categoryPut, id);
             console.log(resOfUpdate);
             setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+        }
+    }
+    const handleDelete = async (id: number) => {
+        try {
+            const res = await deleteCategory(id);
+            if (res.status == 204) {
+                setIsDataUpdated((prev) => !prev);
+                alert("Delete successful")
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message)
+            }
         }
     }
     const columns: TableColumnsType<CategoryType> = [
@@ -56,11 +74,14 @@ function Category() {
             title: 'Trạng thái',
             dataIndex: 'isPublish',
             width: 100,
-            render: (_text, record) => (
-                <Flex gap="small" wrap="wrap">
+            render: (_text, record) => {
+                console.log(record.isPublish);
+
+                return <Flex gap="small" wrap="wrap">
                     <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatusCateogry(checked, record.id)} />
                 </Flex>
-            ),
+            }
+            ,
         },
         {
             title: 'Ngày tạo',
@@ -84,8 +105,9 @@ function Category() {
                         description="Bạn có chắc chắn muốn xóa danh mục này"
                         okText="Có"
                         cancelText="Không"
+                        onConfirm={() => handleDelete(record.id)}
                     >
-                        <Button danger>Xóa</Button>
+                        <Button danger >Xóa</Button>
                     </Popconfirm>
                 </Flex>
             ),
@@ -117,25 +139,55 @@ function Category() {
     const onClose = () => {
         setOpen(false);
         form.resetFields();
+        setCurrentCatId(null);
     };
     const onFinish = async (values: CategoryType) => {
         console.log(values);
         setPending(true)
         const type = currentCatId ? "update" : "create";
         if (type === "create") {
-            const resSave = await save(values);
-            console.log(resSave);
-            if (resSave.status === 201) {
-                form.resetFields();
-                setOpen(false);
+            try {
+                const resSave = await save(values);
+                console.log(resSave);
+                if (resSave.status === 201) {
+                    form.resetFields();
+                    setOpen(false);
+                    alert("Add category successful")
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    setPending(false);
+
+                    return;
+                }
             }
+
         } else {
-            const id = currentCatId;
-            const resUpdateUser = await update(values, id);
-            if (resUpdateUser.status === 204) {
-                form.resetFields();
-                setOpen(false)
+            try {
+                const id = currentCatId;
+                if (id) {
+                    const resUpdateUser = await update(values, id);
+                    if (resUpdateUser.status === 204) {
+                        form.resetFields();
+                        setOpen(false)
+                        alert("Update category successful")
+                    }
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    setPending(false);
+                    return;
+                }
             }
+
         }
         setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         setPending(false)
@@ -180,7 +232,9 @@ function Category() {
         }
         fetchCategories()
     }, [current, pageSize, isDataUpdated])
-
+    const confirm = () => {
+        form.submit()
+    }
 
     useEffect(() => {
         dispatch(fetchCategoryParents())
@@ -197,7 +251,7 @@ function Category() {
                 <Button className='category-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
             </div>
             <Drawer
-                title="Tạo mới danh mục"
+                title={`${currentCatId ? "Cập nhật danh mục" : "Thêm mới danh mục"}`}
                 width={720}
                 onClose={onClose}
                 open={open}
@@ -209,9 +263,17 @@ function Category() {
                 extra={
                     <Space>
                         <Button onClick={onClose}>Hủy</Button>
-                        <Button type="primary" onClick={() => form.submit()} loading={pending} >
-                            Xác nhận
-                        </Button>
+                        <Popconfirm
+                            title="Xác nhận"
+                            description="Bạn có chắc chắn muốn lưu?"
+                            onConfirm={confirm}
+                            onOpenChange={() => console.log('open change')}
+                            disabled={pending}
+                        >
+                            <Button type="primary"  >
+                                Xác nhận
+                            </Button>
+                        </Popconfirm>
                     </Space>
                 }
             >

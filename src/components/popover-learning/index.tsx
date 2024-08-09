@@ -27,7 +27,7 @@ function PopoverLearning() {
                     </div>
                     <div className="popover-learning-course-right">
                         <div className="popover-learning-course-title">{item.course.title}</div>
-                        <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div>
+                        {/* <div className="popover-learning-course-time">Học cách đây 7 ngày trước</div> */}
                         <Progress percent={item.percentFinished} showInfo={false} className="popover-learning-course-progress" />
                     </div>
                 </div>

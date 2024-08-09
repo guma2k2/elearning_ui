@@ -1,16 +1,31 @@
+
 import { Button, Form, FormProps, Input } from "antd";
 import { AuthType, RegisterRequest } from "../../types/AuthType";
 import { Link } from "react-router-dom";
 import './index.style.scss'
 import { registerUser } from "../../services/AuthService";
+import { AxiosError } from "axios";
+import { ErrorType } from "../../types/ErrorType";
+import { useForm } from "antd/es/form/Form";
 function Register() {
+    const [form] = Form.useForm();
     const onFinish: FormProps<RegisterRequest>['onFinish'] = async (values) => {
-        const res = await registerUser(values);
-        if (res.status == 200) {
-            const data = res.data as AuthType;
-            // show register successful 
-            // then redirect to login page 
+        try {
+            const res = await registerUser(values);
+            if (res.status == 200) {
+                const data = res.data as AuthType;
+                alert("Register successful")
+                form.resetFields();
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message)
+            }
         }
+
     };
     const onFinishFailed = () => {
         console.log('Failed:');
@@ -25,6 +40,7 @@ function Register() {
             </h2>
             <div className="form">
                 <Form
+                    form={form}
                     layout='vertical'
                     name="basic"
                     labelCol={{

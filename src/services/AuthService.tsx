@@ -1,4 +1,4 @@
-import { ForgotPasswordRequest, LoginRequest, RegisterRequest, UpdatePasswordRequest } from "../types/AuthType";
+import { ConfirmPassword, ForgotPasswordRequest, LoginRequest, RegisterRequest, UpdatePasswordRequest } from "../types/AuthType";
 import instance from "../utils/axiosCustomize";
 
 
@@ -14,6 +14,7 @@ export const loginUser = async (request: LoginRequest) => {
     const res = await instance.post(url, request);
     return res;
 }
+
 
 
 export const registerUser = async (request: RegisterRequest) => {

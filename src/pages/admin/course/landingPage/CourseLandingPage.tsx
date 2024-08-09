@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import './CourseLandingPage.style.scss'
 import ReactQuill from 'react-quill'
 import InputFile from '../../../../components/inputFile'
-import { Button, Select, Spin } from 'antd'
+import { Button, Input, Select, Spin, Switch } from 'antd'
 import { TopicType } from '../../topic/TopicType'
 import { getCategoryParents } from '../../../../services/CategoryService'
 import { getTopicsByCategoryId } from '../../../../services/TopicService'
@@ -59,6 +59,8 @@ function CourseLandingPage(probs: Probs) {
     const [topics, setTopics] = useState<TopicType[]>([]);
     const fileRef = useRef<HTMLInputElement>(null);
     const [isDataLoading, setIsDataLoading] = useState<boolean>(false);
+    const [free, setFree] = useState<boolean>();
+    const [price, setPrice] = useState<number>(0);
     const dispatch = useAppDispatch();
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -85,9 +87,10 @@ function CourseLandingPage(probs: Probs) {
                 if (cat.childrens.length > 0) checkCanGetTopics = cat.childrens[0].id;
                 setDefaultCategoryParent(cat.id);
                 setCategoryChildrens(cat.childrens)
-                return;
             }
         })
+
+
         if (checkCanGetTopics !== 0) {
             const res = await getTopicsByCategoryId(checkCanGetTopics);
             if (res.status === 200) {
@@ -99,7 +102,7 @@ function CourseLandingPage(probs: Probs) {
         }
     }
     const handleChangeCategoriesChildrens = async (value: number) => {
-        setDefaultCategoryChild(value);
+
         console.log(value);
         const res = await getTopicsByCategoryId(value);
         if (res.status === 200) {
@@ -109,7 +112,7 @@ function CourseLandingPage(probs: Probs) {
                 setDefaultTopic(data[0].id);
             }
         }
-
+        setDefaultCategoryChild(value);
     }
     const handleChangeLevel = (value: string) => {
         console.log(value);
@@ -141,6 +144,8 @@ function CourseLandingPage(probs: Probs) {
                 level,
                 categoryId: defaultCategoryChild,
                 topicId: defaultTopic,
+                free: free,
+                price: price,
                 image
             };
             console.log(coursePut);
@@ -155,6 +160,9 @@ function CourseLandingPage(probs: Probs) {
         }
         setIsDataLoading(false);
     }
+    const handleChangeTopic = (topicId: number) => {
+        setDefaultTopic(topicId);
+    }
     useEffect(() => {
         setIsDataLoading(true);
         if (course) {
@@ -162,7 +170,9 @@ function CourseLandingPage(probs: Probs) {
             setDefaultCategoryChild(course.categoryId);
             setDefaultTopic(course.topicId);
             setLevel(course.level);
+            setPrice(course.price)
             setCourseTitle(course.title);
+            setFree(course.free)
             course.headline && setCourseHeadline(course.headline);
             course.description && setCourseDesc(course.description);
             course.image && setImgSrc(course.image);
@@ -199,26 +209,26 @@ function CourseLandingPage(probs: Probs) {
             <div className="course-landingpage-container" >
                 <div className="header">
                     <h2>Course Landing Page</h2>
-                    <Button onClick={handleUpdateCourse}>Save</Button>
+                    <Button onClick={handleUpdateCourse}>Lưu</Button>
                 </div>
                 <div className="wrapper">
                     <div className="form-item">
-                        <span className='title'>Course title</span>
+                        <span className='title'>Tiêu đề khóa học</span>
                         <input type="text" value={courseTitle} onChange={(e) => { setCourseTitle(e.target.value) }} />
                     </div>
                     <div className="form-item">
-                        <span className='title'>Course headline</span>
+                        <span className='title'>Giới thiệu khóa học</span>
                         <input type="text" value={courseHeadline} onChange={(e) => { setCourseHeadline(e.target.value) }} />
                     </div>
                     <div className="form-item">
-                        <span className='title'>Course description</span>
+                        <span className='title'>Mô tả khóa học</span>
                         <div className="course-desc">
                             <ReactQuill modules={lectureModules} formats={lectureFormats} theme="snow" value={courseDesc} onChange={setCourseDesc} placeholder="Add a description. Include what students will be able to do after completing the lecture." />
                         </div>
                     </div>
                     <div className="form-item">
-                        <span className='title'>Basic Info</span>
-                        <Select value={level} onChange={handleChangeLevel}>
+                        <span className='title'>Thông tin cơ bản</span>
+                        <Select value={level} onChange={handleChangeLevel} placeholder={"Trình độ"}>
                             {levels && levels.map((level) => {
                                 return <Select.Option key={level.id} value={level.value}>{level.value}</Select.Option>
                             })}
@@ -234,17 +244,23 @@ function CourseLandingPage(probs: Probs) {
                             })}
                         </Select>
                         }
-                        {topics.length > 0 && <Select value={defaultTopic}>
+                        {topics.length > 0 && <Select value={defaultTopic} onChange={handleChangeTopic}>
                             {topics && topics.map((topic) => {
                                 return <Select.Option key={topic.id} value={topic.id}>{topic.name}</Select.Option>
                             })}
                         </Select>}
+
+                        <Switch className='course-free' checkedChildren="Miễn phí" unCheckedChildren="Trả phí" checked={free} onChange={(checked: boolean) => setFree(checked)} />
+                        {free == false && <Input type='number' placeholder='Nhap gia tien khoa hoc' value={price} onChange={(e) => {
+                            console.log(e.target.value);
+                            setPrice(parseInt(e.target.value))
+                        }}></Input>}
                     </div>
                     <div className="form-item">
                         <span className='title'>Course image</span>
                         <div className="form-image">
-                            {imgSrc && <img src={imgSrc} alt="Course image" />}
-                            {!imgSrc && <img src="https://s.udemycdn.com/course/750x422/placeholder.jpg" alt="Course image" />}
+                            {imgSrc && <img src={imgSrc} alt="Course image" style={{ width: "70px", height: "70px", objectFit: "cover" }} />}
+                            {!imgSrc && <img src="https://s.udemycdn.com/course/750x422/placeholder.jpg" alt="Course image" style={{ width: "50px", height: "50px", objectFit: "cover" }} />}
                             <div className="input-file" >
                                 <InputFile filename={file && file.name} title="Upload file" handleFileChange={handleFileChange} fileRef={fileRef} />
                             </div>

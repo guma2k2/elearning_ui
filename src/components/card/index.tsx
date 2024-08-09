@@ -11,14 +11,14 @@ function Card(props: Props) {
     return (
         <Link className='card-container' to={`/courses/${course.id}`}  >
             <img className='course-image' src={course.image} alt="course image" />
-            <h3>{course.title}</h3>
-            <span className='course-instructor'>in28Minutes Official</span>
+            <h3 className='card-course-title'>{course.title}</h3>
+            <span className='course-instructor'>{course.createdBy}</span>
             <span className='course-rating'>
-                <span className='average-rating'>4.8</span>
-                <Rate className='rating' allowHalf disabled defaultValue={4.5} />
-                <span className='count-rating'>22</span>
+                <span className='average-rating'>{course.averageRating}</span>
+                <Rate className='rating' allowHalf disabled defaultValue={course.averageRating} />
+                <span className='count-rating'>{course.ratingCount}</span>
             </span>
-            <span className='course-price'>299 000 d</span>
+            <span className='course-price'>{course.free == true ? "Mien PHi" : course.price} d</span>
         </Link>
 
     )

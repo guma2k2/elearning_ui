@@ -8,6 +8,8 @@ import { uploadFile } from '../../services/MediaService';
 import { updateStudent } from '../../services/StudentService';
 import { AuthType } from '../../types/AuthType';
 import { updateUserProfile } from '../../redux/slices/AuthenticationSlice';
+import { UserType } from '../../types/UserType';
+import { update } from '../../services/UserService';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
 
@@ -34,12 +36,12 @@ for (let i = 1; i <= 12; i++) {
         label: `Tháng ${i}`
     })
 }
-function Profile() {
+function ProfileAdmin() {
     const dispatch = useAppDispatch();
     const [fileType, setFileType] = useState<File>();
     const { auth } = useAppSelector((state: RootState) => state.auth);
     const [form] = Form.useForm();
-    const onFinish = async (values: StudentType) => {
+    const onFinish = async (values: UserType) => {
         console.log("submited");
         const checkIsUploadFile = fileType != undefined;
         console.log(checkIsUploadFile);
@@ -57,14 +59,17 @@ function Profile() {
                 photo = res.data.url;
             }
         }
-        values = { ...values, photo: photo }
+        values = { ...values, photo: photo, active: auth?.user.active, role: auth?.user.role }
         if (checkIsChangePassword === false) {
             values = { ...values, password: "" }
         }
         try {
-            const resUpdateUser = await updateStudent(values);
+            const resUpdateUser = await update(values, auth?.user.id);
+            console.log(values);
+
             if (resUpdateUser.status === 200) {
                 const data = resUpdateUser.data as AuthType;
+                alert("Update user info succesful");
                 dispatch(updateUserProfile(data))
             }
         } catch (error: AxiosError | any) {
@@ -72,7 +77,7 @@ function Profile() {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message)
+                alert(message);
             }
         }
 
@@ -171,4 +176,4 @@ function Profile() {
     </div>;
 }
 
-export default Profile;
+export default ProfileAdmin;

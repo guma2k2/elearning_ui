@@ -1,13 +1,18 @@
 import { Rate } from 'antd';
 import './FilterCourse.style.scss'
 import { CourseListGetType } from '../../types/CourseType';
+import { useNavigate } from 'react-router-dom';
 
 type PropType = {
     course: CourseListGetType
 }
 function FilterCourse(props: PropType) {
+    const navigate = useNavigate();
     const { course } = props;
-    return <div className="filter-course-container">
+    const handleRedirectToCourseDetail = () => {
+        navigate(`/courses/${course.id}`)
+    }
+    return <div className="filter-course-container" onClick={handleRedirectToCourseDetail}>
         <div className="filter-right-course-left">
             <img src={course.image} alt="course-image" />
         </div>

@@ -12,6 +12,12 @@ export const getCourseWithPagination = async (current: number, pageSize: number,
     return res;
 }
 
+export const deleteCourse = async (courseId: number) => {
+    const url = `/admin/courses/${courseId}`
+    const res = await instance.delete(url);
+    return res;
+}
+
 export const getCourseByCategory = async (catId: number) => {
     const url = `/courses/category/${catId}`
     const res = await instance.get(url);

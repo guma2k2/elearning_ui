@@ -38,3 +38,8 @@ export type UpdatePasswordRequest = {
     email: string,
     password: string
 }
+
+export type ConfirmPassword = {
+    password: string,
+    confirmPassword: string
+}

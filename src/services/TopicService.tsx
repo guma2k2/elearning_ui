@@ -29,6 +29,12 @@ export const get = async (topicId: number) => {
     return res;
 }
 
+export const deleteTopic = async (topicId: number) => {
+    const url = `/admin/topic/${topicId}`
+    const res = await instance.delete(url);
+    return res;
+}
+
 export const getTopicsByCategoryId = async (catId: number | undefined) => {
     const url = `/topics/category/${catId}`
     const res = await instance.get(url);

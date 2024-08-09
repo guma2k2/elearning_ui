@@ -3,6 +3,13 @@
     width: 100%;
     padding-right: 20px;
 
+    .card-course-title {
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
     .course-image {
         width: 100%;
         height: 137px;

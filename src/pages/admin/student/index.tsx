@@ -23,7 +23,7 @@ function StudentManagement() {
     }
 
     const handleSearch = async () => {
-        const res = await getWithPagination(current - 1, pageSize, null);
+        const res = await getWithPagination(current - 1, pageSize, keyword);
 
         if (res && res.status === 200) {
             console.log(res);

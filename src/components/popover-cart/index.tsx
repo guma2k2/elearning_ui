@@ -27,7 +27,7 @@ function PopoverCart(props: PropType) {
                             </div>
                             <div className="popover-carts-item-right">
                                 <h3 className="popover-carts-item-title">{cart.course.title}</h3>
-                                <span className="popover-carts-item-instructor">Me</span>
+                                <span className="popover-carts-item-instructor">{cart.course.createdBy}</span>
                                 <span>{cart.course.price} d</span>
                             </div>
                         </div>

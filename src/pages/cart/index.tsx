@@ -104,7 +104,7 @@ function Cart() {
                 </div>
                 <Button className='payment-btn' onClick={handleRedirectToPaymentPage}>Thanh toán</Button>
                 <Divider className='payment-divider' />
-                <h3 className='coupon-header'>Khuyen mai</h3>
+                <h3 className='coupon-header'>Khuyến mãi</h3>
                 {coupon && <div className="coupon-used">
                     <div className="coupon-used-left">
                         <ul>
@@ -119,8 +119,8 @@ function Cart() {
                     </span>
                 </div>}
                 <div className="coupon-input">
-                    <Input disabled={disabledDiscount} className='coupon-input' placeholder='Nhap khuyen mai' value={couponValue} onChange={handleChangeCouponValue} />
-                    <Button disabled={disabledDiscount} onClick={handleSearchCoupon} className='coupon-btn'>Ap dung</Button>
+                    <Input disabled={disabledDiscount} className='coupon-input' placeholder='Nhập khuyến mãi' value={couponValue} onChange={handleChangeCouponValue} />
+                    <Button disabled={disabledDiscount} onClick={handleSearchCoupon} className='coupon-btn'>Áp dụng</Button>
                 </div>
                 {errorMessage && errorMessage !== "" && <span className='coupon-error'>{errorMessage}</span>}
             </div>

@@ -11,7 +11,7 @@ export const save = async (orderPost: OrderPostDto) => {
 export const getOrderWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
     let url: string = ""
     if (keyword != null) {
-        url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}&keyword=${keyword}`
+        url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}&orderId=${keyword}`
     } else {
         url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}`
     }

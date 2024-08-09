@@ -154,7 +154,7 @@ function OrderManagement() {
             <span>Đơn hàng</span>
         </div>
         <div className="order-search">
-            <Input className='order-search-input' onChange={handleChangeKeyword} value={keyword} />
+            <Input className='order-search-input' placeholder='Nhập mã đơn hàng' onChange={handleChangeKeyword} value={keyword} />
             <Button className='order-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
         </div>
         <Drawer

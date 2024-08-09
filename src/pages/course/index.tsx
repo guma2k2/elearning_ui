@@ -278,7 +278,7 @@ function CourseDetail() {
                     </div>
                     {course && course.requirements && course.requirements.length > 0 && <div className='requirement-container'>
                         <h2 className="requirement-header">
-                            Yeu cau
+                            Yêu cầu
                         </h2>
                         <ul className="requirement-item">
                             {course.requirements.map((item, index) => <li key={`requirement-course-detail-${index}`}><span>{item}</span></li>)}
@@ -337,7 +337,7 @@ function CourseDetail() {
                     {course && course.description &&
                         <div className='desc-container'>
                             <h2 className="desc-header">
-                                Mo ta
+                                Mô tả
                             </h2>
                             <div dangerouslySetInnerHTML={{ __html: course.description }}></div>
                         </div>}

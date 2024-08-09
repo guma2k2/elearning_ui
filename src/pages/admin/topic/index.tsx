@@ -2,10 +2,12 @@ import { Button, Col, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Ro
 import { useEffect, useState } from "react";
 import { TopicType } from "./TopicType";
 import TextArea from "antd/es/input/TextArea";
-import { get, getTopicWithPagination, save, update } from "../../../services/TopicService";
+import { deleteTopic, get, getTopicWithPagination, save, update } from "../../../services/TopicService";
 import './Topic.style.scss'
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { fetchCategoryParents } from "../../../redux/slices/CategorySlice";
+import { AxiosError } from "axios";
+import { ErrorType } from "../../../types/ErrorType";
 
 function Topic() {
     const [open, setOpen] = useState<boolean>(false);
@@ -58,7 +60,7 @@ function Topic() {
             width: 100,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.publish} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
                 </Flex>
             ),
         },
@@ -84,6 +86,7 @@ function Topic() {
                         description="Bạn có chắc chắn xóa chủ đề này?"
                         okText="Có"
                         cancelText="Không"
+                        onConfirm={() => handleDelete(record.id)}
                     >
                         <Button danger>Xóa</Button>
                     </Popconfirm>
@@ -125,18 +128,46 @@ function Topic() {
         setPending(true)
         const type = currentTopicId ? "update" : "create";
         if (type === "create") {
-            const resSave = await save(values);
-            console.log(resSave);
-            if (resSave.status === 201) {
-                form.resetFields();
-                setOpen(false);
+
+            try {
+                const resSave = await save(values);
+                console.log(resSave);
+                if (resSave.status === 201) {
+                    form.resetFields();
+                    setOpen(false);
+                    alert("Add successful");
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    setPending(false);
+                    return;
+                }
             }
+
         } else {
-            const resUpdateUser = await update(values, currentTopicId);
-            if (resUpdateUser.status === 204) {
-                form.resetFields();
-                setOpen(false)
+            try {
+                const resUpdateUser = await update(values, currentTopicId);
+                if (resUpdateUser.status === 204) {
+                    form.resetFields();
+                    setOpen(false);
+                    alert("Update successful");
+
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    setPending(false);
+                    return;
+                }
             }
+
         }
         setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         setPending(false)
@@ -151,6 +182,22 @@ function Topic() {
                     return;
                 }
             })
+        }
+    }
+    const handleDelete = async (id: number) => {
+        try {
+            const res = await deleteTopic(id);
+            if (res.status == 204) {
+                setIsDataUpdated((prev) => !prev);
+                alert("delete successful")
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message);
+            }
         }
     }
     const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +240,9 @@ function Topic() {
         }
         fetchTopics()
     }, [current, pageSize, isDataUpdated])
-
+    const confirm = () => {
+        form.submit()
+    }
 
     useEffect(() => {
         dispatch(fetchCategoryParents());
@@ -210,7 +259,7 @@ function Topic() {
                 <Button className='topic-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
             </div>
             <Drawer
-                title="Tạo mới chủ đề"
+                title={`${currentTopicId ? "Cập nhật chủ đề" : "Tạo mới chủ đề"}`}
                 width={720}
                 onClose={onClose}
                 open={open}
@@ -222,9 +271,17 @@ function Topic() {
                 extra={
                     <Space>
                         <Button onClick={onClose}>Hủy bỏ</Button>
-                        <Button type="primary" onClick={() => form.submit()} loading={pending} >
-                            Xác nhận
-                        </Button>
+                        <Popconfirm
+                            title="Xác nhận"
+                            description="Bạn có chắc chắn muốn lưu?"
+                            onConfirm={confirm}
+                            onOpenChange={() => console.log('open change')}
+                            disabled={pending}
+                        >
+                            <Button type="primary"  >
+                                Xác nhận
+                            </Button>
+                        </Popconfirm>
                     </Space>
                 }
             >

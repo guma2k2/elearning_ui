@@ -21,6 +21,7 @@ export type OrderType = {
 }
 
 export type OrderDetailType = {
+    key?: number
     id: number,
     course: CourseGetType
     price: number

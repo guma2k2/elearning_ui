@@ -14,6 +14,11 @@ export const update = async (userPost: UserType, userId: number | undefined) => 
     return res;
 }
 
+export const deleteUser = async (userId: number) => {
+    const url = `/admin/users/${userId}`
+    const res = await instance.delete(url);
+    return res;
+}
 
 export const get = async (userId: number) => {
     const url = `/admin/users/${userId}`

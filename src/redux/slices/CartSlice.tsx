@@ -50,6 +50,11 @@ export const cartSlice = createSlice({
                 state.carts.splice(state.carts.findIndex((cart) => cart.id === cartId), 1)
             }
         },
+        deleteCartBuyLater: (state) => {
+            if (state.carts) {
+                state.carts = state.carts.filter(cart => cart.buyLater);
+            }
+        },
         updateCart: (state, action) => {
             const cartId = action.payload as number
             if (state.carts) {
@@ -83,6 +88,6 @@ export const cartSlice = createSlice({
     },
 })
 
-export const { deleteCart, resetCart, updateCart, addToCartAction } = cartSlice.actions
+export const { deleteCart, resetCart, updateCart, addToCartAction, deleteCartBuyLater } = cartSlice.actions
 
 export default cartSlice.reducer

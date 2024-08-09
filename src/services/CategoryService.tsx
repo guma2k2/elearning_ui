@@ -33,6 +33,12 @@ export const get = async (catId: number) => {
     return res;
 }
 
+export const deleteCategory = async (catId: number) => {
+    const url = `/admin/category/${catId}`
+    const res = await instance.delete(url);
+    return res;
+}
+
 
 export const getByName = async (catName: string) => {
     const url = `/category/name/${catName}`
