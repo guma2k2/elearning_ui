@@ -25,19 +25,19 @@ function CourseEdit() {
                     const id = String(i + 1);
                     if (id == "1") {
                         return {
-                            label: 'Intended learners',
+                            label: 'Học viên mục tiêu',
                             key: id,
                             children: <IntendedLeaners course={currentCourse} />,
                         };
                     } else if (id == "2") {
                         return {
-                            label: 'Curriculum',
+                            label: 'Chương trình giảng dạy',
                             key: id,
                             children: <CurriculumList course={currentCourse} />,
                         };
                     }
                     return {
-                        label: 'Course landing page',
+                        label: 'Trang tổng quan khóa học',
                         key: id,
                         children: <CourseLandingPage course={currentCourse} />,
                     };

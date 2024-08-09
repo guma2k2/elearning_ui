@@ -33,15 +33,15 @@ function getItem(
 const App: React.FC = () => {
     const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
     const items: MenuItem[] = [
-        getItem('Dashboard', '1', <Link to={"/admin"}><PieChartOutlined /></Link>),
-        auth?.user.role === "ROLE_ADMIN" ? getItem('User', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>) : null,
-        auth?.user.role === "ROLE_ADMIN" ? getItem('Category', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>) : null,
-        auth?.user.role === "ROLE_ADMIN" ? getItem('Topic', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>) : null,
-        getItem('Course', '5', <Link to={"/admin/courses"}><DesktopOutlined /></Link>),
-        auth?.user.role === "ROLE_ADMIN" ? getItem('Coupon', '6', <Link to={"/admin/coupons"}><DesktopOutlined /></Link>) : null,
-        auth?.user.role === "ROLE_ADMIN" ? getItem('Order', '7', <Link to={"/admin/orders"}><DesktopOutlined /></Link>) : null,
-        auth?.user.role === "ROLE_ADMIN" ? getItem('Review', '8', <Link to={"/admin/reviews"}><DesktopOutlined /></Link>) : null,
-        auth?.user.role === "ROLE_ADMIN" ? getItem('Student', '9', <Link to={"/admin/students"}><DesktopOutlined /></Link>) : null,
+        getItem('Thống kê', '1', <Link to={"/admin"}><PieChartOutlined /></Link>),
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý người dùng', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý danh mục', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý chủ đề', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>) : null,
+        getItem('Quản lý khóa học', '5', <Link to={"/admin/courses"}><DesktopOutlined /></Link>),
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý khuyến mãi', '6', <Link to={"/admin/coupons"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý đơn hàng', '7', <Link to={"/admin/orders"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý đánh giá', '8', <Link to={"/admin/reviews"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý học sinh', '9', <Link to={"/admin/students"}><DesktopOutlined /></Link>) : null,
 
     ];
     const [collapsed, setCollapsed] = useState(false);

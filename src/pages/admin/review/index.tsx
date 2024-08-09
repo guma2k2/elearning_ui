@@ -9,16 +9,40 @@ function ReviewManagement() {
     const [totalElements, setTotalElements] = useState<number>(1);
     const [reviewList, setReviewList] = useState<ReviewGet[]>([]);
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>();
+    const [keyword, setKeyword] = useState<string>("");
+
     const handleUpdateStatus = async (checked: boolean, id: number) => {
         const res = await updateStatus(checked, id);
         if (res.status === 204) {
             setIsDataUpdated((prev) => !prev);
         }
     }
+    const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value;
+        setKeyword(newKeyword)
+    }
+
+    const handleSearch = async () => {
+        const res = await getWithPagination(current - 1, pageSize, keyword);
+
+        if (res && res.status === 200) {
+            console.log(res);
+            const content = res.data.content.map((review: ReviewGet) => (
+                {
+                    ...review, key: review.id
+                }
+            ))
+            console.log(content)
+            setReviewList(content);
+            setCurrent(res.data.pageNum + 1);
+            setPageSize(res.data.pageSize)
+            setTotalElements(res.data.totalElements)
+        }
+    }
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            const res = await getWithPagination(current - 1, pageSize);
+        const fetchReviews = async () => {
+            const res = await getWithPagination(current - 1, pageSize, null);
 
             if (res && res.status === 200) {
                 console.log(res);
@@ -34,28 +58,28 @@ function ReviewManagement() {
                 setTotalElements(res.data.totalElements)
             }
         }
-        fetchUsers()
+        fetchReviews()
     }, [current, pageSize, isDataUpdated])
 
 
     const columns: TableColumnsType<ReviewGet> = [
         {
-            title: 'Id',
+            title: 'Mã đánh giá',
             dataIndex: 'id',
-            width: 50,
+            width: 200,
         },
         {
-            title: 'Rating star',
+            title: 'Số sao',
             dataIndex: 'ratingStar',
             width: 120,
         },
         {
-            title: 'Content',
+            title: 'Nội dung',
             dataIndex: 'content',
             width: 200,
         },
         {
-            title: 'Active',
+            title: 'Trạng thái',
             dataIndex: 'active',
             width: 100,
             render: (_text, record) => (
@@ -65,12 +89,12 @@ function ReviewManagement() {
             ),
         },
         {
-            title: 'Updated at',
+            title: 'Thời gian cập nhật',
             dataIndex: 'updatedAt',
             width: 200,
         },
         {
-            title: 'Student',
+            title: 'Học sinh',
             dataIndex: 'key',
             width: 300,
             render: (_text, record) => (
@@ -80,7 +104,7 @@ function ReviewManagement() {
             ),
         },
         {
-            title: 'Course',
+            title: 'Khóa học',
             dataIndex: 'key',
             width: 300,
             render: (_text, record) => (
@@ -101,11 +125,11 @@ function ReviewManagement() {
     }
     return <div className="review-management-container">
         <div className='review-header' >
-            <span>Review</span>
+            <span>Đánh giá</span>
         </div>
         <div className="review-search">
-            <Input className='review-search-input' />
-            <Button className='review-search-btn'>Search</Button>
+            <Input placeholder='Nhập nội dung đánh giá' className='review-search-input' onChange={handleChangeKeyword} value={keyword} />
+            <Button className='review-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
         </div>
         <Table columns={columns} dataSource={reviewList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>;

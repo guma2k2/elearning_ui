@@ -2,8 +2,11 @@ import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import Cookies from 'universal-cookie';
 import { RootState } from '../store'
 import { jwtDecode } from "jwt-decode";
-import { LoginRequest, LoginResponse } from '../../types/AuthType'
+import { AuthType, LoginRequest, LoginResponse } from '../../types/AuthType'
 import { loginUser } from "../../services/AuthService"
+import { AxiosError } from 'axios';
+import { ErrorType } from '../../types/ErrorType';
+import { updateAxiosInstance } from '../../utils/axiosCustomize';
 interface AuthState {
     auth?: LoginResponse
     isLoading: boolean
@@ -14,9 +17,21 @@ interface AuthState {
 export const login = createAsyncThunk(
     'auth/login',
     async (request: LoginRequest) => {
-        const response = await loginUser(request);
-        const data = response.data as LoginResponse;
-        return data;
+        try {
+            const response = await loginUser(request);
+            const data = response.data as LoginResponse;
+            updateAxiosInstance();
+            return data;
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message);
+                return;
+            }
+        }
+
     },
 )
 // Define the initial state using that type
@@ -34,6 +49,20 @@ export const authSlice = createSlice({
             const payload = action.payload as LoginResponse
             state.auth = payload;
             state.isLoggin = true;
+            const token = payload.token as string
+            const decoded = jwtDecode(token);
+            const cookies = new Cookies();
+            if (decoded.exp) {
+                cookies.set('token', token, { expires: new Date(decoded.exp * 1000) });
+            }
+            updateAxiosInstance();
+
+        },
+        updateUserProfile: (state, action) => {
+            const payload = action.payload as AuthType
+            if (state.auth) {
+                state.auth.user = payload
+            }
         },
         logOut: (state) => {
             if (state.auth) {
@@ -41,6 +70,9 @@ export const authSlice = createSlice({
             }
             const cookies = new Cookies();
             cookies.remove('token', { path: '/' });
+            cookies.remove('token', { path: '/admin' });
+            const token = cookies.get('token');
+            console.log(token);
             state.isLoading = false
             state.isError = false
             state.isLoggin = false
@@ -75,7 +107,7 @@ export const authSlice = createSlice({
     },
 })
 
-export const { saveUserProfile, logOut } = authSlice.actions
+export const { saveUserProfile, logOut, updateUserProfile } = authSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.courses

@@ -1,9 +1,20 @@
 import { CourseType } from "../types/CourseType";
 import instance from "../utils/axiosCustomize";
 
-export const getCourseWithPagination = async (current: number, pageSize: number) => {
-    const url = `/admin/courses/paging?pageNum=${current}&pageSize=${pageSize}`
+export const getCourseWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
+    let url: string = ""
+    if (keyword != null) {
+        url = `/admin/courses/paging?pageNum=${current}&pageSize=${pageSize}&keyword=${keyword}`
+    } else {
+        url = `/admin/courses/paging?pageNum=${current}&pageSize=${pageSize}`
+    }
     const res = await instance.get(url);
+    return res;
+}
+
+export const deleteCourse = async (courseId: number) => {
+    const url = `/admin/courses/${courseId}`
+    const res = await instance.delete(url);
     return res;
 }
 

@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, Flex, Col, Drawer, Form, Input, Row, Select, Space, Popconfirm, Upload, message, Switch, InputNumber } from 'antd';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Table, Button, Flex, Col, Drawer, Form, Input, Row, Select, Space, Popconfirm, message, Switch, InputNumber } from 'antd';
 import type { PaginationProps, GetProp, UploadProps, TableColumnsType } from 'antd';
 import UserPhoto from "../../../assets/userPhoto.png"
 import "./User.style.scss"
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { uploadFile } from '../../../services/MediaService';
 import { UserGetDetailType, UserType } from '../../../types/UserType';
-import { get, getWithPagination, save, update } from '../../../services/UserService';
+import { deleteUser, get, getWithPagination, save, update } from '../../../services/UserService';
+import { AxiosError } from 'axios';
+import { ErrorType } from '../../../types/ErrorType';
 
 
 
@@ -33,42 +34,23 @@ for (let i = 1; i <= 12; i++) {
     })
 }
 
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
-const getBase64 = (img: FileType, callback: (url: string) => void) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result as string));
-    reader.readAsDataURL(img);
-};
-
-const beforeUpload = (file: FileType) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-        message.error('You can only upload JPG/PNG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-        message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
-};
-
 function User() {
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [fileType, setFileType] = useState<File>();
+    const [messageApi, contextHolder] = message.useMessage();
     const [pending, setPending] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
     const [form] = Form.useForm();
-    const [currentUser, setCurrentUser] = useState<UserGetDetailType>();
+    const [currentUser, setCurrentUser] = useState<UserGetDetailType | null>();
     const [userList, setUserList] = useState<UserType[]>([]);
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const [keyword, setKeyword] = useState<string>("");
     useEffect(() => {
         const fetchUsers = async () => {
-            const res = await getWithPagination(current - 1, pageSize);
-
+            const res = await getWithPagination(current - 1, pageSize, null);
             if (res && res.status === 200) {
                 console.log(res);
                 const content = res.data.content.map((user: UserType) => (
@@ -76,7 +58,7 @@ function User() {
                         ...user, key: user.id
                     }
                 ))
-                console.log(content)
+                console.log(content);
                 setUserList(content);
                 setCurrent(res.data.pageNum + 1);
                 setPageSize(res.data.pageSize)
@@ -89,75 +71,72 @@ function User() {
 
     const columns: TableColumnsType<UserType> = [
         {
-            title: 'Id',
+            title: 'Mã người dùng',
             dataIndex: 'id',
-            width: 50,
+            width: 200,
         }, {
-            title: 'Photo',
+            title: 'Ảnh ',
             dataIndex: 'photo',
-            width: 150,
+            width: 100,
             render: (text, record) => {
                 console.log(text);
 
-                if (record.photoURL === "") {
+                if (record.photoURL === "" || record.photoURL == null) {
                     return <img src={UserPhoto} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
                 }
                 return <img src={record.photoURL} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
             }
         },
         {
-            title: 'Email',
+            title: 'Địa chỉ email',
             dataIndex: 'email',
             width: 250,
         },
         {
-            title: 'First name',
+            title: 'Họ',
             dataIndex: 'firstName',
             width: 200,
         },
         {
-            title: 'Last name',
+            title: 'Tên',
             dataIndex: 'lastName',
             width: 200,
         },
         {
-            title: 'Gender',
+            title: 'Giới tính',
             dataIndex: 'gender',
             width: 100,
         },
         {
-            title: 'Role',
+            title: 'Vai trò',
             dataIndex: 'role',
             width: 100,
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'key',
             width: 300,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary" onClick={() => handleUpdateUser(record.id)}>Edit</Button>
+                    <Button type="primary" onClick={() => handleUpdateUser(record.id)}>Cập nhật</Button>
                     <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this user?"
-                        okText="Yes"
-                        cancelText="No"
+                        title="Xóa người dùng này?"
+                        description="Bạn có chắc chắn xóa người dùng này?"
+                        okText="Có"
+                        cancelText="Không"
+                        onConfirm={() => handleDelete(record.id)}
                     >
-                        <Button danger>Delete</Button>
+                        <Button danger>Xóa</Button>
                     </Popconfirm>
                 </Flex>
             ),
         },
     ];
-    const normFile = (e: any) => {
-        console.log('Upload event:', e);
-        if (Array.isArray(e)) {
-            return e;
-        }
-        return e?.fileList;
-    };
+
     const showDrawer = () => {
+        form.resetFields();
         setOpen(true);
+        setCurrentUser(undefined);
     };
 
     const handleUpdateUser = async (userId: number) => {
@@ -166,6 +145,7 @@ function User() {
         const res = await get(userId)
         if (res && res.status === 200) {
             const newCurrentUser = res.data;
+            console.log(newCurrentUser);
             setCurrentUser(res.data);
             form.setFieldsValue({
                 ...newCurrentUser,
@@ -173,14 +153,14 @@ function User() {
                 month: newCurrentUser.dateOfBirth.split("-")[1],
                 year: newCurrentUser.dateOfBirth.split("-")[0],
             })
-            setImageUrl(newCurrentUser.photoURL);
+            setImageUrl(newCurrentUser.photo);
         }
     }
 
     const onClose = () => {
         setOpen(false);
         form.resetFields();
-        setCurrentUser(undefined)
+        setCurrentUser(null)
         setImageUrl("")
     };
 
@@ -188,12 +168,12 @@ function User() {
         setPending(true);
         console.log(values);
         const type = currentUser ? "update" : "create";
-        const checkIsUploadFile = values.photo?.length ? true : false;
+        const checkIsUploadFile = fileType != undefined;
         const checkIsChangePassword = values.password?.length ? true : false;
         let photo = "";
         if (checkIsUploadFile) {
             var formData = new FormData();
-            formData.append("photo", values.photo[0].originFileObj);
+            formData.append("file", fileType);
             formData.append("type", "photo");
             const res = await uploadFile(formData);
             if (res.status === 200) {
@@ -203,26 +183,72 @@ function User() {
         values = { ...values, photo: photo }
         console.log(values);
         if (type === "create") {
-            const resSaveUser = await save(values);
-            console.log(resSaveUser);
-            if (resSaveUser.status === 201) {
-                form.resetFields();
-                setOpen(false);
+            try {
+                const resSaveUser = await save(values);
+                console.log(resSaveUser);
+                if (resSaveUser.status === 201) {
+                    alert("Add user successful");
+                    form.resetFields();
+                    setOpen(false);
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    setPending(false)
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    return;
+
+                }
             }
+
         } else {
-            const userId = currentUser?.id;
-            if (checkIsChangePassword === false) {
-                values = { ...values, password: "" }
+
+            try {
+                const userId = currentUser?.id;
+                if (checkIsChangePassword === false) {
+                    values = { ...values, password: "" }
+                }
+                const resUpdateUser = await update(values, userId);
+                if (resUpdateUser.status === 204) {
+                    alert("Update user successful");
+                    form.resetFields();
+                    setOpen(false)
+                }
+
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    setPending(false)
+                    return;
+                }
             }
-            const resUpdateUser = await update(values, userId);
-            if (resUpdateUser.status === 204) {
-                form.resetFields();
-                setOpen(false)
-            }
+
         }
         setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         setPending(false)
     };
+
+    const handleDelete = async (id: number) => {
+        try {
+            const res = await deleteUser(id);
+            if (res.status == 204) {
+                setIsDataUpdated((prev) => !prev);
+                alert("Delete user successful");
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message)
+            }
+        }
+    }
     const handleChangePage = (page: PaginationProps) => {
         if (page.current && page.pageSize) {
             console.log(page.current);
@@ -232,196 +258,199 @@ function User() {
         }
     }
 
-    const handleChange: UploadProps['onChange'] = (info) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files
+        if (files && files.length > 0) {
+            const selected = files[0] as File;
+            const url = URL.createObjectURL(selected);
+            console.log(selected);
+            setImageUrl(url);
+            setFileType(selected);
         }
-        if (info.file.status === 'done') {
-            getBase64(info.file.originFileObj as FileType, (url) => {
-                setLoading(false);
-                setImageUrl(url);
-            });
-        }
-    };
+    }
+    const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value;
+        setKeyword(newKeyword)
+    }
 
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </button>
-    );
-    return (
-        <div className='user-container'>
-            <div className='user-header' >
-                <span>User</span>
-                <Button onClick={showDrawer} type="primary">Add user</Button>
-
-            </div>
-            <div className="user-search">
-                <Input className='user-search-input' />
-                <Button className='user-search-btn'>Search</Button>
-            </div>
-            <Drawer
-                title="Create a new user"
-                width={720}
-                onClose={onClose}
-                open={open}
-                styles={{
-                    body: {
-                        paddingBottom: 80,
-                    },
-                }}
-                extra={
-                    <Space>
-                        <Button onClick={onClose}>Cancel</Button>
-                        <Button type="primary" onClick={() => form.submit()} disabled={pending} loading={pending}>
-                            Submit
-                        </Button>
-                    </Space>
+    const handleSearch = async () => {
+        const res = await getWithPagination(current - 1, pageSize, keyword);
+        if (res && res.status === 200) {
+            console.log(res);
+            const content = res.data.content.map((user: UserType) => (
+                {
+                    ...user, key: user.id
                 }
-            >
-                <Form layout="vertical" onFinish={onFinish} form={form} disabled={pending}>
-                    <Form.Item
-                        name="id"
-                        style={{ display: "none" }}
-                    >
-                        <Input placeholder="Please enter user name" type='hidden' />
-                    </Form.Item>
-                    <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="firstName"
-                                label="First name"
-                                rules={[{ required: true, message: 'Please enter user name' }]}
+            ))
+            console.log(content)
+            setUserList(content);
+            setCurrent(res.data.pageNum + 1);
+            setPageSize(res.data.pageSize)
+            setTotalElements(res.data.totalElements)
+        }
+    }
+    const confirm = () => {
+        form.submit()
+    }
+    return (
+        <>
+            <div className='user-container'>
+                <div className='user-header' >
+                    <span>Người dùng</span>
+                    <Button className='user-btn-add' onClick={showDrawer} type="primary">Thêm người dùng</Button>
+                </div>
+                <div className="user-search">
+                    <Input placeholder='Tìm kiếm theo email' className='user-search-input' onChange={handleChangeKeyword} value={keyword} />
+                    <Button className='user-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
+                </div>
+                <Drawer
+                    title={`${currentUser ? "Cập nhật người dùng" : "Thêm mới người dùng"}`}
+                    width={720}
+                    onClose={onClose}
+                    open={open}
+                    styles={{
+                        body: {
+                            paddingBottom: 80,
+                        },
+                    }}
+                    extra={
+                        <Space>
+                            <Button onClick={onClose}>Cancel</Button>
+                            <Popconfirm
+                                title="Xác nhận"
+                                description="Bạn có chắc chắn muốn lưu?"
+                                onConfirm={confirm}
+                                onOpenChange={() => console.log('open change')}
+                                disabled={pending}
                             >
-                                <Input placeholder="Please enter user name" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                name="lastName"
-                                label="Last name"
-                                rules={[{ required: true, message: 'Please enter user name' }]}
-                            >
-                                <Input placeholder="Please enter user name" />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-
-                    <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="password"
-                                label="Password"
-                                rules={currentUser == null ? [{ required: true, message: 'Please select an owner' }, { min: 8, message: "the password must be at least 8 characters" }] : []}
-                            >
-                                <Input type='password' />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                name="email"
-                                label="Email"
-                                rules={[{ required: true, message: 'Please choose the type' }]}
-                            >
-                                <Input type='email' />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="gender"
-                                label="Gender"
-                                rules={[{ required: true, message: 'Please choose the gender' }]}
-                            >
-                                <Select>
-                                    <Select.Option value="MALE">MALE</Select.Option>
-                                    <Select.Option value="FEMALE">FEMALE</Select.Option>
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                name="role"
-                                label="Role"
-                                rules={[{ required: true, message: 'Please choose role for user' }]}
-                            >
-                                <Select >
-                                    <Select.Option value="ROLE_ADMIN">ROLE_ADMIN</Select.Option>
-                                    <Select.Option value="ROLE_INSTRUCTOR">ROLE_INSTRUCTOR</Select.Option>
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row gutter={16}>
-                        <Col span={8}>
-                            <Form.Item
-                                name="day"
-                                label="Day"
-                                rules={[{ required: true, message: 'Please choose the day' }]}
-                            >
-                                <Select >
-                                    {day.map((item) => <Select.Option key={item.value} value={item.value}>{item.value}</Select.Option>)}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item
-                                name="month"
-                                label="Month"
-                                rules={[{ required: true, message: 'Please choose the month' }]}
-                            >
-                                <Select >
-                                    {month.map((item) => <Select.Option key={item.value} value={item.value}>{item.label}</Select.Option>)}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item
-                                name="year"
-                                label="Year"
-                                rules={[{ required: true, message: 'Please choose the year' }]}
-                            >
-                                <InputNumber style={{ minWidth: "100%" }} />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Form.Item name="active" label="Active" valuePropName="checked">
-                                <Switch />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Form.Item
-                                name="photoId"
-                                label="Photo"
-                                valuePropName="fileList"
-                                getValueFromEvent={normFile}
-                            >
-                                <Upload
-                                    name="photoId"
-                                    listType="picture-card"
-                                    className="avatar-uploader"
-                                    showUploadList={false}
-                                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                                    beforeUpload={beforeUpload}
-                                    onChange={handleChange}
+                                <Button type="primary"  >
+                                    Xác nhận
+                                </Button>
+                            </Popconfirm>
+                        </Space>
+                    }
+                >
+                    <Form layout="vertical" onFinish={onFinish} form={form} disabled={pending}>
+                        <Form.Item
+                            name="id"
+                            style={{ display: "none" }}
+                        >
+                            <Input placeholder="Please enter user name" type='hidden' />
+                        </Form.Item>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="firstName"
+                                    label="First name"
+                                    rules={[{ required: true, message: 'Please enter user name' }]}
                                 >
-                                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                </Upload>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                </Form>
-            </Drawer>
-            <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
-        </div>
+                                    <Input placeholder="Please enter user name" />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="lastName"
+                                    label="Last name"
+                                    rules={[{ required: true, message: 'Please enter last name' }]}
+                                >
+                                    <Input placeholder="Please enter user name" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="password"
+                                    label="Password"
+                                    rules={currentUser == null ? [{ required: true, message: 'Please select an owner' }, { min: 6, message: "the password must be at least 6 characters" }] : []}
+                                >
+                                    <Input type='password' />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="email"
+                                    label="Email"
+                                    rules={[{ required: true, message: 'Email không được bỏ trống' }]}
+                                >
+                                    <Input type='email' />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="gender"
+                                    label="Gender"
+                                    rules={[{ required: true, message: 'Please choose the gender' }]}
+                                >
+                                    <Select>
+                                        <Select.Option value="MALE">MALE</Select.Option>
+                                        <Select.Option value="FEMALE">FEMALE</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="role"
+                                    label="Role"
+                                    rules={[{ required: true, message: 'Please choose role for user' }]}
+                                >
+                                    <Select >
+                                        <Select.Option value="ROLE_ADMIN">ROLE_ADMIN</Select.Option>
+                                        <Select.Option value="ROLE_INSTRUCTOR">ROLE_INSTRUCTOR</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={16}>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="day"
+                                    label="Day"
+                                    rules={[{ required: true, message: 'Please choose the day' }]}
+                                >
+                                    <Select >
+                                        {day.map((item) => <Select.Option key={item.value} value={item.value}>{item.value}</Select.Option>)}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="month"
+                                    label="Month"
+                                    rules={[{ required: true, message: 'Please choose the month' }]}
+                                >
+                                    <Select >
+                                        {month.map((item) => <Select.Option key={item.value} value={item.value}>{item.label}</Select.Option>)}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="year"
+                                    label="Year"
+                                    rules={[{ required: true, message: 'Please choose the year' }]}
+                                >
+                                    <InputNumber style={{ minWidth: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={16}>
+                            <Col span={24}>
+                                <Form.Item name="active" label="Active" valuePropName="checked">
+                                    <Switch />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                    </Form>
+                    {imageUrl && <img className='user-profile-photo' src={imageUrl} alt="avatar" />}
+                    <Input type="file" onChange={handleFileChange} />
+                </Drawer>
+                <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
+            </div>
+        </>
     )
 }
 

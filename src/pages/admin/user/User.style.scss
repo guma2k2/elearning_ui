@@ -12,6 +12,12 @@
             font-weight: 600;
         }
 
+        .user-btn-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
 
     }
 
@@ -24,6 +30,6 @@
             width: 300px;
         }
 
-        .user-search-btn {}
+        // .user-search-btn {}
     }
 }

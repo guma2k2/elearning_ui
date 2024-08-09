@@ -12,6 +12,11 @@ export const getByCode = async (code: string) => {
     const res = await instance.get(url);
     return res;
 }
+export const deleteCoupon = async (couponId: number) => {
+    const url = `/admin/coupons/${couponId}`
+    const res = await instance.delete(url);
+    return res;
+}
 
 
 

@@ -6,10 +6,10 @@ export type UserType = {
     photoURL?: string
     email: string;
     firstName: string;
-    active: boolean
+    active?: boolean
     lastName: string;
     gender: string;
-    role: string;
+    role?: string;
     password?: string
 }
 

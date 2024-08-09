@@ -15,7 +15,6 @@ import { get } from '../../services/CourseService';
 
 
 function PaymentCourse() {
-    const { carts } = useAppSelector((state: RootState) => state.carts);
     const { id } = useParams();
     const location = useLocation();
     const [bankCode, setBankCode] = useState<string>("NCB");
@@ -29,7 +28,6 @@ function PaymentCourse() {
 
     const handlePayment = async () => {
         if (course) {
-
             const orderDetailList: OrderDetailPostDto[] = [
                 {
                     courseId: course.id,
@@ -69,33 +67,27 @@ function PaymentCourse() {
         if (res.status == 200) {
             const data = res.data as CourseGetType
             setCourse(data);
+            const searchParams = new URLSearchParams(location.search);
+            const discountPercentParam = searchParams.get('discountPercent');
+            console.log(discountPercentParam);
+            if (discountPercentParam != null) {
+                console.log(discountPercentParam);
+                let discountPercentNumber = parseInt(discountPercentParam);
+                console.log(discountPercentNumber);
+                setDiscountPercent(discountPercentNumber)
+                const newTotal = data?.price - discountPercentNumber * data?.price / 100
+                setTotal(newTotal);
+            } else {
+                setTotal(data.price)
+            }
         }
     }
     useEffect(() => {
         if (id) {
             const courseId = parseInt(id);
             fetchCourseById(courseId);
-            const searchParams = new URLSearchParams(location.search);
-            const discountPercentParam = searchParams.get('discountPercent');
-            console.log(discountPercentParam);
-            if (discountPercentParam) {
-                console.log(discountPercentParam);
-                let discountPercentNumber = parseInt(discountPercentParam);
-                console.log(discountPercentNumber);
-                setDiscountPercent(discountPercentNumber)
-                if (course) {
-                    const newTotal = course?.price - discountPercentNumber * course?.price / 100
-                    setTotal(newTotal);
-                }
-            } else {
-                if (course) {
-                    setTotal(course.price)
-                }
-            }
         }
     }, [id]);
-
-    console.log(course);
 
     return <div className="payment-container">
         <div className="payment-left">

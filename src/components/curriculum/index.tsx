@@ -89,6 +89,12 @@ function Curriculum(probs: CurriculumType) {
                 const resOfUploadVideoLecture = await updateLecture(lecturePost, curriculum.id);
                 if (resOfUploadVideoLecture.status === 200) {
                     console.log((resOfUploadVideoLecture).data);
+                    const data = resOfUploadVideoLecture.data
+                    const request: CurriculumPost = {
+                        sectionId,
+                        curriculum: data
+                    }
+                    dispatch(updateCurriculum(request));
                     setToggle({ type: "" })
                     if (fileRef.current) {
                         fileRef.current.value = '';
@@ -151,6 +157,8 @@ function Curriculum(probs: CurriculumType) {
                     quizId: curriculum.id,
                     answers
                 }
+                console.log(questionPost);
+
                 const res = await createQuestion(questionPost);
                 if (res.status === 201) {
                     console.log(res.data);
@@ -280,7 +288,7 @@ function Curriculum(probs: CurriculumType) {
                                     <Button onClick={() => { setToggle({ type: "questions" }); resetForm(); }} >New Question</Button>
                                 </div>
                                 <div className="right">
-                                    <Button>Preview</Button>
+                                    {/* <Button>Preview</Button> */}
                                 </div>
                             </div>
                             <div className="dropdown-questions-list">

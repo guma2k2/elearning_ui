@@ -21,6 +21,7 @@ function StatisticYear() {
     };
 
     const fetchStatisticByTime = async (time: string) => {
+        console.log(time);
         const res = await getStatisticByTime(time);
         console.log(res);
         if (res.status === 200) {
@@ -35,7 +36,7 @@ function StatisticYear() {
             time += `?year=${year}`
         }
         fetchStatisticByTime(time);
-    }, [year])
+    }, [year,])
     return <div className="dashboard-chart-year-container">
         <div className="dashboard-input-year">
             <span>Chọn năm</span>

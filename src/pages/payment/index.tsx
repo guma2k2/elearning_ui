@@ -1,7 +1,7 @@
 import { Button, Divider, Select } from 'antd';
 import './Payment.style.scss'
 import { BankSelectionData } from '../../utils/BankData';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 import { CartType } from '../../types/CartType';
 import { useEffect, useState } from 'react';
@@ -10,10 +10,12 @@ import { save } from '../../services/OrderService';
 import { PaymentRequestType, VNPayResponse } from '../../types/PaymentType';
 import { pay } from '../../services/PaymentService';
 import { useLocation } from 'react-router-dom';
+import { deleteCartBuyLater } from '../../redux/slices/CartSlice';
 
 
 function Payment() {
     const { carts } = useAppSelector((state: RootState) => state.carts);
+    const dispatch = useAppDispatch();
     const location = useLocation();
     const cartBuyLaters = carts && carts.filter(item => !item.buyLater) as CartType[]
     const [bankCode, setBankCode] = useState<string>("NCB");
@@ -28,10 +30,13 @@ function Payment() {
     const handlePayment = async () => {
         if (cartBuyLaters) {
 
-            const orderDetailList: OrderDetailPostDto[] = cartBuyLaters.map(cartItem => ({
-                courseId: cartItem.course.id,
-                price: cartItem.course.price,
-            }));
+            const orderDetailList: OrderDetailPostDto[] = cartBuyLaters
+                .filter(cart => cart.buyLater === false) // Filter carts where buyLater is false
+                .map(cart => ({
+                    courseId: cart.course.id,
+                    price: cart.course.price
+                }));
+            dispatch(deleteCartBuyLater());
 
             const orderPostDto: OrderPostDto = {
                 orderDetails: orderDetailList

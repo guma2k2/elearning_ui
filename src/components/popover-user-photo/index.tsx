@@ -20,17 +20,19 @@ function PopoverUserProfile() {
             navigate("/")
         }
     }
+    console.log(auth);
+
     return <div className="popover-user-profile-container">
         <div className="popover-user-profile-top">
             <div className="popover-user-profile-top-left">
-                <img src={UserPhoto} alt="user-profile" />
+                <img src={auth?.user.photoURL ? auth.user.photoURL : UserPhoto} alt="user-profile" />
             </div>
             <div className="popover-user-profile-top-right">
                 <span className="user-profile-fullname">{auth?.user.firstName.concat(auth?.user.lastName)}</span>
                 <span className="user-profile-email">{auth?.user.email}</span>
             </div>
         </div>
-        {auth?.user.role != "ROLE_ADMIN" && <Fragment>
+        {auth?.user.role == "ROLE_STUDENT" && <Fragment>
             <Divider className="popover-profile-devider" />
             <div className="popover-user-profile-middle">
                 <Link className="popover-profile-link-redirect" to={"/cart"}> <span>Giỏ hàng của tôi</span> </Link>
@@ -40,7 +42,7 @@ function PopoverUserProfile() {
         </Fragment>}
         <Divider className="popover-profile-devider" />
         <div className="popover-user-profile-bottom">
-            <Link className="popover-profile-link-redirect" to={"/profile"}> <span>Cài đặt</span> </Link>
+            <Link className="popover-profile-link-redirect" to={auth?.user.role == "ROLE_STUDENT" ? "/profile" : "/admin/profile"}> <span>Cài đặt</span> </Link>
             <div onClick={handleLogout} className="popover-profile-link-redirect" > <span>Đăng xuất</span> </div>
         </div>
     </div>;

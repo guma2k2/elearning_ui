@@ -37,6 +37,7 @@ import PaymentCourse from "./pages/payment/PaymentCourse";
 import InstructorProfile from "./pages/instructor-profile";
 import ForgotPassword from "./pages/forgotpassword";
 import UpdatePassword from "./pages/forgotpassword/UpdatePassword";
+import ProfileAdmin from "./pages/profile-admin";
 function App() {
   const [messageApi, contextHolder] = message.useMessage();
   const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
@@ -128,6 +129,10 @@ function App() {
         {
           path: "/admin/categories",
           element: <Category />
+        },
+        {
+          path: "/admin/profile",
+          element: <ProfileAdmin />
         },
         {
           path: "/admin/topics",

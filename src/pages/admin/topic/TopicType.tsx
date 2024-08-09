@@ -1,7 +1,7 @@
 export type TopicType = {
     id: number,
     name?: string,
-    publish: boolean,
+    isPublish: boolean,
     categories: string[],
     createdAt: string,
     updatedAt: string

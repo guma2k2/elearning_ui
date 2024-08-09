@@ -3,6 +3,8 @@ import Logo from "../../assets/logo-udemy.svg"
 import { PiShoppingCartLight } from "react-icons/pi";
 import { MdOutlineKeyboardArrowRight, MdOutlineNotifications, MdSearch } from "react-icons/md"
 import './Navbar.style.scss'
+import UserPhoto from "../../assets/userPhoto.png"
+
 import { useEffect, useRef, useState } from "react"
 import PopperWrapper from "../popper/PopperWrapper"
 import { Tooltip, TooltipRefProps } from 'react-tooltip'
@@ -18,6 +20,8 @@ import { getCartsByUser } from '../../redux/slices/CartSlice';
 import { getLearningCourse } from '../../redux/slices/LearningCourseSlice';
 import { CourseGetType } from "../../types/CourseType";
 import { getCourseByMultiQuery } from "../../services/CourseService";
+import { getTopicsByCategoryId } from "../../services/TopicService";
+import { TopicType } from "../../pages/admin/topic/TopicType";
 function Navbar() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -41,7 +45,7 @@ function Navbar() {
         const newKeyword = e.target.value;
         console.log(newKeyword);
         setOpenSearch(true);
-        if (newKeyword) {
+        if (newKeyword && newKeyword != "") {
             const params = `keyword=${newKeyword}`;
             const res = await getCourseByMultiQuery(params);
             console.log(res);
@@ -49,6 +53,8 @@ function Navbar() {
                 const data = res.data.content as CourseGetType[];
                 setCourses(data);
             }
+        } else {
+            setCourses([]);
         }
         setKeyword(newKeyword);
     }
@@ -78,7 +84,7 @@ function Navbar() {
     const handleHideCart = () => {
         setOpen(false);
     }
-    const handleShowTopics = (childId: number) => {
+    const handleShowTopics = async (childId: number) => {
         console.log(childId);
         let xCategoryTooltipPosition: number = 0;
         if (categoryRef.current) {
@@ -88,21 +94,25 @@ function Navbar() {
         // Todo: get topics by categoryChildId
         if (topicTooltipRef.current) {
             const index = 0;
-            const childrens: CategoryType[] = categoryParents ? categoryParents[index].childrens : [];
-            const html = childrens.length > 0 && childrens.map((child) => {
-                return <div key={child.id} className="category-item" onMouseEnter={() => handleShowTopics(child.id)}>
-                    <span>{child.name}</span>
-                    <MdOutlineKeyboardArrowRight />
-                </div>
-            })
-            topicTooltipRef.current.open({
-                content: <PopperWrapper>{html}</PopperWrapper>,
-                position: {
-                    x: xCategoryTooltipPosition + 255 * 2,
-                    y: 46
-                },
+            const res = await getTopicsByCategoryId(childId);
+            console.log(res);
+            if (res.status === 200) {
+                const data = res.data as TopicType[];
+                const html = data.length > 0 && data.map((topic) => {
+                    return <div key={topic.id} className="category-item">
+                        <span>{topic.name}</span>
+                    </div>
+                })
+                topicTooltipRef.current.open({
+                    content: <PopperWrapper>{html}</PopperWrapper>,
+                    position: {
+                        x: xCategoryTooltipPosition + 255 * 2,
+                        y: 46
+                    },
+                }
+                )
             }
-            )
+
         }
     }
 
@@ -119,7 +129,7 @@ function Navbar() {
             const index: number = parentId;
             const childrens: CategoryType[] = categoryParents ? categoryParents[index].childrens : [];
             const html = childrens.length > 0 && childrens.map((child) => {
-                return <div key={child.id} className="category-item" onMouseEnter={() => handleShowTopics(child.id)}>
+                return <div key={child.id} className="category-item" onClick={() => handleShowTopics(child.id)}>
                     <span>{child.name}</span>
                     <MdOutlineKeyboardArrowRight />
                 </div>
@@ -171,7 +181,7 @@ function Navbar() {
                     <div className="categories"
                         data-tooltip-id="category-tooltip"
                         ref={categoryRef}
-                        onMouseEnter={() => setCategoryOpen(true)}
+                        onClick={() => setCategoryOpen(true)}
 
                     >Thể loại</div>
                     <Tooltip id="category-tooltip"
@@ -269,7 +279,7 @@ function Navbar() {
                             placement="bottomLeft"
                             onOpenChange={handleOpenProfileChange}
                         >
-                            <img src={auth?.user.photoURL} alt="Photo" className="profile" />
+                            <img src={auth?.user.photoURL ? auth?.user.photoURL : UserPhoto} alt="Photo" className="profile" />
                         </Popover>
                     </>
                     }

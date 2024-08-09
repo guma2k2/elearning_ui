@@ -7,6 +7,8 @@ import { useAppDispatch } from '../../../../redux/hooks';
 import { updateCourseById } from '../../../../services/CourseService';
 import { updateCourse } from '../../../../redux/slices/CourseSlice';
 import { Message, updateShowing } from '../../../../redux/slices/MessageSlice';
+import { AxiosError } from 'axios';
+import { ErrorType } from '../../../../types/ErrorType';
 
 export enum AddType {
     Objective,
@@ -101,17 +103,28 @@ function IntendedLeaners(probs: Probs) {
             }
             console.log(coursePut);
             if (course.id) {
-                const res = await updateCourseById(coursePut, course.id);
-                if (res.status === 200) {
-                    const data = res.data as CourseType;
-                    console.log(data);
-                    dispatch(updateCourse(data))
-                    const message: Message = {
-                        type: "success",
-                        content: "save succesful"
+                try {
+                    const res = await updateCourseById(coursePut, course.id);
+                    if (res.status === 200) {
+                        const data = res.data as CourseType;
+                        console.log(data);
+                        dispatch(updateCourse(data))
+                        const message: Message = {
+                            type: "success",
+                            content: "save succesful"
+                        }
+                        dispatch(updateShowing(message))
                     }
-                    dispatch(updateShowing(message))
+                } catch (error: AxiosError | any) {
+                    if (error.response) {
+                        console.log(error.response.data);
+                        const data = error.response.data as ErrorType;
+                        const message = data.details;
+                        alert(message)
+                        setIsDataLoading(false);
+                    }
                 }
+
             }
             setIsDataLoading(false);
         } else {
@@ -133,14 +146,14 @@ function IntendedLeaners(probs: Probs) {
         <Spin spinning={isDataLoading}>
             <div className="course-intendedLearners-container">
                 <div className="header">
-                    <h2>Intended Learners</h2>
-                    <Button onClick={handleUpdateCourse}>Save</Button>
+                    <h2>Học viên mục tiêu</h2>
+                    <Button onClick={handleUpdateCourse}>Lưu</Button>
                 </div>
                 <div className="wrapper">
                     <IntendedLeaner
                         type={AddType.Objective}
-                        desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
-                        title={"What will students learn in your course"}
+                        desc={"Bạn phải nhập ít nhất 4 mục tiêu hoặc kết quả học tập mà học viên có thể mong đợi đạt được sau khi hoàn thành khóa học."}
+                        title={"Học viên sẽ học được gì trong khóa học của bạn?"}
                         handleChange={handleChange}
                         handleAdd={handleAdd}
                         handleDelete={handleDelete}
@@ -149,8 +162,8 @@ function IntendedLeaners(probs: Probs) {
                     />
                     <IntendedLeaner
                         type={AddType.Requirement}
-                        desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
-                        title={"What will students learn in your course"}
+                        desc={"Liệt kê các kỹ năng, kinh nghiệm, công cụ hoặc thiết bị mà học viên bắt buộc phải có trước khi tham gia khóa học."}
+                        title={"Yêu cầu hoặc điều kiện tiên quyết để tham gia khóa học của bạn là gì?"}
                         handleChange={handleChange}
                         handleAdd={handleAdd}
                         handleDelete={handleDelete}
@@ -159,8 +172,8 @@ function IntendedLeaners(probs: Probs) {
                     />
                     <IntendedLeaner
                         type={AddType.TargetAudience}
-                        desc={"You must enter at least 4 learning objectives or outcomes  that learners can expect to achieve after completing your course."}
-                        title={"What will students learn in your course"}
+                        desc={"Viết mô tả rõ ràng về học viên mục tiêu cho khóa học, tức là những người sẽ thấy nội dung khóa học có giá trị."}
+                        title={"Khóa học này dành cho đối tượng nào?"}
                         handleChange={handleChange}
                         handleAdd={handleAdd}
                         handleDelete={handleDelete}

@@ -2,10 +2,12 @@ import { Button, Col, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Ro
 import { useEffect, useState } from "react";
 import { TopicType } from "./TopicType";
 import TextArea from "antd/es/input/TextArea";
-import { get, getTopicWithPagination, save, update } from "../../../services/TopicService";
+import { deleteTopic, get, getTopicWithPagination, save, update } from "../../../services/TopicService";
 import './Topic.style.scss'
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { fetchCategoryParents } from "../../../redux/slices/CategorySlice";
+import { AxiosError } from "axios";
+import { ErrorType } from "../../../types/ErrorType";
 
 function Topic() {
     const [open, setOpen] = useState<boolean>(false);
@@ -19,52 +21,74 @@ function Topic() {
     const [totalElements, setTotalElements] = useState<number>(1);
     const [currentTopicId, setCurrentTopicId] = useState<number | undefined>();
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
+    const [keyword, setKeyword] = useState<string>("");
     const [form] = Form.useForm();
+    const handleUpdateStatus = async (checked: boolean, id: number) => {
+        const res = await get(id)
+        if (res && res.status === 200) {
+            const data = res.data as TopicType
+
+            const topicPut = {
+                ...data, isPublish: checked
+            }
+            console.log(checked);
+            console.log(topicPut);
+
+            const resOfUpdate = await update(topicPut, id);
+            setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+        }
+    }
     const columns: TableColumnsType<TopicType> = [
         {
-            title: 'Id',
+            title: 'Mã chủ đề',
             dataIndex: 'id',
-            width: 50,
+            width: 200,
         },
         {
-            title: 'Name',
+            title: 'Tên chủ đề',
             dataIndex: 'name',
             width: 150,
         },
         {
-            title: 'Description',
+            title: 'Mô tả',
             dataIndex: 'description',
             width: 250,
         },
         {
-            title: 'Publish',
+            title: 'Trạng thái',
             dataIndex: 'isPublish',
             width: 100,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                </Flex>
+            ),
         },
         {
-            title: 'Created at',
+            title: 'Thời gian tạo',
             dataIndex: 'createdAt',
             width: 300,
         },
         {
-            title: 'Updated At',
+            title: 'Thời gian cập nhật',
             dataIndex: 'updatedAt',
             width: 300,
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'key',
-            width: 300,
+            width: 250,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary" onClick={() => handleUpdateTopic(record.id)}>Edit</Button>
+                    <Button type="primary" onClick={() => handleUpdateTopic(record.id)}>Cập nhật</Button>
                     <Popconfirm
-                        title="Delete this user?"
-                        description="Are you sure to delete this topic?"
-                        okText="Yes"
-                        cancelText="No"
+                        title="Xóa chủ đề này?"
+                        description="Bạn có chắc chắn xóa chủ đề này?"
+                        okText="Có"
+                        cancelText="Không"
+                        onConfirm={() => handleDelete(record.id)}
                     >
-                        <Button danger>Delete</Button>
+                        <Button danger>Xóa</Button>
                     </Popconfirm>
                 </Flex>
             ),
@@ -104,18 +128,46 @@ function Topic() {
         setPending(true)
         const type = currentTopicId ? "update" : "create";
         if (type === "create") {
-            const resSave = await save(values);
-            console.log(resSave);
-            if (resSave.status === 201) {
-                form.resetFields();
-                setOpen(false);
+
+            try {
+                const resSave = await save(values);
+                console.log(resSave);
+                if (resSave.status === 201) {
+                    form.resetFields();
+                    setOpen(false);
+                    alert("Add successful");
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    setPending(false);
+                    return;
+                }
             }
+
         } else {
-            const resUpdateUser = await update(values, currentTopicId);
-            if (resUpdateUser.status === 204) {
-                form.resetFields();
-                setOpen(false)
+            try {
+                const resUpdateUser = await update(values, currentTopicId);
+                if (resUpdateUser.status === 204) {
+                    form.resetFields();
+                    setOpen(false);
+                    alert("Update successful");
+
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    setPending(false);
+                    return;
+                }
             }
+
         }
         setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         setPending(false)
@@ -132,10 +184,46 @@ function Topic() {
             })
         }
     }
+    const handleDelete = async (id: number) => {
+        try {
+            const res = await deleteTopic(id);
+            if (res.status == 204) {
+                setIsDataUpdated((prev) => !prev);
+                alert("delete successful")
+            }
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message);
+            }
+        }
+    }
+    const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value;
+        setKeyword(newKeyword)
+    }
+
+    const handleSearch = async () => {
+        const res = await getTopicWithPagination(current - 1, pageSize, keyword);
+        if (res && res.status === 200) {
+            console.log(res);
+            const content = res.data.content.map((topic: TopicType) => (
+                {
+                    ...topic, key: topic.id
+                }
+            ))
+            setTopics(content);
+            setCurrent(res.data.pageNum + 1);
+            setPageSize(res.data.pageSize)
+            setTotalElements(res.data.totalElements)
+        }
+    }
 
     useEffect(() => {
         const fetchTopics = async () => {
-            const res = await getTopicWithPagination(current - 1, pageSize);
+            const res = await getTopicWithPagination(current - 1, pageSize, null);
             if (res && res.status === 200) {
                 console.log(res);
                 const content = res.data.content.map((topic: TopicType) => (
@@ -152,7 +240,9 @@ function Topic() {
         }
         fetchTopics()
     }, [current, pageSize, isDataUpdated])
-
+    const confirm = () => {
+        form.submit()
+    }
 
     useEffect(() => {
         dispatch(fetchCategoryParents());
@@ -161,15 +251,15 @@ function Topic() {
     return (
         <div className="topic-container">
             <div className='topic-header' >
-                <span>Topic</span>
-                <Button onClick={showDrawer} type="primary">Add topic</Button>
+                <span>Chủ đề</span>
+                <Button onClick={showDrawer} type="primary">Thêm chủ đề</Button>
             </div>
             <div className="topic-search">
-                <Input className='topic-search-input' />
-                <Button className='topic-search-btn'>Search</Button>
+                <Input placeholder="Nhập tên chủ đề" className='topic-search-input' onChange={handleChangeKeyword} value={keyword} />
+                <Button className='topic-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
             </div>
             <Drawer
-                title="Create a new topic"
+                title={`${currentTopicId ? "Cập nhật chủ đề" : "Tạo mới chủ đề"}`}
                 width={720}
                 onClose={onClose}
                 open={open}
@@ -180,10 +270,18 @@ function Topic() {
                 }}
                 extra={
                     <Space>
-                        <Button onClick={onClose}>Cancel</Button>
-                        <Button type="primary" onClick={() => form.submit()} loading={pending} >
-                            Submit
-                        </Button>
+                        <Button onClick={onClose}>Hủy bỏ</Button>
+                        <Popconfirm
+                            title="Xác nhận"
+                            description="Bạn có chắc chắn muốn lưu?"
+                            onConfirm={confirm}
+                            onOpenChange={() => console.log('open change')}
+                            disabled={pending}
+                        >
+                            <Button type="primary"  >
+                                Xác nhận
+                            </Button>
+                        </Popconfirm>
                     </Space>
                 }
             >
@@ -209,7 +307,7 @@ function Topic() {
                         <Col span={24}>
                             <Form.Item
                                 name="description"
-                                label="Description"
+                                label="Mô tả"
                             >
                                 <TextArea rows={4} cols={24} />
                             </Form.Item>
@@ -219,7 +317,7 @@ function Topic() {
                         <Col span={24}>
                             <Form.Item
                                 name="parentId"
-                                label="Parent"
+                                label="Danh mục cha"
                             >
                                 <Select onChange={handleChangeCategories}  >
                                     {categoryParents && categoryParents.map((cat) => {
@@ -234,7 +332,7 @@ function Topic() {
                         <Col span={24}>
                             <Form.Item
                                 name="categories"
-                                label="Categories"
+                                label="Danh mục"
                             >
                                 <Select mode="multiple" >
                                     {categoryChildrens && categoryChildrens.map((cat) => {
@@ -247,7 +345,7 @@ function Topic() {
 
                     <Row gutter={16}>
                         <Col span={24}>
-                            <Form.Item name="isPublish" label="Publish" valuePropName="checked">
+                            <Form.Item name="isPublish" label="Công khai" valuePropName="checked">
                                 <Switch />
                             </Form.Item>
                         </Col>

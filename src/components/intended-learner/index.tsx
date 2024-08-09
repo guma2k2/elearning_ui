@@ -59,7 +59,7 @@ function IntendedLeaner(probs: Probs) {
             </div>
             <div className="action" onClick={() => handleAdd(type)}>
                 <AiOutlinePlus className='icon-plus' />
-                <span>Add more to your response</span>
+                <span>Thêm nội dung</span>
             </div>
         </div>
     )
