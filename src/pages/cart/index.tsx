@@ -39,7 +39,7 @@ function Cart() {
     const handleRedirectToPaymentPage = () => {
         if (coupon) {
             console.log("navigate to my destiny");
-            const url = `/payment/checkout/?discountPercent=${coupon.discountPercent}`;
+            const url = `/payment/checkout/?discountPercent=${coupon.discountPercent}&couponCode=${coupon.code}`;
             console.log(url);
             navigate(url)
         } else {

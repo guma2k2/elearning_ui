@@ -105,8 +105,10 @@ function Courses() {
                 {learningCourses && learningCourses.length > 0 && <div className="wrapper">
                     <h2 className="header">Khóa học của tôi</h2>
                     <div className="courses-learning-wrapper">
-                        {learningCourses && learningCourses.map((lc) => {
-                            return <div key={`lc-${lc.id}`} className="courses-learning-item"><Card course={lc.course} /></div>
+                        {learningCourses && learningCourses.map((lc, index) => {
+                            if (index < 5) {
+                                return <div key={`lc-${lc.id}`} className="courses-learning-item"><Card course={lc.course} /></div>
+                            }
                         })}
                     </div>
                 </div>}

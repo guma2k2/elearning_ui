@@ -37,8 +37,13 @@ function Payment() {
                     price: cart.course.price
                 }));
             dispatch(deleteCartBuyLater());
+            const searchParams = new URLSearchParams(location.search);
+            let couponCode = searchParams.get('couponCode');
 
-            const orderPostDto: OrderPostDto = {
+            let orderPostDto: OrderPostDto = couponCode != undefined ? {
+                orderDetails: orderDetailList,
+                couponCode: couponCode
+            } : {
                 orderDetails: orderDetailList
             }
             var orderId: number = -1;

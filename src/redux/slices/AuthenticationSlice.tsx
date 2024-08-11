@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, current, isRejectedWithValue } from '@reduxjs/toolkit'
 import Cookies from 'universal-cookie';
 import { RootState } from '../store'
 import { jwtDecode } from "jwt-decode";
@@ -26,10 +26,13 @@ export const login = createAsyncThunk(
             if (error.response) {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
-                const message = data.details;
+                let message = data.details;
+                if (message == "User is disabled") {
+                    message = "Tài khoản của bạn đã bị khóa";
+                }
                 alert(message);
-                return;
             }
+            return null;
         }
 
     },
@@ -86,17 +89,19 @@ export const authSlice = createSlice({
                 state.isLoggin = false;
             })
             .addCase(login.fulfilled, (state, action) => {
-                const payload = action.payload as LoginResponse
-                const token = payload.token as string
-                const decoded = jwtDecode(token);
-                const cookies = new Cookies();
-                if (decoded.exp) {
-                    cookies.set('token', token, { expires: new Date(decoded.exp * 1000) });
+                if (action.payload != null) {
+                    const payload = action.payload as LoginResponse
+                    const token = payload.token as string
+                    const decoded = jwtDecode(token);
+                    const cookies = new Cookies();
+                    if (decoded.exp) {
+                        cookies.set('token', token, { expires: new Date(decoded.exp * 1000) });
+                    }
+                    state.auth = payload;
+                    state.isError = false;
+                    state.isLoading = false
+                    state.isLoggin = true;
                 }
-                state.auth = payload;
-                state.isError = false;
-                state.isLoading = false
-                state.isLoggin = true;
 
             })
             .addCase(login.rejected, (state, action) => {

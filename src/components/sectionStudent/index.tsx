@@ -34,7 +34,7 @@ function SectionForStudent(probs: ProbTypes) {
                                 {index}. {cur.title}
                             </div>
                         </div>
-                        <div className="curriculum-student-right">2 bài học</div>
+                        <div className="curriculum-student-right">{cur.type == "lecture" && cur.formattedDuration}</div>
                     </div>
                 })}
             </div>}
