@@ -66,6 +66,7 @@ function Profile() {
             if (resUpdateUser.status === 200) {
                 const data = resUpdateUser.data as AuthType;
                 dispatch(updateUserProfile(data))
+                alert("Update user profile success");
             }
         } catch (error: AxiosError | any) {
             if (error.response) {

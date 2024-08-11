@@ -247,7 +247,7 @@ function Category() {
                 <Button onClick={showDrawer} type="primary">Thêm danh mục</Button>
             </div>
             <div className="category-search">
-                <Input className='category-search-input' onChange={handleChangeKeyword} value={keyword} />
+                <Input className='category-search-input' onChange={handleChangeKeyword} value={keyword} placeholder="Nhập tên danh mục" />
                 <Button className='category-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
             </div>
             <Drawer

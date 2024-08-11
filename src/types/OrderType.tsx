@@ -6,6 +6,7 @@ export type OrderDetailPostDto = {
 }
 
 export type OrderPostDto = {
+    couponCode?: string | null
     orderDetails: OrderDetailPostDto[]
 }
 

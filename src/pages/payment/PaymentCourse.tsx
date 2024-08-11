@@ -35,7 +35,13 @@ function PaymentCourse() {
                 }
             ]
 
-            const orderPostDto: OrderPostDto = {
+            const searchParams = new URLSearchParams(location.search);
+            let couponCode = searchParams.get('couponCode');
+
+            let orderPostDto: OrderPostDto = couponCode != undefined ? {
+                orderDetails: orderDetailList,
+                couponCode: couponCode
+            } : {
                 orderDetails: orderDetailList
             }
             var orderId: number = -1;

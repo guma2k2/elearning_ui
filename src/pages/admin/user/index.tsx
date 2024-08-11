@@ -8,6 +8,10 @@ import { UserGetDetailType, UserType } from '../../../types/UserType';
 import { deleteUser, get, getWithPagination, save, update } from '../../../services/UserService';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../../types/ErrorType';
+import { RootState } from '../../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { AuthType } from '../../../types/AuthType';
+import { updateUserProfile } from '../../../redux/slices/AuthenticationSlice';
 
 
 
@@ -35,9 +39,10 @@ for (let i = 1; i <= 12; i++) {
 }
 
 function User() {
+    const { auth } = useAppSelector((state: RootState) => state.auth);
+    const dispatch = useAppDispatch();
     const [open, setOpen] = useState(false);
     const [fileType, setFileType] = useState<File>();
-    const [messageApi, contextHolder] = message.useMessage();
     const [pending, setPending] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
     const [current, setCurrent] = useState<number>(1);
@@ -211,10 +216,14 @@ function User() {
                     values = { ...values, password: "" }
                 }
                 const resUpdateUser = await update(values, userId);
-                if (resUpdateUser.status === 204) {
+                if (resUpdateUser.status === 200) {
                     alert("Update user successful");
+                    const data = resUpdateUser.data as AuthType;
                     form.resetFields();
                     setOpen(false)
+                    if (userId == auth?.user.id) {
+                        dispatch(updateUserProfile(data));
+                    }
                 }
 
             } catch (error: AxiosError | any) {

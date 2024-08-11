@@ -6,3 +6,9 @@ export const getMyLearningByStudent = async () => {
     return res;
 }
 
+export const createLearningCourse = async (courseId: number) => {
+    const url = `/learning-course?courseId=${courseId}`
+    const res = await instance.post(url);
+    return res;
+}
+

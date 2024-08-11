@@ -27,10 +27,12 @@ import { RootState } from '../../redux/store';
 import { addToCart } from '../../services/CartService';
 import { CartType } from '../../types/CartType';
 import { addToCartAction } from '../../redux/slices/CartSlice';
+import { createLearningCourse } from '../../services/LearningService';
+import { getLearningCourse } from '../../redux/slices/LearningCourseSlice';
 function CourseDetail() {
     let { courseId } = useParams();
     const dispatch = useAppDispatch();
-    const { isLoggin } = useAppSelector((state: RootState) => state.auth);
+    const { isLoggin, } = useAppSelector((state: RootState) => state.auth);
     const { carts } = useAppSelector((state: RootState) => state.carts);
 
     const navigate = useNavigate();
@@ -67,9 +69,17 @@ function CourseDetail() {
         setIsModalOpen(false);
     };
 
-    const handleLearning = () => {
-        if (course) {
-            navigate(`/course/${course.slug}/learning`)
+    const handleLearning = async () => {
+        if (isLoggin == false) {
+            navigate("/login")
+        } else {
+            if (course) {
+                const res = await createLearningCourse(course.id);
+                if (res.status == 204) {
+                    dispatch(getLearningCourse());
+                    navigate(`/course/${course.slug}/learning`)
+                }
+            }
         }
     }
     const handleCancelCoupon = () => {
@@ -181,7 +191,7 @@ function CourseDetail() {
         }
         if (course) {
             if (coupon) {
-                navigate(`/payment/checkout/course/${course.id}?discountPercent=${coupon.discountPercent}`)
+                navigate(`/payment/checkout/course/${course.id}?discountPercent=${coupon.discountPercent}&couponCode=${coupon.code}`)
             } else {
                 navigate(`/payment/checkout/course/${course.id}`)
             }
@@ -231,6 +241,11 @@ function CourseDetail() {
         }
 
 
+    }
+    const handleNavigateToInstructor = (userId: number | undefined) => {
+        if (userId) {
+            navigate(`/user/${userId}`);
+        }
     }
 
     return <div className="course-container">
@@ -291,27 +306,27 @@ function CourseDetail() {
                         <span>{course?.user?.fullName}</span>
 
                         <div className="instructor-course-wrapper">
-                            <img src={course?.user?.photo} alt="instructor-image" />
+                            <img src={course?.user?.photo} alt="instructor-image" onClick={() => handleNavigateToInstructor(course?.user?.id)} />
 
                             <div className="instructor-course-right">
                                 <div className="intructor-course-right-item">
                                     <IoMdStar />
-                                    <span>4,7 xếp hạng giảng viên</span>
-                                    {/* <span>{course?.user?.averageRating}xếp hạng giảng viên</span> */}
+                                    {/* <span>4,7 xếp hạng giảng viên</span> */}
+                                    <span>{course?.user?.averageRating} xếp hạng giảng viên</span>
                                 </div>
                                 <div className="intructor-course-right-item">
                                     <IoPeopleSharp />
-                                    <span>4404 học viên</span>
-                                    {/* <span>{course?.user?.numberOfStudent} học viên</span> */}
+                                    {/* <span>4404 học viên</span> */}
+                                    <span>{course?.user?.numberOfStudent} học viên</span>
                                 </div>
                                 <div className="intructor-course-right-item">
                                     <LiaCertificateSolid />
-                                    <span>4404 học viên</span>
-                                    {/* <span>{course?.user?.numberOfReview} danh gia</span> */}
+                                    {/* <span>4404 học viên</span> */}
+                                    <span>{course?.user?.numberOfReview} đánh giá</span>
                                 </div>
                                 <div className="intructor-course-right-item">
                                     <FaCirclePlay />
-                                    <span>8 khóa học</span>
+                                    {/* <span>8 khóa học</span> */}
                                     <span>{course?.user?.numberOfCourse} khóa học</span>
 
                                 </div>
@@ -349,12 +364,12 @@ function CourseDetail() {
                 </div>
                 <div className="course-detail">
                     <div className="course-detail-action">
-                        <span className="course-action-price">{course?.free == false ? `${course.price} d` : "Mien phi"}</span>
-                        {course?.learning == false && checkIsAddedToCart() == false && <Button className='btn-add-to-cart' onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>}
+                        <span className="course-action-price">{course?.free == false ? `${course.price} d` : "Miễn phí"}</span>
+                        {course?.learning == false && checkIsAddedToCart() == false && course?.free == false && <Button className='btn-add-to-cart' onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>}
                         {course?.learning == false && isLoggin == true && checkIsAddedToCart() == true && <Button className='btn-add-to-cart' onClick={handleRedirectToCarts}>Chuyển đến giỏ hàng</Button>}
-                        {course?.learning == true && <Button className='btn-buy-now' onClick={handleLearning}>Chuyen den khoa hoc</Button>}
-                        {course?.learning == false && course?.free == true && <Button className='btn-buy-now' onClick={handleLearning}>Dang ki khoa hoc</Button>}
-                        {course?.learning == false && course?.free == false && <Button className='btn-buy-now' onClick={handleRedirectToPaymentPage}>Mua khoa hoc</Button>}
+                        {course?.learning == true && <Button className='btn-buy-now' onClick={handleLearning}>Chuyển đến khóa học</Button>}
+                        {course?.learning == false && course?.free == true && <Button className='btn-buy-now' onClick={handleLearning}>Đăng ký khóa học</Button>}
+                        {course?.learning == false && course?.free == false && <Button className='btn-buy-now' onClick={handleRedirectToPaymentPage}>Mua khóa học</Button>}
 
                     </div>
                     <div className="course-info">
@@ -374,7 +389,7 @@ function CourseDetail() {
                             <FaBatteryFull />
                             <span>Học mọi lúc mọi nơi</span>
                         </div>
-                        <div className="course-coupon-container">
+                        {course?.free == false && <div className="course-coupon-container">
                             <h3 className='coupon-header'>Áp dụng coupon</h3>
                             {coupon && <div className="coupon-used">
                                 <div className="coupon-used-left">
@@ -394,7 +409,7 @@ function CourseDetail() {
                                 <Button disabled={disabledDiscount} onClick={handleSearchCoupon} className='coupon-btn'>Ap dung</Button>
                             </div>
                             {errorMessage && errorMessage !== "" && <span className='coupon-error'>{errorMessage}</span>}
-                        </div>
+                        </div>}
                     </div>
                 </div>
 
