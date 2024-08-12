@@ -183,16 +183,20 @@ function CourseLandingPage(probs: Probs) {
                 const data: CategoryListGetType[] = res.data.map((cat: CategoryListGetType) => ({
                     key: cat.id, ...cat
                 }))
-                data.forEach((parent) => {
+                let indexOfParent: number = 0;
+                data.forEach((parent, index) => {
                     parent.childrens.forEach((child) => {
                         if (child.id == course?.categoryId) {
                             setDefaultCategoryParent(parent.id);
+                            indexOfParent = index;
                         }
                     })
                 })
                 setCategoryParents(data);
                 if (data.length > 0) {
-                    setCategoryChildrens(data[0].childrens);
+                    setCategoryChildrens(data[indexOfParent].childrens);
+                    console.log(data[indexOfParent].childrens);
+
                     const resTopics = await getTopicsByCategoryId(course?.categoryId);
                     if (resTopics.status === 200) {
                         const data = resTopics.data as TopicType[]
