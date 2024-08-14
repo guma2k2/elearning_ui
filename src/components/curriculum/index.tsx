@@ -266,7 +266,7 @@ function Curriculum(probs: CurriculumType) {
                             </span>
                         </div>
                         <div className="curriculum-right">
-                            {toggle.type !== "resources" && toggle.type !== "content" && curriculum.type == "lecture" && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
+                            {toggle.type !== "resources" && toggle.type !== "content" && curriculum.type == "lecture" && !curriculum.videoId && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
                             {toggle.type !== "resources" && toggle.type !== "questions" && curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length === 0
                                 && <Button onClick={() => { setToggle({ type: "questions" }); }} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
                             {curriculum.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
@@ -276,7 +276,22 @@ function Curriculum(probs: CurriculumType) {
                         </div>
                     </div>
                     {toggle.type == "dropdown" && <div className="curriculum-dropdown">
+                        {(curriculum.type == "lecture" && curriculum.videoId && curriculum.videoId != "") && <Fragment>
+                            <div className="curriculum-lecture-video-container">
+                                <video width={100} height={100} controls className='curriculum-lecture-video-left'>
+                                    <source src={curriculum.videoId} type='video/mp4' />
+                                </video>
+                                <div className="curriculum-lecture-video-right">
+                                    <h3>lecture{curriculum.index}.mp4</h3>
+                                    <div className="lecture-content-edit">
+                                        <MdModeEdit className="icon-edit" />
+                                        <span onClick={() => setToggle({ type: "content" })}>Chinh sua noi dung </span>
+                                    </div>
+                                </div>
+                            </div></Fragment>}
+
                         <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "desc" })} className='btn-desc-curriculum' icon={<AiOutlinePlus />}>Description</Button>
+
                         {/* <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "resources" })} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button> */}
                     </div>
                     }
@@ -348,26 +363,7 @@ function Curriculum(probs: CurriculumType) {
                         toggle.type == "content" &&
                         <div className="curriculum-dropdown">
                             <div className="dropdown-bottom">
-                                {(curriculum.type == "lecture" && curriculum.videoId && curriculum.videoId != "") && <Fragment>
-                                    <div className="tab-title">
-                                        <span>Add Video</span>
-                                        <span className="tab-title-icon" onClick={() => {
-                                            setToggle({ type: "dropdown" });
-                                        }}><LiaTimesSolid /></span>
-                                    </div>
-                                    <div className="curriculum-lecture-video-container">
-                                        <video width={100} height={100} controls className='curriculum-lecture-video-left'>
-                                            <source src={curriculum.videoId} type='video/mp4' />
-                                        </video>
-                                        <div className="curriculum-lecture-video-right">
-                                            <h3>lecture{curriculum.index}.mp4</h3>
-                                            <div className="lecture-content-edit">
-                                                <MdModeEdit className="icon-edit" />
-                                                <span>Chinh sua noi dung </span>
-                                            </div>
-                                        </div>
-                                    </div></Fragment>}
-                                {curriculum.type == "lecture" && (curriculum.videoId == null || curriculum.videoId == "") && <Fragment>
+                                {curriculum.type == "lecture" && <Fragment>
                                     <div className="tab-title">
                                         <span>Add Video</span>
                                         <span className="tab-title-icon" onClick={() => {

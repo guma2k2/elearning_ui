@@ -1,9 +1,10 @@
 import { Link, useParams } from 'react-router-dom'
 import './index.style.scss'
-import { LearningType } from '../../types/LearningType';
+import { PiNote } from "react-icons/pi";
+import { FaPlus } from "react-icons/fa6";
 import { useEffect, useRef, useState } from 'react';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
-import { Button, Progress } from 'antd';
+import { Button, Drawer, Progress, Select } from 'antd';
 import SectionLearning from '../../components/section-learning';
 import { ICurriculum, ILecture, IQuiz } from '../../types/CourseType';
 import AnswerLearning from '../../components/answer-learning';
@@ -15,8 +16,16 @@ import { createLearningLecture } from '../../services/LearningLectureService';
 import { LearningQuizPost } from '../../types/learning/LearningQuizType';
 import { createLearningQuiz } from '../../services/LearningQuizService';
 import { CurriculumType } from '../../components/curriculum/CurriculumType';
+import DrawerLearning from '../../components/drawer';
+import { convertSecondToMinute } from '../../utils/Format';
+import { NoteType } from '../../types/NoteType';
+import { getNotesBySectionId } from '../../services/NoteService';
+import NoteComponent from '../../components/note';
 function Learning() {
     const { slug } = useParams();
+    const [open, setOpen] = useState<boolean>(false);
+    const [openViewNote, setOpenViewNote] = useState<boolean>(false);
+    const [notes, setNotes] = useState<NoteType[]>();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const { learning, isLoading } = useAppSelector((state: RootState) => state.learning);
     const dispatch = useAppDispatch();
@@ -273,6 +282,20 @@ function Learning() {
 
     }, [slug])
 
+    const fetchNoteBySection = async (sectionId: number) => {
+        const res = await getNotesBySectionId(sectionId);
+        if (res.status == 200) {
+            const data = res.data as NoteType[]
+            setNotes(data)
+        }
+    }
+
+    const onClose = () => {
+        setOpen(false);
+    };
+    const onCloseViewNote = () => {
+        setOpenViewNote(false);
+    };
     useEffect(() => {
         if (videoRef.current) {
             if (learning) {
@@ -302,14 +325,20 @@ function Learning() {
             if (videoElement) {
                 videoElement.removeEventListener('timeupdate', handleTimeUpdate);
             }
+            if (learning?.sectionId) {
+                const secId = learning.sectionId;
+                fetchNoteBySection(secId);
+            }
         };
     }, [learning])
 
-    // console.log(isFirstCurriculum());
-
+    const handleChange = (value: string) => {
+        console.log(`selected ${value}`);
+    };
 
     return (
         <div className='learning-container'>
+
             <div className="learning-top">
                 <div className="learning-top-title">
                     <Link to={"/"} className="learning-top-icon">
@@ -318,18 +347,31 @@ function Learning() {
                     <img src="https://fullstack.edu.vn/assets/f8-icon-lV2rGpF0.png" alt="udemylogo" className='learning-udemy-logo' />
                     <span>{learning?.course.title}</span>
                 </div>
-                <div className="learning-top-tracking">
-                    <Progress className='learning-progress' type="circle" percent={getPecentFinished()} size={100} />
-                    <span>{getLectureFinishedCount()}/{learning?.course.totalLectureCourse} bài học</span>
+                <div className="learning-top-right">
+                    <div className="learning-top-tracking">
+                        <Progress className='learning-progress' type="circle" percent={getPecentFinished()} size={100} />
+                        <span>{getLectureFinishedCount()}/{learning?.course.totalLectureCourse} bài học</span>
+                    </div>
+                    <div className="learning-top-note" onClick={() => setOpenViewNote(true)}>
+                        <PiNote />
+                        <span>Ghi chú</span>
+                    </div>
                 </div>
             </div>
             <div className="learning-wrapper">
                 <div className="learning-left">
+                    {open == true && <DrawerLearning setOpen={setOpen} second={watchingSecond} lectureId={currentCurriculum?.id} />}
                     {learning?.type == "lecture" && <> <video ref={videoRef} width={"100%"} height={500} controls className='learning-video' key={currentCurriculum?.type == "lecture" ? `${currentCurriculum.videoId}-${currentCurriculum.id}` : ""}>
                         <source src={currentCurriculum?.type == "lecture" ? currentCurriculum.videoId : ""} type='video/mp4' />
                     </video>
                         <div className="learning-curriculum-info">
-                            <h2 className='learning-curriculum-title'>{currentCurriculum?.title}</h2>
+                            <div className="learning-curriculum-info-top">
+                                <h2 className='learning-curriculum-title'>{currentCurriculum?.title}</h2>
+                                <Button onClick={() => setOpen(true)}>
+                                    <FaPlus />
+                                    <span>Thêm ghi chú tại {convertSecondToMinute(watchingSecond)}</span>
+                                </Button>
+                            </div>
                             <div className='learning-curriculum-time'>Cập nhật {currentCurriculum?.updatedAt}</div>
                             <div className='learning-curriculum-footer'>Made with  Powered by F8</div>
                         </div>
@@ -396,6 +438,35 @@ function Learning() {
                     <RxCaretRight className='learning-bottom-caret' />
                 </Button>
             </div>
+            <Drawer
+                placement={"right"}
+                width={"50%"}
+                onClose={onCloseViewNote}
+                open={openViewNote}
+                rootClassName='drawer-learning-note'
+
+            >
+                <div className="learning-note-view-container">
+                    <div className="learning-note-view-header">
+                        <h2>Ghi chú của tôi</h2>
+                        <div className="learning-note-selection">
+                            <Select onChange={handleChange} value={"sample"}>
+                                <Select.Option value="sample">Sample</Select.Option>
+                            </Select>
+                            <Select onChange={handleChange} value={"sample"}>
+                                <Select.Option value="sample">Sample</Select.Option>
+                            </Select>
+                        </div>
+                    </div>
+
+                    <div className="learning-note-wrapper">
+                        {notes && notes.length > 0 && notes.map((note) => {
+                            return <NoteComponent note={note} key={`note-${note.id}`} />
+                        })}
+                    </div>
+
+                </div>
+            </Drawer>
         </div>
     )
 }
