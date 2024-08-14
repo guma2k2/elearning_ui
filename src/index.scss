@@ -36,6 +36,25 @@ li {
   list-style: none;
 }
 
+.drawer-learning-note {
+  .ant-drawer-content {
+    .learning-note-view-container {
+      .learning-note-view-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 16px;
+      }
+
+      .learning-note-wrapper {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  }
+}
 
 .review-modal {
   .ant-modal-content {

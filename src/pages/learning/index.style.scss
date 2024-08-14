@@ -1,6 +1,7 @@
 .learning-container {
     height: 100vh;
 
+
     .learning-top {
         height: 50px;
         min-width: 100%;
@@ -49,29 +50,50 @@
 
         }
 
-        .learning-top-tracking {
+        .learning-top-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: flex-end;
+            gap: 15px;
 
-            .learning-progress {
-                .ant-progress-inner {
-                    width: 30px !important;
-                    height: 30px !important;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+            .learning-top-note {
+                display: flex;
+                align-items: center;
+                gap: 8px;
 
+                span {
+                    font-size: 12px;
                 }
 
-                .ant-progress-text {
-                    font-size: 10px !important;
+                &:hover {
+                    cursor: pointer;
                 }
             }
 
-            span {
-                font-size: 13px;
-                color: white;
+            .learning-top-tracking {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .learning-progress {
+                    .ant-progress-inner {
+                        width: 30px !important;
+                        height: 30px !important;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                    }
+
+                    .ant-progress-text {
+                        font-size: 10px !important;
+                    }
+                }
+
+                span {
+                    font-size: 13px;
+                    color: white;
+                }
             }
         }
     }
@@ -80,12 +102,12 @@
         height: calc(100% - 50px - 50px);
         display: flex;
 
+
         .learning-left {
             max-height: 100%;
-            width: 100%;
             overflow-y: scroll;
             flex: 8;
-
+            position: relative;
 
             .learning-quiz-container {
                 padding: 48px 190px;
@@ -169,11 +191,19 @@
                 padding: 0 8.5%;
                 min-height: 400px;
 
-                .learning-curriculum-title {
+                .learning-curriculum-info-top {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
                     margin: 48px 0 8px;
-                    font-size: 28px;
-                    line-height: 1.4;
+
+                    .learning-curriculum-title {
+
+                        font-size: 28px;
+                        line-height: 1.4;
+                    }
                 }
+
 
                 .learning-curriculum-time {
                     font-size: 12px;

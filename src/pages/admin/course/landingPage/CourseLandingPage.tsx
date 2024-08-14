@@ -92,6 +92,7 @@ function CourseLandingPage(probs: Probs) {
 
 
         if (checkCanGetTopics !== 0) {
+            setDefaultCategoryChild(checkCanGetTopics);
             const res = await getTopicsByCategoryId(checkCanGetTopics);
             if (res.status === 200) {
                 const data = res.data as TopicType[];
