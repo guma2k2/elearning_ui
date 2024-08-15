@@ -1,13 +1,13 @@
 import { NotePost } from "../types/NoteType";
 import instance from "../utils/axiosCustomize";
 
-export const getNotesBySectionId = async (sectionId: number) => {
+export const getNotesBySectionId = async (sectionId: number | undefined) => {
     const url = `/notes/section/${sectionId}`
     const res = await instance.get(url);
     return res;
 }
 
-export const getNotesByCourseId = async (courseId: number) => {
+export const getNotesByCourseId = async (courseId: number | undefined) => {
     const url = `/notes/course/${courseId}`
     const res = await instance.get(url);
     return res;

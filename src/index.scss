@@ -44,6 +44,12 @@ li {
         align-items: center;
         justify-content: space-between;
         font-size: 16px;
+
+        .learning-note-selection {
+          .learning-note-fetch {
+            width: 250px;
+          }
+        }
       }
 
       .learning-note-wrapper {

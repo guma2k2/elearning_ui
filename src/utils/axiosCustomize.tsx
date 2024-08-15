@@ -6,7 +6,7 @@ const cookies = new Cookies();
 
 const createAxiosInstance = () => {
     const token = cookies.get('token');
-    console.log(token);
+    // console.log(token);
     return axios.create({
         baseURL,
         headers: token != undefined ? { 'Authorization': `Bearer ${token}` } : {}
@@ -26,7 +26,7 @@ instance.interceptors.request.use(function (config) {
 
 // Add a response interceptor to the custom instance
 instance.interceptors.response.use(function (response) {
-    console.log(response);
+    // console.log(response);
     return response;
 }, function (error) {
     console.log(error);

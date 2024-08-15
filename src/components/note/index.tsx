@@ -6,7 +6,7 @@ import { FaTrash } from "react-icons/fa6";
 import { MdEdit } from "react-icons/md";
 import './Note.style.scss'
 import { convertSecondToMinute } from '../../utils/Format';
-import { Fragment, useState } from 'react';
+import { Dispatch, Fragment, SetStateAction, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { Button, Popconfirm } from 'antd';
 import { deleteNote, updateNote } from '../../services/NoteService';
@@ -14,7 +14,9 @@ import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
 
 type propType = {
-    note: NoteType
+    note: NoteType,
+    setNotes: Dispatch<SetStateAction<NoteType[]>>,
+    notes: NoteType[]
 }
 const modules = {
     toolbar: [
@@ -25,28 +27,30 @@ const formats = [
     'bold', 'italic'
 ];
 function Note(props: propType) {
-    const { note } = props;
+    const { note, setNotes } = props;
     const { learning } = useAppSelector((state: RootState) => state.learning);
     const [content, setContent] = useState<string>(note.content);
     const [toggle, setToggle] = useState<boolean>(false);
-    const getCurrentSection = (): (SectionType | undefined) => {
+    const getCurrentSection = (): SectionType | undefined => {
         if (learning) {
-            const sectionCurrentId = learning.sectionId;
-            return learning.course.sections.find(sec => sec.id === sectionCurrentId);
+            return learning.course.sections.find((sec) =>
+                sec.curriculums.some((cur) => cur.type == "lecture" && cur.id === note.lectureId)
+            );
         }
         return undefined;
-    }
-    const getCurrentLecture = (): (ILecture | undefined | IQuiz) => {
-        if (learning) {
-            const sectionCurrentId = learning.sectionId;
+    };
 
-            const section = learning.course.sections.find(sec => sec.id === sectionCurrentId);
+    const getCurrentLecture = (): ILecture | IQuiz | undefined => {
+        if (learning) {
+            const section = learning.course.sections.find((sec) =>
+                sec.curriculums.some((cur) => cur.type == "lecture" && cur.id === note.lectureId)
+            );
             if (section) {
-                return section.curriculums.find(cur => cur.id === note.lectureId && cur.type == "lecture");
+                return section.curriculums.find((cur) => cur.id === note.lectureId && cur.type == "lecture");
             }
         }
         return undefined;
-    }
+    };
     const handleUpdateNode = async () => {
         if (note) {
             const notePost: NotePost = {
@@ -56,6 +60,10 @@ function Note(props: propType) {
             try {
                 const res = await updateNote(notePost);
                 if (res.status === 200) {
+                    const data = res.data as NoteType
+                    setNotes((prevNotes) =>
+                        prevNotes?.map((note) => (note.id === data.id ? data : note))
+                    );
                     setToggle(false);
                 }
             } catch (error: AxiosError | any) {
@@ -70,10 +78,13 @@ function Note(props: propType) {
     }
     const handleDelete = async () => {
         if (note) {
-
             try {
                 const res = await deleteNote(note.id);
-                if (res.status === 200) {
+                if (res.status === 204) {
+                    alert("Delete successful")
+                    setNotes((prevNotes) =>
+                        prevNotes?.filter((item) => item.id !== note.id)
+                    );
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
