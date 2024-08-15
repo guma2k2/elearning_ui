@@ -4,7 +4,7 @@ import ReactQuill from 'react-quill';
 import { Dispatch, SetStateAction, useState } from 'react'
 import { convertSecondToMinute } from '../../utils/Format';
 import { createNote } from '../../services/NoteService';
-import { NotePost } from '../../types/NoteType';
+import { NotePost, NoteType } from '../../types/NoteType';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
 const modules = {
@@ -19,10 +19,11 @@ const formats = [
 type propType = {
     setOpen: Dispatch<SetStateAction<boolean>>
     second: number
-    lectureId: number | undefined
+    lectureId: number | undefined,
+    setNotes: Dispatch<SetStateAction<NoteType[]>>
 }
 function Drawer(props: propType) {
-    const { setOpen, second, lectureId } = props;
+    const { setOpen, second, lectureId, setNotes } = props;
     const [content, setContent] = useState<string>("");
     const handleCreateNote = async () => {
         if (lectureId) {
@@ -34,6 +35,8 @@ function Drawer(props: propType) {
                 const res = await createNote(notePost);
                 if (res.status === 201) {
                     setOpen(false);
+                    const data = res.data as NoteType
+                    setNotes((prev) => [...prev, data]);
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {

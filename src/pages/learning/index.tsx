@@ -19,13 +19,13 @@ import { CurriculumType } from '../../components/curriculum/CurriculumType';
 import DrawerLearning from '../../components/drawer';
 import { convertSecondToMinute } from '../../utils/Format';
 import { NoteType } from '../../types/NoteType';
-import { getNotesBySectionId } from '../../services/NoteService';
+import { getNotesByCourseId, getNotesBySectionId } from '../../services/NoteService';
 import NoteComponent from '../../components/note';
 function Learning() {
     const { slug } = useParams();
     const [open, setOpen] = useState<boolean>(false);
     const [openViewNote, setOpenViewNote] = useState<boolean>(false);
-    const [notes, setNotes] = useState<NoteType[]>();
+    const [notes, setNotes] = useState<NoteType[]>([]);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const { learning, isLoading } = useAppSelector((state: RootState) => state.learning);
     const dispatch = useAppDispatch();
@@ -33,7 +33,7 @@ function Learning() {
     const [selectingQuestion, setSelectingQuestion] = useState<number>(0);
     const [isAnswer, setIsAnswer] = useState<boolean>(false);
     const [watchingSecond, setWatchingSecond] = useState<number>(0);
-
+    const [selectionFetchNote, setSelectFetchNote] = useState<string>("section");
 
     const getCurrenCurriculum = (): (ILecture | IQuiz | undefined) => {
         if (learning) {
@@ -89,8 +89,10 @@ function Learning() {
                 const sec = learning.course.sections[indexSection];
                 for (let indexCur = 0; indexCur < sec.curriculums.length; indexCur++) {
                     const cur = sec.curriculums[indexCur];
-                    if (indexSection === 0 && indexCur === 0 && cur.id === learning.curriculumId) {
-                        console.log("true");
+                    if (indexSection === 0 && indexCur === 0 && cur.id === learning.curriculumId && cur.type == learning.type) {
+                        // console.log("true");
+                        // console.log(indexCur);
+                        // console.log(sec.curriculums);
                         return true;
                     }
                 }
@@ -172,9 +174,6 @@ function Learning() {
                         }
                     })
                 })
-
-
-
             }
         } else if (type == "next") {
             if (learning) {
@@ -190,6 +189,9 @@ function Learning() {
                                     curriculumId: nextCur.id,
                                     type: nextCur.type
                                 }
+                                console.log(indexCur, curCountOfSection);
+                                console.log(nextCur);
+
                                 dispatch(updateSelection(selection))
                                 updateAccessCurriculum(cur);
                                 return;
@@ -332,8 +334,22 @@ function Learning() {
         };
     }, [learning])
 
-    const handleChange = (value: string) => {
+    const handleChange = async (value: string) => {
         console.log(`selected ${value}`);
+        setSelectFetchNote(value)
+        if (value == "course") {
+            const res = await getNotesByCourseId(learning?.course.id);
+            if (res.status == 200) {
+                const data = res.data as NoteType[]
+                setNotes(data)
+            }
+        } else if (value == "section") {
+            const res = await getNotesBySectionId(learning?.sectionId);
+            if (res.status == 200) {
+                const data = res.data as NoteType[]
+                setNotes(data)
+            }
+        }
     };
 
     return (
@@ -360,7 +376,7 @@ function Learning() {
             </div>
             <div className="learning-wrapper">
                 <div className="learning-left">
-                    {open == true && <DrawerLearning setOpen={setOpen} second={watchingSecond} lectureId={currentCurriculum?.id} />}
+                    {open == true && <DrawerLearning setNotes={setNotes} setOpen={setOpen} second={watchingSecond} lectureId={currentCurriculum?.id} />}
                     {learning?.type == "lecture" && <> <video ref={videoRef} width={"100%"} height={500} controls className='learning-video' key={currentCurriculum?.type == "lecture" ? `${currentCurriculum.videoId}-${currentCurriculum.id}` : ""}>
                         <source src={currentCurriculum?.type == "lecture" ? currentCurriculum.videoId : ""} type='video/mp4' />
                     </video>
@@ -450,8 +466,10 @@ function Learning() {
                     <div className="learning-note-view-header">
                         <h2>Ghi chú của tôi</h2>
                         <div className="learning-note-selection">
-                            <Select onChange={handleChange} value={"sample"}>
-                                <Select.Option value="sample">Sample</Select.Option>
+                            <Select onChange={handleChange} value={selectionFetchNote} className='learning-note-fetch'>
+                                <Select.Option value="section">Trong chương hiện tại</Select.Option>
+                                <Select.Option value="course">Trong tất cả các chương</Select.Option>
+
                             </Select>
                             <Select onChange={handleChange} value={"sample"}>
                                 <Select.Option value="sample">Sample</Select.Option>
@@ -461,7 +479,7 @@ function Learning() {
 
                     <div className="learning-note-wrapper">
                         {notes && notes.length > 0 && notes.map((note) => {
-                            return <NoteComponent note={note} key={`note-${note.id}`} />
+                            return <NoteComponent note={note} key={`note-${note.id}`} setNotes={setNotes} notes={notes} />
                         })}
                     </div>
 
