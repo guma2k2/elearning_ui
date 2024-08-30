@@ -2,14 +2,14 @@ import axios from "axios";
 import Cookies from 'universal-cookie';
 
 const baseURL = import.meta.env.VITE_BACKEND_URL;
-const cookies = new Cookies();
+// const cookies = new Cookies();
 
 const createAxiosInstance = () => {
-    const token = cookies.get('token');
+    const token = localStorage.getItem('token');
     // console.log(token);
     return axios.create({
         baseURL,
-        headers: token != undefined ? { 'Authorization': `Bearer ${token}` } : {}
+        headers: token != undefined && token != null ? { 'Authorization': `Bearer ${token}` } : {}
     });
 };
 
@@ -33,9 +33,6 @@ instance.interceptors.response.use(function (response) {
     return Promise.reject(error);
 });
 
-// Function to update Axios instance after login/logout
-export const updateAxiosInstance = () => {
-    instance = createAxiosInstance();
-};
+
 
 export default instance;
