@@ -29,6 +29,7 @@ import { CartType } from '../../types/CartType';
 import { addToCartAction } from '../../redux/slices/CartSlice';
 import { createLearningCourse } from '../../services/LearningService';
 import { getLearningCourse } from '../../redux/slices/LearningCourseSlice';
+import { formatCurrency } from '../../utils/Format';
 function CourseDetail() {
     let { courseId } = useParams();
     const dispatch = useAppDispatch();
@@ -364,7 +365,7 @@ function CourseDetail() {
                 </div>
                 <div className="course-detail">
                     <div className="course-detail-action">
-                        <span className="course-action-price">{course?.free == false ? `${course.price} d` : "Miễn phí"}</span>
+                        <span className="course-action-price">{course?.free == false ? formatCurrency(course.price) : "Miễn phí"}</span>
                         {course?.learning == false && checkIsAddedToCart() == false && course?.free == false && <Button className='btn-add-to-cart' onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>}
                         {course?.learning == false && isLoggin == true && checkIsAddedToCart() == true && <Button className='btn-add-to-cart' onClick={handleRedirectToCarts}>Chuyển đến giỏ hàng</Button>}
                         {course?.learning == true && <Button className='btn-buy-now' onClick={handleLearning}>Chuyển đến khóa học</Button>}

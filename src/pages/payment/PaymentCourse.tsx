@@ -12,6 +12,7 @@ import { pay } from '../../services/PaymentService';
 import { useLocation, useParams } from 'react-router-dom';
 import { CourseGetType } from '../../types/CourseType';
 import { get } from '../../services/CourseService';
+import { formatCurrency } from '../../utils/Format';
 
 
 function PaymentCourse() {
@@ -116,7 +117,7 @@ function PaymentCourse() {
                                 <img src={course?.image} alt="course image" />
                                 <span className='payment-left-order-course-name'>{course?.title}</span>
                             </div>
-                            <span className="payment-left-order-right">{course?.price} d</span>
+                            <span className="payment-left-order-right">{course ? formatCurrency(course?.price) : 0}</span>
                         </div>
                     </div>
                 </div>
@@ -129,17 +130,17 @@ function PaymentCourse() {
                 {discountPercent && <div className='payment-discount'>
                     <div className="payment-old-price">
                         <div className="payment-old-price-left">Giá gốc:</div>
-                        <span className="payment-old-price-right">₫ {course?.price}</span>
+                        <span className="payment-old-price-right">{course ? formatCurrency(course?.price) : 0}</span>
                     </div>
                     <div className="payment-discount-price">
                         <div className="payment-old-price-left">Mức chiết khấu:</div>
-                        <span className="payment-old-price-right">₫ {course && course.price ? course?.price * discountPercent / 100 : 0}</span>
+                        <span className="payment-old-price-right"> {course && course.price ? formatCurrency(course?.price * discountPercent / 100) : 0}</span>
                     </div>
                     <Divider />
                 </div>}
                 <div className="payment-right-total">
                     <div className="payment-right-left">Tổng</div>
-                    <span className="payment-right-right">₫ {total}</span>
+                    <span className="payment-right-right">₫ {formatCurrency(total)}</span>
                 </div>
                 <Button className="payment-right-btn" onClick={handlePayment}>Hoàn tất thanh toán</Button>
             </div>

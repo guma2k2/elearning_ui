@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { ErrorType } from '../../types/ErrorType';
 import { CouponType } from '../../types/CouponType';
 import { AxiosError } from 'axios';
+import { formatCurrency } from '../../utils/Format';
 function Cart() {
     const { carts } = useAppSelector((state: RootState) => state.carts);
     const navigate = useNavigate()
@@ -96,10 +97,10 @@ function Cart() {
             <div className="right">
                 <div className="total">
                     <div className="total-header">Tổng</div>
-                    <span className="total-price">₫ {getTotalPrice()}</span>
+                    <span className="total-price">{formatCurrency(getTotalPrice())}</span>
                     {coupon && <>
-                        <span className="total-old-price">₫ {totalPrice}</span>
-                        <span className="total-discount">Giam {coupon.discountPercent}%</span>
+                        <span className="total-old-price">{formatCurrency(totalPrice)}</span>
+                        <span className="total-discount">Giảm {coupon.discountPercent}%</span>
                     </>}
                 </div>
                 <Button className='payment-btn' onClick={handleRedirectToPaymentPage}>Thanh toán</Button>
