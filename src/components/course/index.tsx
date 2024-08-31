@@ -4,6 +4,7 @@ import { CartType } from "../../types/CartType";
 import { useAppDispatch } from "../../redux/hooks";
 import { deleteCart, updateCart } from "../../redux/slices/CartSlice";
 import { deleteCartById, updateCartBuyLaterById } from "../../services/CartService";
+import { formatCurrency } from "../../utils/Format";
 type PropType = {
     cart: CartType
 }
@@ -45,7 +46,7 @@ function Course(props: PropType) {
                     <div className="delete" onClick={handleDeleteCart}>Xóa</div>
                     <div className="save-for-later" onClick={handleSaveForLater}>Lưu lại để xem sau</div>
                 </div>
-                <div className="course-price">{cart.course.price} d</div>
+                <div className="course-price">{formatCurrency(cart.course.price)}</div>
             </div>
         </>
     )

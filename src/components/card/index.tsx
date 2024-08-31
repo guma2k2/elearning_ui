@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { CourseListGetType, CourseType } from '../../types/CourseType'
 import './Card.style.scss'
 import { Rate } from 'antd';
+import { formatCurrency } from '../../utils/Format';
 
 type Props = {
     course: CourseType | CourseListGetType
@@ -18,7 +19,7 @@ function Card(props: Props) {
                 <Rate className='rating' allowHalf disabled defaultValue={course.averageRating} />
                 <span className='count-rating'>{course.ratingCount}</span>
             </span>
-            <span className='course-price'>{course.free == true ? "Mien PHi" : course.price} d</span>
+            <span className='course-price'>{course.free == true ? "Miễn phí" : formatCurrency(course.price)}</span>
         </Link>
 
     )

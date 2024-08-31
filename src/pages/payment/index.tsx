@@ -11,6 +11,7 @@ import { PaymentRequestType, VNPayResponse } from '../../types/PaymentType';
 import { pay } from '../../services/PaymentService';
 import { useLocation } from 'react-router-dom';
 import { deleteCartBuyLater } from '../../redux/slices/CartSlice';
+import { formatCurrency } from '../../utils/Format';
 
 
 function Payment() {
@@ -105,7 +106,7 @@ function Payment() {
                                     <img src={cart.course.image} alt="course image" />
                                     <span className='payment-left-order-course-name'>{cart.course.title}</span>
                                 </div>
-                                <span className="payment-left-order-right">{cart.course.price} d</span>
+                                <span className="payment-left-order-right">{formatCurrency(cart.course.price)}</span>
                             </div>
                         })}
                     </div>
@@ -119,17 +120,17 @@ function Payment() {
                 {discountPercent && <div className='payment-discount'>
                     <div className="payment-old-price">
                         <div className="payment-old-price-left">Giá gốc:</div>
-                        <span className="payment-old-price-right">₫ {totalPrice}</span>
+                        <span className="payment-old-price-right">{formatCurrency(totalPrice)}</span>
                     </div>
                     <div className="payment-discount-price">
                         <div className="payment-old-price-left">Mức chiết khấu:</div>
-                        <span className="payment-old-price-right">₫ {totalPrice * discountPercent / 100}</span>
+                        <span className="payment-old-price-right">{formatCurrency(totalPrice * discountPercent / 100)}</span>
                     </div>
                     <Divider />
                 </div>}
                 <div className="payment-right-total">
                     <div className="payment-right-left">Tổng</div>
-                    <span className="payment-right-right">₫ {total}</span>
+                    <span className="payment-right-right">₫ {formatCurrency(total)}</span>
                 </div>
                 <Button className="payment-right-btn" onClick={handlePayment}>Hoàn tất thanh toán</Button>
             </div>
