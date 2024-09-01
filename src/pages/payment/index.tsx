@@ -130,7 +130,7 @@ function Payment() {
                 </div>}
                 <div className="payment-right-total">
                     <div className="payment-right-left">Tổng</div>
-                    <span className="payment-right-right">₫ {formatCurrency(total)}</span>
+                    <span className="payment-right-right">{formatCurrency(total)}</span>
                 </div>
                 <Button className="payment-right-btn" onClick={handlePayment}>Hoàn tất thanh toán</Button>
             </div>
