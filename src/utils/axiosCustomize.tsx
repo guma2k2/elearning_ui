@@ -5,11 +5,9 @@ const baseURL = import.meta.env.VITE_BACKEND_URL;
 // const cookies = new Cookies();
 
 const createAxiosInstance = () => {
-    const token = localStorage.getItem('token');
-    // console.log(token);
     return axios.create({
         baseURL,
-        headers: token != undefined && token != null ? { 'Authorization': `Bearer ${token}` } : {}
+        headers: { 'Content-Type': 'application/json', }
     });
 };
 
@@ -17,7 +15,8 @@ let instance = createAxiosInstance();
 
 // Add a request interceptor to the custom instance
 instance.interceptors.request.use(function (config) {
-    // Do something before request is sent
+    const token = localStorage.getItem('token');
+    config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
 }, function (error) {
     // Do something with request error
