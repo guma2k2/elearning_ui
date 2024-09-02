@@ -57,7 +57,7 @@ const App: React.FC = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical" style={{ height: "80px", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }} >
-                    F8 ADMIN
+                    F4 ADMIN
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>

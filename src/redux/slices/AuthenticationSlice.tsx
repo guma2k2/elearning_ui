@@ -57,7 +57,7 @@ export const authSlice = createSlice({
             //     cookies.set('token', token, { expires: new Date(decoded.exp * 1000) });
             // }
 
-            localStorage.setItem("token", token)
+            window.localStorage.setItem("token", token)
 
 
         },
@@ -75,7 +75,7 @@ export const authSlice = createSlice({
             // cookies.remove('token', { path: '/' });
             // cookies.remove('token', { path: '/admin' });
             // const token = cookies.get('token');
-            localStorage.removeItem("token");
+            window.localStorage.removeItem("token");
             state.isLoading = false
             state.isError = false
             state.isLoggin = false

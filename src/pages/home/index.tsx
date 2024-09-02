@@ -9,19 +9,21 @@ import { getCartsByUser } from "../../redux/slices/CartSlice"
 import { getLearningCourse } from "../../redux/slices/LearningCourseSlice"
 function Home() {
     const dispatch = useAppDispatch();
-    const { auth } = useAppSelector((state: RootState) => state.auth);
+    const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
     useEffect(() => {
-        if (auth) {
+        if (auth && isLoggin == true) {
             if (auth.user.role === "ROLE_ADMIN" || auth.user.role === "ROLE_INSTRUCTOR") {
-                // const url = window.location.pathname;
                 navigate("/admin")
             } else {
-                dispatch(getCartsByUser());
-                dispatch(getLearningCourse());
+                const getDataOfUser = async () => {
+                    dispatch(getCartsByUser());
+                    dispatch(getLearningCourse());
+                }
+                getDataOfUser();
             }
         }
-    }, [])
+    }, [isLoggin])
     return (
         <div className="home-container">
             <Navbar />
