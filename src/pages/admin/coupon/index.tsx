@@ -38,12 +38,14 @@ function CouponManagement() {
         }
     }
     const onFinish = async (values: CouponType) => {
-        setPending(true);
-        // console.log(values);
-        const type = values.id ? "update" : "create";
-        // console.log(type);
+        const codeCoupon = values.code;
+        const newValues: CouponType = {
+            ...values, code: codeCoupon.trim()
+        }
 
-        // console.log(dayjs(values.startTime).format('YYYY-MM-DD HH:mm:ss'));
+
+        setPending(true);
+        const type = values.id ? "update" : "create";
 
 
         const formatedStartTime = dayjs(values.startTime).format('YYYY-MM-DD HH:mm:ss');
@@ -51,7 +53,7 @@ function CouponManagement() {
         if (type === "create") {
             try {
                 const couponPost: CouponPostType = {
-                    ...values, startTime: formatedStartTime, endTime: formatedEndTime
+                    ...newValues, startTime: formatedStartTime, endTime: formatedEndTime
                 }
                 console.log(couponPost);
 
@@ -77,7 +79,7 @@ function CouponManagement() {
             try {
                 const couponId = values.id;
                 const couponPost: CouponPostType = {
-                    ...values, startTime: formatedStartTime, endTime: formatedEndTime
+                    ...newValues, startTime: formatedStartTime, endTime: formatedEndTime
                 }
                 console.log(couponPost);
 

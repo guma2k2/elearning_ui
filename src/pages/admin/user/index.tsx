@@ -170,6 +170,10 @@ function User() {
     };
 
     const onFinish = async (values: UserType) => {
+        const emailUser = values.email;
+        const newValues: UserType = {
+            ...values, email: emailUser.trim()
+        }
         setPending(true);
         console.log(values);
         const type = currentUser ? "update" : "create";
@@ -189,7 +193,7 @@ function User() {
         console.log(values);
         if (type === "create") {
             try {
-                const resSaveUser = await save(values);
+                const resSaveUser = await save(newValues);
                 console.log(resSaveUser);
                 if (resSaveUser.status === 201) {
                     alert("Add user successful");
@@ -215,7 +219,7 @@ function User() {
                 if (checkIsChangePassword === false) {
                     values = { ...values, password: "" }
                 }
-                const resUpdateUser = await update(values, userId);
+                const resUpdateUser = await update(newValues, userId);
                 if (resUpdateUser.status === 200) {
                     alert("Update user successful");
                     const data = resUpdateUser.data as AuthType;

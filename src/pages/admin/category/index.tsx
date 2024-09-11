@@ -143,11 +143,15 @@ function Category() {
     };
     const onFinish = async (values: CategoryType) => {
         console.log(values);
+        const nameCat = values.name;
+        const newValues: CategoryType = {
+            ...values, name: nameCat.trim()
+        }
         setPending(true)
         const type = currentCatId ? "update" : "create";
         if (type === "create") {
             try {
-                const resSave = await save(values);
+                const resSave = await save(newValues);
                 console.log(resSave);
                 if (resSave.status === 201) {
                     form.resetFields();
@@ -170,7 +174,7 @@ function Category() {
             try {
                 const id = currentCatId;
                 if (id) {
-                    const resUpdateUser = await update(values, id);
+                    const resUpdateUser = await update(newValues, id);
                     if (resUpdateUser.status === 204) {
                         form.resetFields();
                         setOpen(false)

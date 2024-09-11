@@ -139,7 +139,7 @@ function CourseLandingPage(probs: Probs) {
         if (course) {
             const coursePut: CourseType = {
                 ...course,
-                title: courseTitle,
+                title: courseTitle.trim(),
                 headline: courseHeadline,
                 description: courseDesc,
                 level,
