@@ -123,14 +123,17 @@ function Topic() {
         form.resetFields();
     };
     const onFinish = async (values: TopicType) => {
-        console.log(values);
+        const nameTopic = values.name;
+        const newValues: TopicType = {
+            ...values, name: nameTopic.trim()
+        }
 
         setPending(true)
         const type = currentTopicId ? "update" : "create";
         if (type === "create") {
 
             try {
-                const resSave = await save(values);
+                const resSave = await save(newValues);
                 console.log(resSave);
                 if (resSave.status === 201) {
                     form.resetFields();
@@ -150,7 +153,7 @@ function Topic() {
 
         } else {
             try {
-                const resUpdateUser = await update(values, currentTopicId);
+                const resUpdateUser = await update(newValues, currentTopicId);
                 if (resUpdateUser.status === 204) {
                     form.resetFields();
                     setOpen(false);

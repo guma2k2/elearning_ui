@@ -24,7 +24,6 @@ function ReviewManagement() {
 
     const handleSearch = async () => {
         const res = await getWithPagination(current - 1, pageSize, keyword);
-
         if (res && res.status === 200) {
             console.log(res);
             const content = res.data.content.map((review: ReviewGet) => (
