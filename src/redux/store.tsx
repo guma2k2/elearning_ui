@@ -1,6 +1,5 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import courseReducer from "./slices/CourseSlice"
-import messageReducer from './slices/MessageSlice'
 import categoryReducer from './slices/CategorySlice'
 import authReducer from './slices/AuthenticationSlice'
 import learningReducer from './slices/LearningSlice'
@@ -18,7 +17,6 @@ const persistConfig = {
 }
 const rootReducer = combineReducers({
     courses: courseReducer,
-    messages: messageReducer,
     categories: categoryReducer,
     auth: authReducer,
     learning: learningReducer,

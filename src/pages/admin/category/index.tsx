@@ -43,7 +43,7 @@ function Category() {
             const res = await deleteCategory(id);
             if (res.status == 204) {
                 setIsDataUpdated((prev) => !prev);
-                alert("Delete successful")
+
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
