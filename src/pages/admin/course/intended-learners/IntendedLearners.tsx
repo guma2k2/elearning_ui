@@ -6,7 +6,6 @@ import { Button, Spin } from 'antd';
 import { useAppDispatch } from '../../../../redux/hooks';
 import { updateCourseById } from '../../../../services/CourseService';
 import { updateCourse } from '../../../../redux/slices/CourseSlice';
-import { Message, updateShowing } from '../../../../redux/slices/MessageSlice';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../../../types/ErrorType';
 
@@ -109,11 +108,7 @@ function IntendedLeaners(probs: Probs) {
                         const data = res.data as CourseType;
                         console.log(data);
                         dispatch(updateCourse(data))
-                        const message: Message = {
-                            type: "success",
-                            content: "save succesful"
-                        }
-                        dispatch(updateShowing(message))
+
                     }
                 } catch (error: AxiosError | any) {
                     if (error.response) {

@@ -11,9 +11,6 @@ import Category from "./pages/admin/category";
 import Topic from "./pages/admin/topic";
 import Course from "./pages/admin/course";
 import CourseEdit from "./pages/admin/course/CourseEdit";
-import { message } from "antd";
-import { useAppSelector } from "./redux/hooks";
-import { useEffect } from "react";
 import Login from "./pages/login";
 import Authenticate from "./pages/authenticate";
 import Register from "./pages/register";
@@ -39,8 +36,6 @@ import ForgotPassword from "./pages/forgotpassword";
 import UpdatePassword from "./pages/forgotpassword/UpdatePassword";
 import ProfileAdmin from "./pages/profile-admin";
 function App() {
-  const [messageApi, contextHolder] = message.useMessage();
-  const { isShow, content, type, duration } = useAppSelector((state) => state.messages);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -172,19 +167,8 @@ function App() {
     }
   ]);
 
-  useEffect(() => {
-    // if (content !== "") {
-    //   messageApi.open({
-    //     type: type,
-    //     content,
-    //     duration
-    //   });
-    // }
-  }, [isShow])
-
   return (
     <>
-      {contextHolder}
       <RouterProvider router={router} ></RouterProvider>
     </>
   )

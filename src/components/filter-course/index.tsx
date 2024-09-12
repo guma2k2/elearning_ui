@@ -2,6 +2,7 @@ import { Rate } from 'antd';
 import './FilterCourse.style.scss'
 import { CourseListGetType } from '../../types/CourseType';
 import { useNavigate } from 'react-router-dom';
+import { formatCurrency } from '../../utils/Format';
 
 type PropType = {
     course: CourseListGetType
@@ -32,7 +33,7 @@ function FilterCourse(props: PropType) {
             </div>
         </div>
         <div className="filter-right-course-right">
-            {course.price} d
+            {formatCurrency(course.price)}
         </div>
     </div>
 }
