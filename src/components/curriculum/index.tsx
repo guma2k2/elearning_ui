@@ -75,6 +75,7 @@ function Curriculum(probs: CurriculumType) {
             var formData = new FormData();
             formData.append("file", selected);
             formData.append("type", "video");
+            console.log(selected);
             const res = await uploadFile(formData);
             console.log(res);
 
