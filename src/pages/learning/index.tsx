@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import './index.style.scss'
 import { PiNote } from "react-icons/pi";
 import { FaPlus } from "react-icons/fa6";
@@ -21,7 +21,10 @@ import { convertSecondToMinute } from '../../utils/Format';
 import { NoteType } from '../../types/NoteType';
 import { getNotesByCourseId, getNotesBySectionId } from '../../services/NoteService';
 import NoteComponent from '../../components/note';
+import { AxiosError } from 'axios';
+import { ErrorType } from '../../types/ErrorType';
 function Learning() {
+    const navigate = useNavigate();
     const { slug } = useParams();
     const [open, setOpen] = useState<boolean>(false);
     const [openViewNote, setOpenViewNote] = useState<boolean>(false);
@@ -272,7 +275,20 @@ function Learning() {
     }
 
     useEffect(() => {
-        dispatch(fetchCourseBySlug(slug));
+        try {
+            dispatch(fetchCourseBySlug(slug));
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message)
+                if (data.statusCode == "400") {
+                    navigate("/")
+                }
+            }
+        }
+
         if (videoRef.current) {
             if (learning) {
                 const watchingSecondCurrent = learning.secondWatched;
