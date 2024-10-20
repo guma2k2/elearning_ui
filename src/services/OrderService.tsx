@@ -32,7 +32,7 @@ export const updateOrderStatus = async (orderId: number, status: string) => {
 }
 
 export const getBestSellerCourse = async () => {
-    const url = "/beseller-courses"
+    const url = "/orders/beseller-courses"
     const res = await instance.get(url);
     return res;
 }

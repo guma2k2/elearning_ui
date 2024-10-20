@@ -43,3 +43,9 @@ export const getWithPagination = async (current: number, pageSize: number, keywo
     const res = await instance.get(url);
     return res;
 }
+
+export const updateStatus = async (status: boolean, id: number) => {
+    const url = `/admin/users/${id}/status/${status}`
+    const res = await instance.put(url);
+    return res;
+}
