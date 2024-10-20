@@ -35,6 +35,7 @@ import InstructorProfile from "./pages/instructor-profile";
 import ForgotPassword from "./pages/forgotpassword";
 import UpdatePassword from "./pages/forgotpassword/UpdatePassword";
 import ProfileAdmin from "./pages/profile-admin";
+import ChatApp from "./pages/chat";
 function App() {
   const router = createBrowserRouter([
     {
@@ -164,6 +165,10 @@ function App() {
       path: "/course/:slug/learning",
       errorElement: <NotFound />,
       element: <ProtectedRoute><Learning /></ProtectedRoute>
+    },
+    {
+      path: "/chat",
+      element: <ChatApp></ChatApp>
     }
   ]);
 

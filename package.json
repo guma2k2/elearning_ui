@@ -29,12 +29,16 @@
     "redux-persist": "^6.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.69.7",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@types/react-slick": "^0.23.13",
+    "@types/sockjs-client": "^1.5.4",
+    "@types/stompjs": "^2.3.9",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^4.2.1",

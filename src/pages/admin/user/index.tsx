@@ -5,7 +5,7 @@ import UserPhoto from "../../../assets/userPhoto.png"
 import "./User.style.scss"
 import { uploadFile } from '../../../services/MediaService';
 import { UserGetDetailType, UserType } from '../../../types/UserType';
-import { deleteUser, get, getWithPagination, save, update } from '../../../services/UserService';
+import { deleteUser, get, getWithPagination, save, update, updateStatus } from '../../../services/UserService';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../../types/ErrorType';
 import { RootState } from '../../../redux/store';
@@ -53,6 +53,12 @@ function User() {
     const [userList, setUserList] = useState<UserType[]>([]);
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("");
+    const handleUpdateStatus = async (checked: boolean, id: number) => {
+        const res = await updateStatus(checked, id);
+        if (res.status === 204) {
+            setIsDataUpdated((prev) => !prev);
+        }
+    }
     useEffect(() => {
         const fetchUsers = async () => {
             const res = await getWithPagination(current - 1, pageSize, null);
@@ -106,6 +112,16 @@ function User() {
             title: 'Tên',
             dataIndex: 'lastName',
             width: 200,
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'active',
+            width: 100,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Switch checkedChildren="active" unCheckedChildren="unactive" checked={record.active} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                </Flex>
+            ),
         },
         {
             title: 'Giới tính',
