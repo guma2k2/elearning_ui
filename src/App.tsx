@@ -36,6 +36,7 @@ import ForgotPassword from "./pages/forgotpassword";
 import UpdatePassword from "./pages/forgotpassword/UpdatePassword";
 import ProfileAdmin from "./pages/profile-admin";
 import ChatApp from "./pages/chat";
+import Meeting from "./components/meeting";
 function App() {
   const router = createBrowserRouter([
     {
@@ -167,8 +168,8 @@ function App() {
       element: <ProtectedRoute><Learning /></ProtectedRoute>
     },
     {
-      path: "/chat",
-      element: <ChatApp></ChatApp>
+      path: "/meeting",
+      element: <Meeting></Meeting>
     }
   ]);
 
