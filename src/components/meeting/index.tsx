@@ -7,6 +7,7 @@ import {
 } from "@videosdk.live/react-sdk";
 import { authToken, createMeeting } from "./meetingConfig";
 import ReactPlayer from "react-player";
+import { Stream } from "@videosdk.live/react-sdk/dist/types/stream";
 interface JoinScreenProps {
     getMeetingAndToken: (id: string | null) => Promise<void>;
 }
@@ -44,8 +45,10 @@ function JoinScreen({ getMeetingAndToken }: JoinScreenProps) {
 function ParticipantView(prop: ParticipantViewProps) {
     const micRef = useRef<HTMLAudioElement | null>(null);
 
-    const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName } =
-        useParticipant(prop.participantId);
+    const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName, } = useParticipant(prop.participantId, {
+        onStreamEnabled,
+        onStreamDisabled,
+    });
 
     const videoStream = useMemo<MediaStream | undefined>(() => {
         if (webcamOn && webcamStream) {
@@ -55,6 +58,20 @@ function ParticipantView(prop: ParticipantViewProps) {
         }
         return undefined;
     }, [webcamStream, webcamOn]);
+
+
+    function onStreamEnabled(stream: Stream) {
+        if (stream.kind === 'share') {
+            console.log("Share Stream On: onStreamEnabled", stream);
+        }
+    }
+
+    //Callback for when the participant stops a stream
+    function onStreamDisabled(stream: Stream) {
+        if (stream.kind === 'share') {
+            console.log("Share Stream Off: onStreamDisabled", stream);
+        }
+    }
 
     useEffect(() => {
         if (micRef.current) {
@@ -102,28 +119,80 @@ function ParticipantView(prop: ParticipantViewProps) {
 }
 
 function Controls(props: any) {
-    const { leave, toggleMic, toggleWebcam } = useMeeting();
+    const { leave, toggleMic, toggleWebcam, toggleScreenShare } = useMeeting();
     return (
         <div>
             <button onClick={() => leave()}>Leave</button>
             <button onClick={() => toggleMic()}>toggleMic</button>
             <button onClick={() => toggleWebcam()}>toggleWebcam</button>
+            <button onClick={() => toggleScreenShare()}>Screen Share</button>
         </div>
     );
 }
+interface PresenterViewProps {
+    presenterId: string;
+}
+
+
+function PresenterView({ presenterId }: PresenterViewProps) {
+    // Get screen share stream and screen share status
+    const { screenShareStream, screenShareOn } = useParticipant(presenterId);
+
+    // Creating a media stream from the screen share stream
+    const mediaStream = useMemo(() => {
+        if (screenShareOn && screenShareStream) {
+            const stream = new MediaStream();
+            stream.addTrack(screenShareStream.track);
+            return stream;
+        }
+        return null;
+    }, [screenShareStream, screenShareOn]);
+
+    return (
+        <>
+            {mediaStream && (
+                <ReactPlayer
+                    playsinline // extremely crucial prop
+                    playIcon={<></>} // Optional, can customize the play icon
+                    pip={false}
+                    light={false}
+                    controls={false}
+                    muted={true}
+                    playing={true}
+                    url={mediaStream} // Passing the mediaStream here
+                    height="100%"
+                    width="100%"
+                    onError={(err) => {
+                        console.log(err, "presenter video error");
+                    }}
+                />
+            )}
+        </>
+    );
+};
 
 // MeetingView Component
 function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
     const [joined, setJoined] = useState<"JOINING" | "JOINED" | null>(null);
 
+    function onPresenterChange(presenterId: any) {
+        if (presenterId) {
+            console.log(presenterId, "started screen share");
+        } else {
+            console.log("someone stopped screen share");
+        }
+    }
+
     // Get methods from useMeeting hook
-    const { join, participants } = useMeeting({
+    const { join, participants, presenterId } = useMeeting({
         onMeetingJoined: () => {
             setJoined("JOINED");
         },
         onMeetingLeft: () => {
             onMeetingLeave();
         },
+        onPresenterChanged: onPresenterChange
+        ,
     });
 
     const joinMeeting = () => {
@@ -131,7 +200,6 @@ function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
         join();
     };
 
-    console.log(meetingId);
 
     return (
         <div className="container">
@@ -149,6 +217,7 @@ function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
             ) : (
                 <button onClick={joinMeeting}>Join</button>
             )}
+            {presenterId && <PresenterView presenterId={presenterId} />}
         </div>
     );
 }
@@ -176,6 +245,7 @@ function Meeting() {
                 micEnabled: true,
                 webcamEnabled: true,
                 name: "C.V. Raman",
+
             }}
             token={authToken}
         >
