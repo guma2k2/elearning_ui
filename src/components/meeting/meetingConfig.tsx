@@ -15,7 +15,7 @@ export const createMeeting = async ({ token }: CreateMeetingParams): Promise<str
     const res = await fetch(`https://api.videosdk.live/v2/rooms`, {
         method: "POST",
         headers: {
-            authorization: `${authToken}`,
+            authorization: `${token}`,
             "Content-Type": "application/json",
         },
         body: JSON.stringify({}),

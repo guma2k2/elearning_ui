@@ -1,6 +1,6 @@
 import { useMeeting } from "@videosdk.live/react-sdk";
 import './Controls.style.scss'
-function Controls(props: any) {
+function Controls(_props: any) {
     const { leave, toggleMic, toggleWebcam, toggleScreenShare } = useMeeting();
     return (
         <div className="controls-container">
