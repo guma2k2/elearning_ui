@@ -1,0 +1,38 @@
+.classroomDetail-container {
+    height: 1000px;
+    width: 100%;
+
+    .classroomDetail-top {
+        position: relative;
+        width: 100%;
+        height: 300px; // Adjust height as needed
+        overflow: hidden;
+
+        img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; // Ensures image covers the container
+        }
+
+        .classroomDetail-text {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white; // Adjust to contrast with background
+            background-color: rgba(0, 0, 0, 0.5); // Optional background for readability
+            padding: 10px;
+            border-radius: 4px; // Optional styling
+
+            .classroomDetail-Title {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .classroomDetail-Desc {
+                font-size: 14px;
+                margin-top: 4px;
+            }
+        }
+    }
+}

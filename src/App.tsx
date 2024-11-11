@@ -37,6 +37,8 @@ import UpdatePassword from "./pages/forgotpassword/UpdatePassword";
 import ProfileAdmin from "./pages/profile-admin";
 import ChatApp from "./pages/chat";
 import Meeting from "./components/meeting";
+import Classroom from "./pages/classroom";
+import ClassroomDetail from "./pages/classroom/classroomDetail";
 function App() {
   const router = createBrowserRouter([
     {
@@ -83,6 +85,14 @@ function App() {
         {
           path: "/cart",
           element: <ProtectedRoute><Cart /> </ProtectedRoute>,
+        },
+        {
+          path: "/classroom/course/:id",
+          element: <Classroom></Classroom>,
+        },
+        {
+          path: "/classroom/detail",
+          element: <ClassroomDetail></ClassroomDetail>,
         },
         {
           path: "/courses/:courseId",
