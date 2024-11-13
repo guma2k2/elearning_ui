@@ -1,4 +1,4 @@
-import { Form, Input, Modal, Progress, Rate } from "antd";
+import { Button, Form, Input, Modal, Progress, Rate } from "antd";
 import './MyLearningCourse.style.scss'
 import { Fragment, useState } from "react";
 import TextArea from "antd/es/input/TextArea";
@@ -70,6 +70,10 @@ function MyLearningCourse(props: PropType) {
         }
     }
 
+    const handleNavigateToClassroom = () => {
+        navigate(`/classrooms/course/${learingCourse.course.id}`)
+    }
+
     const hanldeHoverChange = (value: number) => {
         console.log(value);
         switch (value) {
@@ -119,7 +123,7 @@ function MyLearningCourse(props: PropType) {
 
                 </div>
             </div>
-
+            <Button onClick={(e) => { e.stopPropagation(); handleNavigateToClassroom() }}>Classroom</Button>
         </div>;
         <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} rootClassName="review-modal" okText={"Luu va tiep tuc"}>
             <h1>Vì sao bạn xếp hạng ở mức này?</h1>

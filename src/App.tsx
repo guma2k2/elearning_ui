@@ -87,10 +87,6 @@ function App() {
           element: <ProtectedRoute><Cart /> </ProtectedRoute>,
         },
         {
-          path: "/classroom/course/:id",
-          element: <Classroom></Classroom>,
-        },
-        {
           path: "/classroom/detail",
           element: <ClassroomDetail></ClassroomDetail>,
         },
@@ -178,9 +174,18 @@ function App() {
       element: <ProtectedRoute><Learning /></ProtectedRoute>
     },
     {
-      path: "/meeting",
+      path: "/meeting/:meetingId",
       element: <Meeting></Meeting>
+    },
+    {
+      path: "/classrooms/course/:courseId",
+      element: <Classroom></Classroom>,
+    },
+    {
+      path: "/classrooms/:id",
+      element: <ClassroomDetail></ClassroomDetail>,
     }
+
   ]);
 
   return (

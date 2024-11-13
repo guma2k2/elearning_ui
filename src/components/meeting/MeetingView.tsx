@@ -9,9 +9,16 @@ interface MeetingViewProps {
 }
 import './MeetingView.style.scss'
 
+export type ToggleType = {
+    type: "participants" | "board"
+}
+
 function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
     const [joined, setJoined] = useState<"JOINING" | "JOINED" | null>(null);
+    const [toggleRight, setToggleRight] = useState<ToggleType>({ type: "participants" });
 
+
+    // const [toggle, setToggle] = useState<ToggleType>({ type: "" });
     function onPresenterChange(presenterId: any) {
         if (presenterId) {
             console.log(presenterId, "started screen share");
@@ -40,21 +47,30 @@ function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
 
     return (
         <div className="meetingView-container">
-            <h3>Meeting Id: {meetingId}</h3>
             {joined === "JOINED" ? (
                 <div>
-                    <Controls />
-                    {/* Render all participants in the meeting */}
-                    {[...participants.keys()].map((participantId) => (
-                        <ParticipantView participantId={participantId} key={participantId} />
-                    ))}
+
+                    <div className="meetingView-top">
+                        <div className="meetingView-top-left" style={{ width: "80%" }}>
+                            {presenterId && <PresenterView presenterId={presenterId} />}
+                        </div>
+                        {toggleRight.type == "participants" && <div className="meetingView-top-right" style={{ width: "20%" }} >
+                            {[...participants.keys()].map((participantId) => (
+                                <ParticipantView participantId={participantId} key={participantId} />
+                            ))}
+                        </div>}
+
+                        {toggleRight.type == "board" && <div className="meetingView-top-right" style={{ width: "20%" }} >
+
+                        </div>}
+                    </div>
+                    <Controls meetingId={meetingId} toggleRight={toggleRight} setToggleRight={setToggleRight} />
                 </div>
             ) : joined === "JOINING" ? (
                 <p>Joining the meeting...</p>
             ) : (
                 <button onClick={joinMeeting}>Join</button>
             )}
-            {presenterId && <PresenterView presenterId={presenterId} />}
         </div>
     );
 }

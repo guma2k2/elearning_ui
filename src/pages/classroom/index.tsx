@@ -1,28 +1,51 @@
 import { Avatar, Card } from 'antd';
 import './Classroom.style.scss'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { ClassroomType } from '../../types/ClassroomType';
+import { getByCourseId } from '../../services/ClassroomService';
 const { Meta } = Card;
 function Classroom() {
     const navigate = useNavigate();
-    const redirectToClassroomDetail = () => {
-        navigate("/classroom/detail")
+    let { courseId } = useParams();
+    const redirectToClassroomDetail = (classroomId: number) => {
+        navigate(`/classrooms/${classroomId}`)
     }
+
+    const [classrooms, setClassrooms] = useState<ClassroomType[]>([]);
+
+
+    const fetchClassroomsByCourseId = async () => {
+        const res = await getByCourseId(courseId);
+        console.log(res);
+        if (res.status === 200) {
+            const classroomList = res.data as ClassroomType[]
+            console.log(classroomList);
+            setClassrooms(classroomList);
+        }
+    }
+
+    useEffect(() => {
+        fetchClassroomsByCourseId();
+    }, [courseId])
+
+
     return <div className="classroom-container">
-        <Card onClick={redirectToClassroomDetail}
+        {classrooms && classrooms.length > 0 && classrooms.map((classroom) => <Card key={`classroom-${classroom.id}`} onClick={() => redirectToClassroomDetail(classroom.id)}
             style={{ width: 300 }}
             cover={
                 <img
-                    alt="example"
-                    src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                    alt="classroom image"
+                    src={classroom.image}
                 />
             }
         >
             <Meta
                 avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
-                title="Card title"
-                description="This is the description"
+                title={classroom.name}
+                description={classroom.description}
             />
-        </Card>
+        </Card>)}
 
     </div>
 }

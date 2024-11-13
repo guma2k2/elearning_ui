@@ -1,4 +1,18 @@
 .meetingView-container {
     height: 100vh;
-    position: relative; // Set position to relative to enable absolute positioning inside
+    position: relative;
+
+    .meetingView-top {
+        height: calc(100vh - 60px);
+        display: flex;
+        width: 100%;
+
+        .meetingView-top-left {
+            background-color: black;
+        }
+
+        .meetingView-top-right {}
+    }
+
+    // Set position to relative to enable absolute positioning inside
 }

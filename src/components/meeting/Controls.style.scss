@@ -2,9 +2,65 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 50px;
+    height: 60px;
     background-color: #f1f1f1;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    .controls-middle {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .controls-item {
+            cursor: pointer;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #000;
+
+            &:hover {
+                background-color: #826f6f;
+            }
+
+            .controls-icon {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    }
+
+    .controls-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding-right: 30px;
+
+        .controls-item {
+            cursor: pointer;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #000;
+
+            &:hover {
+                background-color: #826f6f;
+            }
+
+            .controls-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            &.active {
+                background-color: #826f6f;
+            }
+        }
+
+    }
 }
