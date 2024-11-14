@@ -11,8 +11,8 @@
 //     downloadIcon,
 //     github,
 // } from '../Icons';
-
-// import { db } from '../firebase';
+// import { getFirestore, collection, doc, setDoc, onSnapshot } from "firebase/firestore";
+// import { db } from '../../utils/firebase';
 // import { Canvas, Rect, Triangle, Textbox, Circle } from 'fabric';
 
 // let canvas: Canvas;
@@ -33,7 +33,7 @@
 //     const [strokeColor, setStrokeColor] = useState<string>(colors.black);
 //     const [JSONData, setJSONData] = useState<string>('');
 
-//     const ref = db.collection('canvasData').doc('JSONData');
+//     const ref = doc(collection(db, 'canvasData'), 'JSONData');
 
 //     useEffect(() => {
 //         canvas = new Canvas('canvas');
@@ -45,11 +45,12 @@
 //             canvas.freeDrawingBrush.width = brushSize;
 //         }
 
-//         canvas.on('mouse:up', () => {
-//             setJSONData(JSON.stringify(canvas));
-//             ref.set({ data: JSONData });
+//         canvas.on('mouse:up', async () => {
+//             const data = JSON.stringify(canvas);
+//             setJSONData(data);
+//             await setDoc(ref, { data });
 
-//             ref.onSnapshot((snap: any) => {
+//             onSnapshot(ref, (snap) => {
 //                 const JSONFirebase = snap.data()?.data;
 //                 if (JSONFirebase) {
 //                     canvas.loadFromJSON(JSONFirebase, canvas.renderAll.bind(canvas));
@@ -149,21 +150,21 @@
 //         canvas.isDrawingMode = false;
 //     };
 
-//     const saveData = () => {
-//         setJSONData(JSON.stringify(canvas));
-//         ref.set({ data: JSONData });
+//     const saveData = async () => {
+//         const data = JSON.stringify(canvas);
+//         setJSONData(data);
+//         await setDoc(ref, { data });
 //         console.log('JSONData saved to Firestore');
 //     };
 
 //     const loadData = () => {
-//         ref.onSnapshot((snap: any) => {
+//         onSnapshot(ref, (snap) => {
 //             const JSONFirebase = snap.data()?.data;
 //             if (JSONFirebase) {
 //                 canvas.loadFromJSON(JSONFirebase, canvas.renderAll.bind(canvas));
 //             }
 //         });
 //     };
-
 //     const clearSaved = () => {
 //         // ref.update({ data: firebase.firestore.FieldValue.delete() });
 //         canvas.clear();
