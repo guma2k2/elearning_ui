@@ -257,7 +257,7 @@ function Toolbar() {
                         src={eraser}
                         alt='eraser-icon'
                         className='eraserIcon'
-                        onClick={(e) => {
+                        onClick={() => {
                             setBrushColor(colors.white);
                         }}
                     />
