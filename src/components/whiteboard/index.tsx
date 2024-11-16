@@ -1,7 +1,24 @@
-// Whiteboard.tsx
-import React, { useEffect, useRef, useState } from 'react';
 import { db } from '../../utils/firebase';
-import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    collection,
+    addDoc,
+    onSnapshot,
+    getDocs,
+    writeBatch,
+    QueryDocumentSnapshot,
+    DocumentData,
+    deleteDoc,
+    doc,
+} from 'firebase/firestore';
+
+type Point = {
+    x: number;
+    y: number;
+    color: string;
+    brushSize: number;
+    isNewLine?: boolean; // Đánh dấu khi bắt đầu một nét vẽ mới
+};
 
 const Whiteboard: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -10,7 +27,7 @@ const Whiteboard: React.FC = () => {
     const [color, setColor] = useState<string>('#000000');
     const [brushSize, setBrushSize] = useState<number>(5);
 
-    const canvasId = 'whiteboard';
+    const whiteboardCollection = collection(db, 'whiteboardData');
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -21,23 +38,53 @@ const Whiteboard: React.FC = () => {
         const ctx = canvas.getContext('2d');
         if (ctx) {
             ctx.lineCap = 'round';
-            ctx.strokeStyle = color;
-            ctx.lineWidth = brushSize;
             ctxRef.current = ctx;
         }
-    }, [color, brushSize]);
+    }, []);
+
+    // Đồng bộ hóa dữ liệu từ Firestore
+    useEffect(() => {
+        const unsubscribe = onSnapshot(whiteboardCollection, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added') {
+                    const point = change.doc.data() as Point;
+                    drawPoint(point);
+                } else if (change.type === 'removed') {
+                    clearCanvas();
+                }
+            });
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
         ctxRef.current?.beginPath();
         ctxRef.current?.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         setIsDrawing(true);
+
+        // Gửi điểm bắt đầu nét vẽ lên Firestore
+        savePoint({
+            x: e.nativeEvent.offsetX,
+            y: e.nativeEvent.offsetY,
+            color,
+            brushSize,
+            isNewLine: true,
+        });
     };
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawing || !ctxRef.current) return;
 
-        ctxRef.current.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        ctxRef.current.stroke();
+        const point: Point = {
+            x: e.nativeEvent.offsetX,
+            y: e.nativeEvent.offsetY,
+            color,
+            brushSize,
+        };
+
+        drawPoint(point);
+        savePoint(point);
     };
 
     const stopDrawing = () => {
@@ -45,41 +92,25 @@ const Whiteboard: React.FC = () => {
         setIsDrawing(false);
     };
 
-    const saveCanvas = async () => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+    const drawPoint = (point: Point) => {
+        if (!ctxRef.current) return;
 
-        const dataURL = canvas.toDataURL();
-        const ref = doc(collection(db, 'canvasData'), canvasId);
-
-        try {
-            await setDoc(ref, { data: dataURL });
-            alert('Canvas saved successfully!');
-        } catch (error) {
-            console.error('Error saving canvas:', error);
+        if (point.isNewLine) {
+            ctxRef.current.beginPath();
+            ctxRef.current.moveTo(point.x, point.y);
+        } else {
+            ctxRef.current.strokeStyle = point.color;
+            ctxRef.current.lineWidth = point.brushSize;
+            ctxRef.current.lineTo(point.x, point.y);
+            ctxRef.current.stroke();
         }
     };
 
-    const loadCanvas = async () => {
-        const ref = doc(collection(db, 'canvasData'), canvasId);
-
+    const savePoint = async (point: Point) => {
         try {
-            const docSnap = await getDoc(ref);
-            if (docSnap.exists()) {
-                const canvas = canvasRef.current;
-                if (canvas) {
-                    const ctx = canvas.getContext('2d');
-                    const img = new Image();
-                    img.src = docSnap.data()?.data || '';
-                    img.onload = () => {
-                        ctx?.drawImage(img, 0, 0);
-                    };
-                }
-            } else {
-                alert('No saved canvas data found!');
-            }
+            await addDoc(whiteboardCollection, point);
         } catch (error) {
-            console.error('Error loading canvas:', error);
+            console.error('Error saving point:', error);
         }
     };
 
@@ -90,12 +121,26 @@ const Whiteboard: React.FC = () => {
         ctxRef.current.clearRect(0, 0, canvas.width, canvas.height);
     };
 
+    const clearFirestore = async () => {
+        const snapshot = await getDocs(whiteboardCollection);
+        const batch = writeBatch(db);
+
+        snapshot.docs.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
+            batch.delete(doc.ref);
+        });
+
+        await batch.commit();
+    };
+
+    const handleClearCanvas = async () => {
+        clearCanvas(); // Xóa canvas hiện tại
+        await clearFirestore(); // Xóa dữ liệu trên Firestore
+    };
+
     return (
         <div className="whiteboard-container">
             <div className="toolbar">
-                <button onClick={saveCanvas}>Save</button>
-                <button onClick={loadCanvas}>Load</button>
-                <button onClick={clearCanvas}>Clear</button>
+                <button onClick={handleClearCanvas}>Clear</button>
                 <input
                     type="color"
                     value={color}
