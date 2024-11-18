@@ -1,6 +1,41 @@
 .classroom-container {
-    width: 100%;
-    margin: 20px 50px;
-    display: flex;
-    flex-wrap: wrap;
+    .classroom-top {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e0e0e0;
+
+        .classroom-top-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .classroom-icon-back {
+                width: 28px;
+                height: 28px;
+                object-fit: cover;
+                cursor: pointer;
+                margin-left: 20px;
+            }
+
+            img {
+                width: 28px;
+                height: 28px;
+                object-fit: cover;
+            }
+
+            span {
+                color: #5f6368;
+                font-size: 22px;
+            }
+        }
+    }
+
+    .classroom-content {
+        width: 100%;
+        margin: 20px 50px;
+        display: flex;
+        flex-wrap: wrap;
+    }
 }

@@ -1,5 +1,4 @@
 .classroomDetail-container {
-    height: 1000px;
     width: 100%;
 
     .classroomDetail-top {
@@ -7,6 +6,23 @@
         width: 100%;
         height: 300px; // Adjust height as needed
         overflow: hidden;
+
+        .classromDetail-back {
+            position: absolute;
+            /* Allows free placement within the relative container */
+            top: 10px;
+            /* Adjust to position vertically */
+            left: 10px;
+            /* Adjust to position horizontally */
+            z-index: 2;
+            /* Ensures it appears above the image */
+            color: white;
+            /* Set an appropriate color for contrast */
+            font-size: 36px;
+            /* Adjust the icon size */
+            cursor: pointer;
+            /* Optional: Makes it look clickable */
+        }
 
         img {
             position: relative;
@@ -42,6 +58,40 @@
         gap: 30px;
         align-items: center;
         justify-content: center;
-        padding-top: 30px;
+        padding: 30px 0;
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 40px;
+            gap: 14px;
+            margin-bottom: 40px;
+
+            .review-total-rating {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        }
+
+        .review-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .btn-review-showmore {
+            margin-top: 20px;
+            border-radius: 0;
+            height: 40px;
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
 }

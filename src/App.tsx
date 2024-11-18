@@ -40,6 +40,7 @@ import Meeting from "./components/meeting";
 import Classroom from "./pages/classroom";
 import ClassroomDetail from "./pages/classroom/classroomDetail";
 import WhiteBoard from "./components/whiteboard";
+import TestChatApp from "./components/chat/testChatApp";
 function App() {
   const router = createBrowserRouter([
     {
@@ -183,12 +184,15 @@ function App() {
       element: <Classroom></Classroom>,
     },
     {
-      path: "/classrooms/:id",
+      path: "/classrooms/:id/c/:courseId",
       element: <ClassroomDetail></ClassroomDetail>,
     },
     {
       path: "/whiteboard",
       element: <WhiteBoard></WhiteBoard>,
+    }, {
+      path: "/chat",
+      element: <TestChatApp></TestChatApp>,
     },
   ]);
 

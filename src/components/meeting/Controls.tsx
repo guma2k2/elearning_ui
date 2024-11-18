@@ -11,6 +11,7 @@ import { ToggleType } from "./MeetingView";
 import { Dispatch, SetStateAction } from "react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
+import { MdOutlineChat } from "react-icons/md";
 type ControlsPropsType = {
     meetingId: string
     toggleRight: ToggleType;
@@ -32,7 +33,7 @@ function Controls(props: ControlsPropsType) {
     }
     const { leave, toggleMic, toggleWebcam, toggleScreenShare } = useMeeting();
     const { webcamOn, micOn } = useParticipant(getCurrentId())
-    const handleToggleRight = (prop: "board" | "participants") => {
+    const handleToggleRight = (prop: "board" | "participants" | "chat") => {
         setToggleRight({ type: prop })
     }
     return (
@@ -48,6 +49,7 @@ function Controls(props: ControlsPropsType) {
             <div className="controls-right">
                 <div onClick={() => handleToggleRight("participants")} className={toggleRight.type == "participants" ? "controls-item active" : "controls-item"}><IoMdPeople className="controls-icon" /></div>
                 <div onClick={() => handleToggleRight("board")} className={toggleRight.type == "board" ? "controls-item active" : "controls-item"}><FaRegClipboard className="controls-icon" /></div>
+                <div onClick={() => handleToggleRight("chat")} className={toggleRight.type == "chat" ? "controls-item active" : "controls-item"}><MdOutlineChat className="controls-icon" /></div>
             </div>
         </div>
     );
