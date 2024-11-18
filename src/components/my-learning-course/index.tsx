@@ -123,9 +123,9 @@ function MyLearningCourse(props: PropType) {
 
                 </div>
             </div>
-            <Button onClick={(e) => { e.stopPropagation(); handleNavigateToClassroom() }}>Classroom</Button>
+            <Button onClick={(e) => { e.stopPropagation(); handleNavigateToClassroom() }}>Danh sách lớp học</Button>
         </div>;
-        <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} rootClassName="review-modal" okText={"Luu va tiep tuc"}>
+        <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} rootClassName="review-modal" okText={"Lưu và tiếp tục"}>
             <h1>Vì sao bạn xếp hạng ở mức này?</h1>
             <span className="review-modal-rating-text">{ratingText}</span>
             <Form

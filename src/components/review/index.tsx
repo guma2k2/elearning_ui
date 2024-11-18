@@ -1,8 +1,9 @@
 import { Divider, Rate } from "antd";
 import './Review.style.scss'
 import { ReviewGet } from "../../types/ReviewType";
+import { ReviewClassroomGet } from "../../types/ReviewClassroomType";
 type PropType = {
-    review: ReviewGet | undefined,
+    review: ReviewGet | undefined | ReviewClassroomGet,
     isFilter: boolean
 }
 function Review(prop: PropType) {
@@ -15,7 +16,8 @@ function Review(prop: PropType) {
                 <div className="review-name">{review?.student.email}</div>
                 <div className="review-rating">
                     <Rate className='review-rating-icon' allowHalf disabled defaultValue={review?.ratingStar} />
-                    <span>6 ngày trước</span>
+                    {/* <span>6 ngày trước</span> */}
+                    <span>{review?.updatedAt}</span>
                 </div>
             </div>
         </div>

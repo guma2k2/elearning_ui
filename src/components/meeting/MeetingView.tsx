@@ -1,16 +1,21 @@
 import { useMeeting } from "@videosdk.live/react-sdk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Controls from "./Controls";
 import ParticipantView from "./ParticipantView";
 import PresenterView from "./PresenterView";
+
+import { LoadingOutlined } from '@ant-design/icons';
 interface MeetingViewProps {
     meetingId: string;
     onMeetingLeave: () => void;
 }
 import './MeetingView.style.scss'
+import { Spin } from "antd";
+import Chat from "../chat";
+import Whiteboard from "../whiteboard";
 
 export type ToggleType = {
-    type: "participants" | "board"
+    type: "participants" | "board" | "chat"
 }
 
 function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
@@ -45,11 +50,11 @@ function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
     };
 
 
+
     return (
         <div className="meetingView-container">
             {joined === "JOINED" ? (
                 <div>
-
                     <div className="meetingView-top">
                         <div className="meetingView-top-left" style={{ width: "80%" }}>
                             {presenterId && <PresenterView presenterId={presenterId} />}
@@ -61,13 +66,21 @@ function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
                         </div>}
 
                         {toggleRight.type == "board" && <div className="meetingView-top-right" style={{ width: "20%" }} >
-
+                            <Whiteboard></Whiteboard>
+                        </div>}
+                        {toggleRight.type == "chat" && <div className="meetingView-top-right" style={{ width: "20%" }} >
+                            <Chat roomId={meetingId} />
                         </div>}
                     </div>
                     <Controls meetingId={meetingId} toggleRight={toggleRight} setToggleRight={setToggleRight} />
                 </div>
             ) : joined === "JOINING" ? (
-                <p>Joining the meeting...</p>
+                <div style={{ textAlign: 'center' }}>
+                    <Spin indicator={<LoadingOutlined spin />} size="small" />
+                    <div style={{ marginTop: '8px', fontSize: '14px', color: '#555' }}>
+                        Joining the meeting...
+                    </div>
+                </div>
             ) : (
                 <button onClick={joinMeeting}>Join</button>
             )}
