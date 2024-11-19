@@ -30,6 +30,16 @@
                 font-size: 22px;
             }
         }
+
+        .classroom-top-right {
+            .classroom-icon-create {
+                width: 24px;
+                height: 24px;
+                object-fit: cover;
+                cursor: pointer;
+                margin-right: 20px;
+            }
+        }
     }
 
     .classroom-content {
