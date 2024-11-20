@@ -7,6 +7,13 @@ export const save = async (classroomPostType: ClassroomPostType) => {
     return res;
 }
 
+export const update = async (classroomPostType: ClassroomPostType, classId: number | undefined) => {
+    const url = `/classrooms/${classId}`;
+    const res = await instance.put(url, classroomPostType);
+    return res;
+}
+
+
 
 export const getById = async (classroomId: number | string | undefined) => {
     const url = `/classrooms/${classroomId}`
