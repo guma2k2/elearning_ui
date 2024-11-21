@@ -9,6 +9,7 @@ import { FaPlus } from 'react-icons/fa6';
 import TextArea from 'antd/es/input/TextArea';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
+import { uploadFile } from '../../services/MediaService';
 const { Meta } = Card;
 function Classroom() {
     const navigate = useNavigate();
@@ -16,8 +17,11 @@ function Classroom() {
     const [form] = Form.useForm();
 
     const [classroomId, setClassroomId] = useState<number>();
+    const [file, setFile] = useState<File>();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false)
 
     const [imageUrl, setImageUrl] = useState<string>("");
     const showModal = () => {
@@ -25,7 +29,8 @@ function Classroom() {
     };
 
     const handleOk = () => {
-        setIsModalOpen(false);
+        // setIsModalOpen(false);
+        form.submit();
     };
 
     const handleCancel = () => {
@@ -45,56 +50,81 @@ function Classroom() {
 
     const onFinish = async (values: ClassroomPostType) => {
         console.log(values);
-        const nameCat = values.name;
+        const nameClass = values.name;
+
+        const checkIsUploadFile = file != undefined;
+        let image = "";
+
+        if (checkIsUploadFile) {
+            var formData = new FormData();
+            formData.append("file", file);
+            formData.append("type", "image");
+
+            try {
+                console.log(formData);
+                const res = await uploadFile(formData);
+                if (res.status === 200) {
+                    image = res.data.url;
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    // setPending(false);
+                    return;
+                }
+            }
+        }
         const newValues: ClassroomPostType = {
-            ...values, name: nameCat.trim(), image: imageUrl
+            ...values, name: nameClass.trim(), image: image, courseId: courseId ? parseInt(courseId) : 0
         }
+
         // setPending(true)
-        const type = classroomId ? "update" : "create";
-        if (type === "create") {
-            try {
-                const resSave = await save(newValues);
-                console.log(resSave);
-                if (resSave.status === 201) {
-                    form.resetFields();
-                    setIsModalOpen(false);
-                    alert("Add category successful")
-                }
-            } catch (error: AxiosError | any) {
-                if (error.response) {
-                    console.log(error.response.data);
-                    const data = error.response.data as ErrorType;
-                    const message = data.details;
-                    alert(message)
-                    // setPending(false);
+        // const type = classroomId ? "update" : "create";
+        // if (type === "create") {
+        //     try {
+        //         const resSave = await save(newValues);
+        //         console.log(resSave);
+        //         if (resSave.status === 200) {
+        //             form.resetFields();
+        //             setIsModalOpen(false);
+        //             alert("Add category successful")
+        //         }
+        //     } catch (error: AxiosError | any) {
+        //         if (error.response) {
+        //             console.log(error.response.data);
+        //             const data = error.response.data as ErrorType;
+        //             const message = data.details;
+        //             alert(message)
+        //             return;
+        //         }
+        //     }
 
-                    return;
-                }
-            }
+        // } else {
+        //     try {
+        //         const id = classroomId;
+        //         if (id) {
+        //             const resUpdateUser = await update(newValues, id);
+        //             if (resUpdateUser.status === 204) {
+        //                 form.resetFields();
+        //                 setIsModalOpen(false)
+        //                 alert("Update category successful")
+        //             }
+        //         }
+        // } catch (error: AxiosError | any) {
+        //     if (error.response) {
+        //         console.log(error.response.data);
+        //         const data = error.response.data as ErrorType;
+        //         const message = data.details;
+        //         alert(message)
+        //         // setPending(false);
+        //         return;
+        //     }
+        // }
 
-        } else {
-            try {
-                const id = classroomId;
-                if (id) {
-                    const resUpdateUser = await update(newValues, id);
-                    if (resUpdateUser.status === 204) {
-                        form.resetFields();
-                        setIsModalOpen(false)
-                        alert("Update category successful")
-                    }
-                }
-            } catch (error: AxiosError | any) {
-                if (error.response) {
-                    console.log(error.response.data);
-                    const data = error.response.data as ErrorType;
-                    const message = data.details;
-                    alert(message)
-                    // setPending(false);
-                    return;
-                }
-            }
-
-        }
+        // }
         // setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         // setPending(false)
     }
@@ -106,6 +136,7 @@ function Classroom() {
             const url = URL.createObjectURL(selected);
             console.log(selected);
             setImageUrl(url);
+            setFile(selected);
         }
     }
 
@@ -121,7 +152,7 @@ function Classroom() {
 
     useEffect(() => {
         fetchClassroomsByCourseId();
-    }, [courseId])
+    }, [courseId, isDataUpdated])
 
 
     return <div className="classroom-container">
@@ -167,6 +198,7 @@ function Classroom() {
 
             </Form>
             <Input type="file" onChange={handleFileChange} />
+            {imageUrl && <img className='classroom-photo' src={imageUrl} alt="avatar" />}
         </Modal>
         <div className="classroom-content">
             {classrooms && classrooms.length > 0 && classrooms.map((classroom) => <Card key={`classroom-${classroom.id}`} onClick={() => redirectToClassroomDetail(classroom.id)}
