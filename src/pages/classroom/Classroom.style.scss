@@ -47,5 +47,13 @@
         margin: 20px 50px;
         display: flex;
         flex-wrap: wrap;
+        gap: 15px;
+
+        .classroom-action {
+            display: flex;
+            margin-top: 20px;
+            align-items: center;
+
+        }
     }
 }
