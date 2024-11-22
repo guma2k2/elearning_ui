@@ -1,4 +1,4 @@
-import { Avatar, Card, Col, Form, Input, Modal, Row } from 'antd';
+import { Avatar, Button, Card, Col, Form, Input, Modal, Row } from 'antd';
 import './Classroom.style.scss'
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -16,12 +16,13 @@ function Classroom() {
     let { courseId } = useParams();
     const [form] = Form.useForm();
 
-    const [classroomId, setClassroomId] = useState<number>();
+    const [classroomId, setClassroomId] = useState<number | null>();
     const [file, setFile] = useState<File>();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false)
+    const [classrooms, setClassrooms] = useState<ClassroomType[]>([]);
 
     const [imageUrl, setImageUrl] = useState<string>("");
     const showModal = () => {
@@ -35,6 +36,9 @@ function Classroom() {
 
     const handleCancel = () => {
         setIsModalOpen(false);
+        form.resetFields();
+        setClassroomId(null);
+        setImageUrl("")
     };
     const redirectToClassroomDetail = (classroomId: number) => {
         navigate(`/classrooms/${classroomId}/c/${courseId}`)
@@ -45,7 +49,6 @@ function Classroom() {
         navigate(`/my-learning`)
     }
 
-    const [classrooms, setClassrooms] = useState<ClassroomType[]>([]);
 
 
     const onFinish = async (values: ClassroomPostType) => {
@@ -77,55 +80,57 @@ function Classroom() {
                 }
             }
         }
+        console.log(image);
+
         const newValues: ClassroomPostType = {
             ...values, name: nameClass.trim(), image: image, courseId: courseId ? parseInt(courseId) : 0
         }
 
         // setPending(true)
-        // const type = classroomId ? "update" : "create";
-        // if (type === "create") {
-        //     try {
-        //         const resSave = await save(newValues);
-        //         console.log(resSave);
-        //         if (resSave.status === 200) {
-        //             form.resetFields();
-        //             setIsModalOpen(false);
-        //             alert("Add category successful")
-        //         }
-        //     } catch (error: AxiosError | any) {
-        //         if (error.response) {
-        //             console.log(error.response.data);
-        //             const data = error.response.data as ErrorType;
-        //             const message = data.details;
-        //             alert(message)
-        //             return;
-        //         }
-        //     }
+        const type = classroomId ? "update" : "create";
+        if (type === "create") {
+            try {
+                const resSave = await save(newValues);
+                console.log(resSave);
+                if (resSave.status === 200) {
+                    form.resetFields();
+                    setIsModalOpen(false);
+                    alert("Add category successful")
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    return;
+                }
+            }
 
-        // } else {
-        //     try {
-        //         const id = classroomId;
-        //         if (id) {
-        //             const resUpdateUser = await update(newValues, id);
-        //             if (resUpdateUser.status === 204) {
-        //                 form.resetFields();
-        //                 setIsModalOpen(false)
-        //                 alert("Update category successful")
-        //             }
-        //         }
-        // } catch (error: AxiosError | any) {
-        //     if (error.response) {
-        //         console.log(error.response.data);
-        //         const data = error.response.data as ErrorType;
-        //         const message = data.details;
-        //         alert(message)
-        //         // setPending(false);
-        //         return;
-        //     }
-        // }
+        } else {
+            try {
+                const id = classroomId;
+                if (id) {
+                    const resUpdateUser = await update(newValues, id);
+                    if (resUpdateUser.status === 204) {
+                        form.resetFields();
+                        setIsModalOpen(false)
+                        alert("Update category successful")
+                    }
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    // setPending(false);
+                    return;
+                }
+            }
 
-        // }
-        // setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+        }
+        setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         // setPending(false)
     }
 
@@ -138,6 +143,19 @@ function Classroom() {
             setImageUrl(url);
             setFile(selected);
         }
+    }
+
+    const handleEditClassroom = (classroomId: number) => {
+        setClassroomId(classroomId);
+
+        const currentClassroom = classrooms.find(classroom => classroom.id === classroomId);
+        form.setFieldsValue({
+            ...currentClassroom,
+        })
+        if (currentClassroom?.image) {
+            setImageUrl(currentClassroom?.image)
+        }
+        setIsModalOpen(true);
     }
 
     const fetchClassroomsByCourseId = async () => {
@@ -207,6 +225,7 @@ function Classroom() {
                     <img
                         alt="classroom image"
                         src={classroom.image}
+                        style={{ height: "200px", objectFit: "cover" }}
                     />
                 }
             >
@@ -215,6 +234,10 @@ function Classroom() {
                     title={classroom.name}
                     description={classroom.description}
                 />
+                <div className="classroom-action">
+                    <Button onClick={(e) => { e.stopPropagation(); handleEditClassroom(classroom.id) }}>Edit</Button>
+                    <Button>Delete</Button>
+                </div>
             </Card>)}
         </div>
     </div>
