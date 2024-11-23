@@ -46,3 +46,16 @@ export type ReferenceFileType = {
     fileName: string,
     fileUrl: string
 }
+
+
+export type MeetingPostType = {
+    code: string,
+    startTime: string,
+    endTime: string,
+    classroomId: number
+}
+
+export type ReferencePostType = {
+    description: string,
+    classroomId: number
+}

@@ -1,42 +1,55 @@
 import './ClassroomDetail.style.scss'
 import Background from "../../../assets/img_classroom_background.jpg"
-import { Button, Card, Form, Input, Modal, Rate, Tabs } from 'antd';
+import { Button, Card, Col, DatePicker, Form, Input, Modal, Rate, Row, Select, Tabs } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ClassroomGetType, ReferenceFileType } from '../../../types/ClassroomType';
+import { ClassroomGetType, MeetingPostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
 import { useEffect, useState } from 'react';
 import { getById } from '../../../services/ClassroomService';
 import { downloadFile } from '../../../services/MediaService';
 import { formatDate } from '../../../utils/Format';
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
+import dayjs from 'dayjs';
 
 import StarIcon from '../../../assets/star.png'
 import { ReviewClassroomGet, ReviewClassroomPost } from '../../../types/ReviewClassroomType';
 import { createReview, getByClassroomId, getByStudent, updateReview } from '../../../services/ReviewClassroomService';
 import Review from '../../../components/review';
 import TextArea from 'antd/es/input/TextArea';
+import { createMeeting, updateMeeting } from '../../../services/MeetingService';
+import { createReference, updateReference } from '../../../services/ReferenceService';
 
+
+type ToggleType = {
+    type: "meeting" | "reference" | ""
+}
 function ClassroomDetail() {
     let { id, courseId } = useParams();
     const navigate = useNavigate();
     const [classroomGet, setClassroomGet] = useState<ClassroomGetType>();
+    const [formClassroom] = Form.useForm();
+    const [toggle, setToggle] = useState<ToggleType>({ type: "" });
+    const [isModalClassroom, setIsModalClassroom] = useState(false);
 
+    const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false)
 
     const [reviews, setReviews] = useState<ReviewClassroomGet[]>([]);
 
     const [review, setReview] = useState<ReviewClassroomGet | null>(null);
 
+    const [eventId, setEventId] = useState<number>();
+
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [ratingText, setRatingText] = useState<string>("Tuyệt vời, trên cả mong đợi!");
     const [form] = Form.useForm();
-    const handleOk = () => {
-        form.submit()
-        setIsModalOpen(false);
+    const handleOkClassroom = () => {
+        formClassroom.submit()
+        setIsModalClassroom(false);
     };
-    const handleCancel = () => {
-        setIsModalOpen(false);
+    const handleCancelClassroom = () => {
+        setIsModalClassroom(false);
     };
-    const showModal = () => {
-        setIsModalOpen(true);
+    const showModalClassroom = () => {
+        setIsModalClassroom(true);
     };
 
     const navigateToMeetingRoom = (code: string) => {
@@ -132,6 +145,22 @@ function ClassroomDetail() {
         }
     }
 
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        // setIsModalOpen(false);
+        form.submit();
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+        form.resetFields();
+        // setClassroomId(null);
+        // setImageUrl("")
+    };
+
     const onFinish = async (values: ReviewClassroomPost) => {
         console.log('Received values of form: ', values);
 
@@ -195,6 +224,78 @@ function ClassroomDetail() {
         }
     };
 
+
+    const onFinishMeeting = async (values: MeetingPostType) => {
+        console.log('Received values of form: ', values);
+
+        const type: string = eventId ? "update" : "create";
+
+        const formatedStartTime = dayjs(values.startTime).format('YYYY-MM-DD HH:mm:ss');
+        const formatedEndTime = dayjs(values.endTime).format('YYYY-MM-DD HH:mm:ss');
+        console.log(type);
+
+        if (id) {
+            console.log(parseInt(id));
+
+            const body: MeetingPostType = {
+                ...values,
+                startTime: formatedStartTime,
+                endTime: formatedEndTime,
+                classroomId: parseInt(id)
+            }
+            console.log(body);
+
+            if (type == "create") {
+                const res = await createMeeting(body);
+                if (res.status == 200) {
+
+                }
+            } else {
+                if (eventId) {
+                    const res = await updateMeeting(body, eventId);
+                    if (res.status == 200) {
+
+                    }
+                }
+            }
+        }
+    };
+
+    const onFinishFolder = async (values: ReferencePostType) => {
+        console.log('Received values of form: ', values);
+
+        const type: string = eventId ? "update" : "create";
+        console.log(type);
+        console.log(id);
+
+        if (id) {
+            console.log(parseInt(id));
+
+            const body: ReferencePostType = {
+                ...values,
+                classroomId: parseInt(id)
+            }
+            console.log(body);
+
+            if (type == "create") {
+                const res = await createReference(body);
+                if (res.status == 200) {
+
+                }
+            } else {
+                if (eventId) {
+                    const res = await updateReference(body, eventId);
+                    if (res.status == 200) {
+
+                    }
+                }
+            }
+        }
+    };
+    const handleChange = (value: "meeting" | "reference") => {
+        console.log(`selected ${value}`);
+        setToggle({ type: value })
+    };
     useEffect(() => {
         fetchClassroomById();
         fetchReviewsClassroomById();
@@ -208,9 +309,82 @@ function ClassroomDetail() {
             <div className="classroomDetail-text">
                 <div className="classroomDetail-Title">{classroomGet?.name}</div>
                 <div className="classroomDetail-Desc">{classroomGet?.description}</div>
+                <Button>Them ctlh</Button>
             </div>
-        </div>
 
+            <Modal title="Tạo lớp học" open={isModalClassroom} onOk={handleOkClassroom} onCancel={handleCancelClassroom} >
+                <Select
+                    onChange={handleChange}
+                    style={{
+                        width: "100%",
+                    }}
+                    disabled
+                    options={[
+                        {
+                            value: 'meeting',
+                            label: 'Meeting',
+                        },
+                        {
+                            value: 'reference',
+                            label: 'Reference',
+                        },
+                    ]}
+                />
+                {toggle?.type == "meeting" ? <Form layout="horizontal" onFinish={onFinishMeeting} form={form} wrapperCol={{ span: 18 }} labelCol={{ span: 6 }} style={{ maxWidth: "100%" }} >
+                    <Form.Item
+                        name="id"
+                        style={{ display: "none" }}
+                    >
+                        <Input placeholder="id" type='hidden' />
+                    </Form.Item>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="startTime"
+                                label="Thời gian bắt đầu"
+                                rules={[{ required: true, message: 'Thời gian bắt đầu không được để trống' }]}
+                            >
+                                <DatePicker
+                                    showTime
+
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="endTime"
+                                label="Thời gian kết thúc"
+                                rules={[{ required: true, message: 'Thời gian kết thúc không được để trống' }]}
+                            >
+                                <DatePicker
+                                    showTime
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form> :
+                    <Form layout="horizontal" onFinish={onFinishFolder} form={form} wrapperCol={{ span: 18 }} labelCol={{ span: 6 }} style={{ maxWidth: "100%" }} >
+                        <Form.Item
+                            name="id"
+                            style={{ display: "none" }}
+                        >
+                            <Input placeholder="id" type='hidden' />
+                        </Form.Item>
+
+                        <Row gutter={16}>
+                            <Col span={24}>
+                                <Form.Item
+                                    name="description"
+                                    label="Mô tả thu muc"
+                                >
+                                    <TextArea placeholder="Nhập mô tả lớp học" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Form>}
+            </Modal>
+        </div>
         <Tabs
             tabPosition={'left'}
             items={new Array(2).fill(null).map((_, i) => {
