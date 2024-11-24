@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
     MeetingProvider,
 } from "@videosdk.live/react-sdk";
-import { authToken, createMeeting } from "./meetingConfig";
+import { authToken, createMeetingCode } from "./meetingConfig";
 import MeetingView from "./MeetingView";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
