@@ -1,11 +1,11 @@
 import './ClassroomDetail.style.scss'
 import Background from "../../../assets/img_classroom_background.jpg"
-import { Button, Card, Col, DatePicker, Form, Input, Modal, Rate, Row, Select, Tabs } from 'antd';
+import { Button, Card, Col, DatePicker, Form, Input, InputRef, Modal, Rate, Row, Select, Tabs } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ClassroomGetType, MeetingPostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
-import { useEffect, useState } from 'react';
+import { ClassroomGetType, MeetingPostType, ReferenceFilePostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { getById } from '../../../services/ClassroomService';
-import { downloadFile } from '../../../services/MediaService';
+import { downloadFile, uploadFile } from '../../../services/MediaService';
 import { formatDate } from '../../../utils/Format';
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import dayjs from 'dayjs';
@@ -17,12 +17,18 @@ import Review from '../../../components/review';
 import TextArea from 'antd/es/input/TextArea';
 import { createMeeting, updateMeeting } from '../../../services/MeetingService';
 import { createReference, updateReference } from '../../../services/ReferenceService';
+import { authToken, createMeetingCode } from '../../../components/meeting/meetingConfig';
+import { createReferenceFile } from '../../../services/ReferenceFileService';
+import { AxiosError } from 'axios';
+import { ErrorType } from '../../../types/ErrorType';
+import { LiaEllipsisVSolid } from 'react-icons/lia';
 
 
 type ToggleType = {
     type: "meeting" | "reference" | ""
 }
 function ClassroomDetail() {
+    const fileInputRef = useRef<InputRef | null>(null);
     let { id, courseId } = useParams();
     const navigate = useNavigate();
     const [classroomGet, setClassroomGet] = useState<ClassroomGetType>();
@@ -41,16 +47,26 @@ function ClassroomDetail() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [ratingText, setRatingText] = useState<string>("Tuyệt vời, trên cả mong đợi!");
     const [form] = Form.useForm();
+    const [formMeeting] = Form.useForm();
+    const [formReference] = Form.useForm();
+
     const handleOkClassroom = () => {
-        formClassroom.submit()
-        setIsModalClassroom(false);
+        if (toggle.type == "meeting") {
+            formMeeting.submit();
+        } else if (toggle.type == "reference") {
+            formReference.submit();
+        }
+        // setIsModalClassroom(false);
     };
+
     const handleCancelClassroom = () => {
         setIsModalClassroom(false);
     };
     const showModalClassroom = () => {
         setIsModalClassroom(true);
     };
+
+
 
     const navigateToMeetingRoom = (code: string) => {
         navigate(`/meeting/${code}`)
@@ -92,7 +108,6 @@ function ClassroomDetail() {
 
     const fetchReviewsClassroomById = async () => {
         const res = await getByClassroomId(id);
-        console.log(res);
         if (res.status === 200) {
             const reviews = res.data as ReviewClassroomGet[]
             setReviews(reviews);
@@ -234,11 +249,12 @@ function ClassroomDetail() {
         const formatedEndTime = dayjs(values.endTime).format('YYYY-MM-DD HH:mm:ss');
         console.log(type);
 
-        if (id) {
-            console.log(parseInt(id));
+        const meetingCode = await createMeetingCode({ token: authToken })
 
+        if (id) {
             const body: MeetingPostType = {
                 ...values,
+                code: meetingCode,
                 startTime: formatedStartTime,
                 endTime: formatedEndTime,
                 classroomId: parseInt(id)
@@ -292,6 +308,48 @@ function ClassroomDetail() {
             }
         }
     };
+
+    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>, referenceId: number) => {
+        const files = event.target.files
+        if (files && files.length > 0) {
+            const selected = files[0] as File;
+            // const url = URL.createObjectURL(selected);
+            console.log(selected);
+            var formData = new FormData();
+            formData.append("file", selected);
+            formData.append("type", "other");
+
+            try {
+                console.log(formData);
+                const res = await uploadFile(formData);
+                if (res.status === 200) {
+                    const urlFile = res.data.url as string;
+                    const body: ReferenceFilePostType = {
+                        fileName: selected.name,
+                        fileUrl: urlFile,
+                        referenceId: referenceId
+                    }
+
+                    const resCreateReferenceFile = await createReferenceFile(body);
+                    if (resCreateReferenceFile.status == 200) {
+                        console.log(resCreateReferenceFile.data);
+                    }
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    // setPending(false);
+                    return;
+                }
+            }
+        }
+    }
+    const handleAddNewReferenceFolder = () => {
+        fileInputRef.current?.input?.click();
+    }
     const handleChange = (value: "meeting" | "reference") => {
         console.log(`selected ${value}`);
         setToggle({ type: value })
@@ -309,28 +367,37 @@ function ClassroomDetail() {
             <div className="classroomDetail-text">
                 <div className="classroomDetail-Title">{classroomGet?.name}</div>
                 <div className="classroomDetail-Desc">{classroomGet?.description}</div>
-                <Button>Them ctlh</Button>
+                <Button onClick={showModalClassroom}>Them ctlh</Button>
             </div>
 
-            <Modal title="Tạo lớp học" open={isModalClassroom} onOk={handleOkClassroom} onCancel={handleCancelClassroom} >
-                <Select
-                    onChange={handleChange}
-                    style={{
-                        width: "100%",
-                    }}
-                    disabled
-                    options={[
-                        {
-                            value: 'meeting',
-                            label: 'Meeting',
-                        },
-                        {
-                            value: 'reference',
-                            label: 'Reference',
-                        },
-                    ]}
-                />
-                {toggle?.type == "meeting" ? <Form layout="horizontal" onFinish={onFinishMeeting} form={form} wrapperCol={{ span: 18 }} labelCol={{ span: 6 }} style={{ maxWidth: "100%" }} >
+            <Modal title="Tạo sk" open={isModalClassroom} onOk={handleOkClassroom} onCancel={handleCancelClassroom} >
+
+                <Col span={24}>
+                    <Form.Item
+                        label="Chọn loại sự kiện"
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                    >
+                        <Select
+                            onChange={handleChange}
+                            style={{
+                                width: "100%",
+                            }}
+                            options={[
+                                {
+                                    value: 'meeting',
+                                    label: 'Cuộc họp',
+                                },
+                                {
+                                    value: 'reference',
+                                    label: 'Tài liệu',
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+                </Col>
+
+                {toggle?.type == "meeting" && <Form layout="horizontal" onFinish={onFinishMeeting} form={formMeeting} wrapperCol={{ span: 16 }} labelCol={{ span: 8 }} style={{ maxWidth: "100%" }} >
                     <Form.Item
                         name="id"
                         style={{ display: "none" }}
@@ -338,8 +405,8 @@ function ClassroomDetail() {
                         <Input placeholder="id" type='hidden' />
                     </Form.Item>
 
-                    <Row gutter={16}>
-                        <Col span={12}>
+                    <Row gutter={24}>
+                        <Col span={24}>
                             <Form.Item
                                 name="startTime"
                                 label="Thời gian bắt đầu"
@@ -347,11 +414,14 @@ function ClassroomDetail() {
                             >
                                 <DatePicker
                                     showTime
-
+                                    style={{ width: "100%" }}
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={12}>
+
+                    </Row>
+                    <Row gutter={24}>
+                        <Col span={24}>
                             <Form.Item
                                 name="endTime"
                                 label="Thời gian kết thúc"
@@ -359,12 +429,15 @@ function ClassroomDetail() {
                             >
                                 <DatePicker
                                     showTime
+                                    style={{ width: "100%" }}
                                 />
                             </Form.Item>
                         </Col>
                     </Row>
-                </Form> :
-                    <Form layout="horizontal" onFinish={onFinishFolder} form={form} wrapperCol={{ span: 18 }} labelCol={{ span: 6 }} style={{ maxWidth: "100%" }} >
+                </Form>}
+
+                {toggle?.type == "reference" &&
+                    <Form layout="horizontal" onFinish={onFinishFolder} form={formReference} wrapperCol={{ span: 18 }} labelCol={{ span: 6 }} style={{ maxWidth: "100%" }} >
                         <Form.Item
                             name="id"
                             style={{ display: "none" }}
@@ -400,13 +473,20 @@ function ClassroomDetail() {
                                         key={`meeting-${event.id}`}
                                         style={{ width: "780px", padding: "0 40px" }}
                                     >
-                                        <div className="classroomDetail-card-top" style={{ display: "flex", gap: "15px" }}>
-                                            <img src="https://lh3.googleusercontent.com/a/ACg8ocLf5401BY_QkReNX4ZNaR6_hs5i0n_rgUA7Zrf9z6EQd5ukMw=s40-c-mo" alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
-                                            <div className="classroomDetail-card-top-right">
-                                                <div>Giáo viên đã đăng thông tin cho một cuộc họp</div>
-                                                <div>{formatDate(event.createdAt)}</div>
+                                        <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+
+
+                                            <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
+                                                <img src="https://lh3.googleusercontent.com/a/ACg8ocLf5401BY_QkReNX4ZNaR6_hs5i0n_rgUA7Zrf9z6EQd5ukMw=s40-c-mo" alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                                <div className="classroomDetail-card-top-right">
+                                                    <div>Giáo viên đã đăng thông tin cho một cuộc họp</div>
+                                                    <div>{formatDate(event.createdAt)}</div>
+                                                </div>
+                                                <Button onClick={() => navigateToMeetingRoom(event.code)}>Tham gia cuộc họp</Button>
                                             </div>
-                                            <Button onClick={() => navigateToMeetingRoom(event.code)}>Tham gia cuộc họp</Button>
+                                            <div className="classroomDetail-card-topRight">
+                                                <LiaEllipsisVSolid style={{ fontSize: "20px", cursor: "pointer" }} />
+                                            </div>
                                         </div>
                                     </Card>
                                 }
@@ -414,11 +494,17 @@ function ClassroomDetail() {
                                     key={`document-${event.id}`}
                                     style={{ width: "780px", padding: "20px 40px" }}
                                 >
-                                    <div className="classroomDetail-card-top" style={{ display: "flex", gap: "15px", marginBottom: "10px" }}>
-                                        <img src="https://lh3.googleusercontent.com/a/ACg8ocLf5401BY_QkReNX4ZNaR6_hs5i0n_rgUA7Zrf9z6EQd5ukMw=s40-c-mo" alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
-                                        <div className="classroomDetail-card-top-right">
-                                            <div>Giáo viên</div>
-                                            <div>{formatDate(event.createdAt)}</div>
+                                    <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", marginBottom: "10px", justifyContent: "space-between" }}>
+                                        <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
+                                            <img src="https://lh3.googleusercontent.com/a/ACg8ocLf5401BY_QkReNX4ZNaR6_hs5i0n_rgUA7Zrf9z6EQd5ukMw=s40-c-mo" alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                            <div className="classroomDetail-card-top-right">
+                                                <div>Giáo viên</div>
+                                                <div>{formatDate(event.createdAt)}</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="classroomDetail-card-topRight">
+                                            <LiaEllipsisVSolid style={{ fontSize: "20px", cursor: "pointer" }} />
                                         </div>
                                     </div>
                                     <div className="classroomDetail-card-middle" style={{ margin: "10px 0" }}>{event.description}</div>
@@ -433,6 +519,14 @@ function ClassroomDetail() {
                                                 </div>
                                             </Card>
                                         })}
+                                        <Card style={{ width: "calc(50% - 20px)", cursor: "pointer" }} onClick={() => handleAddNewReferenceFolder()} >
+                                            <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
+                                                <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
+                                                    <label>Choose file</label>
+                                                    <Input ref={fileInputRef} style={{ display: "none" }} type="file" onChange={(e) => handleFileChange(e, event.id)} />
+                                                </div>
+                                            </div>
+                                        </Card>
 
                                     </div>
                                 </Card>

@@ -10,7 +10,7 @@ interface CreateMeetingResponse {
 }
 
 // API call to create a meeting
-export const createMeeting = async ({ token }: CreateMeetingParams): Promise<string> => {
+export const createMeetingCode = async ({ token }: CreateMeetingParams): Promise<string> => {
     const res = await fetch(`https://api.videosdk.live/v2/rooms`, {
         method: "POST",
         headers: {
