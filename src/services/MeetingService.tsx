@@ -12,3 +12,9 @@ export const updateMeeting = async (request: MeetingPostType, meetingId: number 
     const res = await instance.put(url, request);
     return res;
 }
+
+export const deleteMeeting = async (meetingId: number | undefined) => {
+    const url = `/meetings/${meetingId}`;
+    const res = await instance.delete(url);
+    return res;
+}

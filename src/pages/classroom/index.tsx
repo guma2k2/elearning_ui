@@ -10,12 +10,14 @@ import TextArea from 'antd/es/input/TextArea';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
 import { uploadFile } from '../../services/MediaService';
+import { useAppSelector } from '../../redux/hooks';
+import { RootState } from '../../redux/store';
 const { Meta } = Card;
 function Classroom() {
     const navigate = useNavigate();
     let { courseId } = useParams();
     const [form] = Form.useForm();
-
+    const { auth } = useAppSelector((state: RootState) => state.auth);
     const [classroomId, setClassroomId] = useState<number | null>();
     const [file, setFile] = useState<File>();
 
@@ -95,7 +97,7 @@ function Classroom() {
                 if (resSave.status === 200) {
                     form.resetFields();
                     setIsModalOpen(false);
-                    alert("Add category successful")
+                    alert("Thêm lớp học thành công")
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
@@ -112,10 +114,10 @@ function Classroom() {
                 const id = classroomId;
                 if (id) {
                     const resUpdateUser = await update(newValues, id);
-                    if (resUpdateUser.status === 204) {
+                    if (resUpdateUser.status === 200) {
                         form.resetFields();
                         setIsModalOpen(false)
-                        alert("Update category successful")
+                        alert("Cập nhật lớp học thành công")
                     }
                 }
             } catch (error: AxiosError | any) {
@@ -181,7 +183,7 @@ function Classroom() {
                 <span>Lớp học</span>
             </div>
             <div className="classroom-top-right">
-                <FaPlus onClick={showModal} className='classroom-icon-create' />
+                {auth?.user.role != "ROLE_STUDENT" && <FaPlus onClick={showModal} className='classroom-icon-create' />}
             </div>
         </div>
         <Modal title="Tạo lớp học" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} >
@@ -234,10 +236,12 @@ function Classroom() {
                     title={classroom.name}
                     description={classroom.description}
                 />
-                <div className="classroom-action">
-                    <Button onClick={(e) => { e.stopPropagation(); handleEditClassroom(classroom.id) }}>Edit</Button>
-                    <Button>Delete</Button>
-                </div>
+
+                {auth?.user.role != "ROLE_STUDENT" && <div className="classroom-action">
+                    <Button onClick={(e) => { e.stopPropagation(); handleEditClassroom(classroom.id) }}>Cập nhật</Button>
+                    <Button style={{ marginLeft: "10px" }}>Xóa</Button>
+                </div>}
+
             </Card>)}
         </div>
     </div>

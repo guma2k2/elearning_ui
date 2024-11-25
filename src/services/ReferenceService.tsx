@@ -12,3 +12,9 @@ export const updateReference = async (request: ReferencePostType, referenceId: n
     const res = await instance.put(url, request);
     return res;
 }
+
+export const deleteReference = async (referenceId: number | undefined) => {
+    const url = `/references/${referenceId}`;
+    const res = await instance.delete(url);
+    return res;
+}

@@ -1,5 +1,5 @@
 // This is the Auth token, you will use it to generate a meeting and connect to it
-export const authToken: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiIzZmJjMWVmOS0wOGQzLTQwMTUtYjUxNC05YWVlMDYzYTk0YzQiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMTkwMjY0MywiZXhwIjoxNzMyNTA3NDQzfQ.Ou2m80qL8KCsF3AU5jlAJCHjzUbCwnnF3edRNLWh5as";
+export const authToken: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiIzZmJjMWVmOS0wOGQzLTQwMTUtYjUxNC05YWVlMDYzYTk0YzQiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMjUxMjgyMywiZXhwIjoxNzM1MTA0ODIzfQ.NB4yaWKwaNG998Z5QDe69bkY8g_UL60WIMXC7Kqwoxw";
 
 interface CreateMeetingParams {
     token: string;

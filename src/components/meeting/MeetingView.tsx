@@ -50,7 +50,6 @@ function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
     };
 
 
-
     return (
         <div className="meetingView-container">
             {joined === "JOINED" ? (
