@@ -11,6 +11,7 @@ import { uploadFile } from '../../../../services/MediaService'
 import { updateCourseById } from '../../../../services/CourseService'
 import { useAppDispatch } from '../../../../redux/hooks'
 import { updateCourse } from '../../../../redux/slices/CourseSlice'
+import { useNavigate } from 'react-router-dom'
 
 const lectureModules = {
     toolbar: [
@@ -45,6 +46,7 @@ type Probs = {
 }
 function CourseLandingPage(probs: Probs) {
     const { course } = probs;
+    const navigate = useNavigate()
     const [courseTitle, setCourseTitle] = useState<string>("");
     const [courseHeadline, setCourseHeadline] = useState<string>("");
     const [courseDesc, setCourseDesc] = useState<string>("");
@@ -74,6 +76,10 @@ function CourseLandingPage(probs: Probs) {
 
         }
     };
+
+    const navigateToClassroom = () => {
+        navigate(`/classrooms/course/${course?.id}`)
+    }
     const resetFileInput = () => {
         if (fileRef.current) {
             fileRef.current.value = '';
@@ -217,6 +223,7 @@ function CourseLandingPage(probs: Probs) {
                     <Button onClick={handleUpdateCourse}>Lưu</Button>
                 </div>
                 <div className="wrapper">
+                    <Button onClick={navigateToClassroom}>Xem danh sach lop hoc</Button>
                     <div className="form-item">
                         <span className='title'>Tiêu đề khóa học</span>
                         <input type="text" value={courseTitle} onChange={(e) => { setCourseTitle(e.target.value) }} />

@@ -181,11 +181,11 @@ function App() {
     },
     {
       path: "/classrooms/course/:courseId",
-      element: <Classroom></Classroom>,
+      element: <ProtectedRoute> <Classroom /></ProtectedRoute>,
     },
     {
       path: "/classrooms/:id/c/:courseId",
-      element: <ClassroomDetail></ClassroomDetail>,
+      element: <ProtectedRoute><ClassroomDetail /></ProtectedRoute>,
     },
     {
       path: "/whiteboard",

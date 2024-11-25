@@ -81,7 +81,7 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
                     <div key={msg.id} className={`message ${msg.userId === auth?.user.id ? 'own' : ''}`}>
                         <img src={msg.photoURL || '/default-avatar.png'} alt="User" className="avatar" />
                         <div className="message-content">
-                            <span className="user-name">{msg.email}</span>
+                            {/* <span className="user-name">{msg.email}</span> */}
                             <span className="message-text">{msg.message}</span>
                             <span className="timestamp">{new Date(msg.timestamp).toLocaleString()}</span>
                         </div>

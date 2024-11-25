@@ -1,39 +1,43 @@
 import './ClassroomDetail.style.scss'
 import Background from "../../../assets/img_classroom_background.jpg"
-import { Button, Card, Col, DatePicker, Form, Input, InputRef, Modal, Rate, Row, Select, Tabs } from 'antd';
+import { Button, Card, Col, DatePicker, Form, Input, InputRef, Modal, Popconfirm, Rate, Row, Select, Tabs } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ClassroomGetType, MeetingPostType, ReferenceFilePostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
+import { ClassroomGetType, IEvent, IMeeting, IReference, MeetingPostType, ReferenceFilePostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { getById } from '../../../services/ClassroomService';
 import { downloadFile, uploadFile } from '../../../services/MediaService';
 import { formatDate } from '../../../utils/Format';
-import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
+import { MdOutlineCancel, MdOutlineEdit, MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import dayjs from 'dayjs';
-
+import { CiTrash } from "react-icons/ci";
 import StarIcon from '../../../assets/star.png'
 import { ReviewClassroomGet, ReviewClassroomPost } from '../../../types/ReviewClassroomType';
 import { createReview, getByClassroomId, getByStudent, updateReview } from '../../../services/ReviewClassroomService';
 import Review from '../../../components/review';
 import TextArea from 'antd/es/input/TextArea';
-import { createMeeting, updateMeeting } from '../../../services/MeetingService';
-import { createReference, updateReference } from '../../../services/ReferenceService';
+import { createMeeting, deleteMeeting, updateMeeting } from '../../../services/MeetingService';
+import { createReference, deleteReference, updateReference } from '../../../services/ReferenceService';
 import { authToken, createMeetingCode } from '../../../components/meeting/meetingConfig';
-import { createReferenceFile } from '../../../services/ReferenceFileService';
+import { createReferenceFile, deleteReferenceFile } from '../../../services/ReferenceFileService';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../../types/ErrorType';
 import { LiaEllipsisVSolid } from 'react-icons/lia';
+import { useAppSelector } from '../../../redux/hooks';
+import { RootState } from '../../../redux/store';
 
 
 type ToggleType = {
-    type: "meeting" | "reference" | ""
+    type: "meeting" | "reference"
 }
 function ClassroomDetail() {
     const fileInputRef = useRef<InputRef | null>(null);
+    const { auth } = useAppSelector((state: RootState) => state.auth);
+
     let { id, courseId } = useParams();
     const navigate = useNavigate();
     const [classroomGet, setClassroomGet] = useState<ClassroomGetType>();
     const [formClassroom] = Form.useForm();
-    const [toggle, setToggle] = useState<ToggleType>({ type: "" });
+    const [toggle, setToggle] = useState<ToggleType>();
     const [isModalClassroom, setIsModalClassroom] = useState(false);
 
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false)
@@ -51,16 +55,21 @@ function ClassroomDetail() {
     const [formReference] = Form.useForm();
 
     const handleOkClassroom = () => {
-        if (toggle.type == "meeting") {
-            formMeeting.submit();
-        } else if (toggle.type == "reference") {
-            formReference.submit();
+        if (toggle) {
+            if (toggle.type == "meeting") {
+                formMeeting.submit();
+            } else if (toggle.type == "reference") {
+                formReference.submit();
+            }
         }
         // setIsModalClassroom(false);
     };
 
     const handleCancelClassroom = () => {
         setIsModalClassroom(false);
+        setToggle(undefined)
+        form.resetFields();
+        setEventId(undefined)
     };
     const showModalClassroom = () => {
         setIsModalClassroom(true);
@@ -165,7 +174,7 @@ function ClassroomDetail() {
     };
 
     const handleOk = () => {
-        // setIsModalOpen(false);
+        setIsModalOpen(false);
         form.submit();
     };
 
@@ -264,13 +273,13 @@ function ClassroomDetail() {
             if (type == "create") {
                 const res = await createMeeting(body);
                 if (res.status == 200) {
-
+                    setIsDataUpdated((isDataUpdated) => !isDataUpdated);
                 }
             } else {
                 if (eventId) {
                     const res = await updateMeeting(body, eventId);
                     if (res.status == 200) {
-
+                        setIsDataUpdated((isDataUpdated) => !isDataUpdated);
                     }
                 }
             }
@@ -333,6 +342,8 @@ function ClassroomDetail() {
                     const resCreateReferenceFile = await createReferenceFile(body);
                     if (resCreateReferenceFile.status == 200) {
                         console.log(resCreateReferenceFile.data);
+                        alert("Thêm tài liệu thành công");
+                        setIsDataUpdated((prev) => !prev)
                     }
                 }
             } catch (error: AxiosError | any) {
@@ -354,11 +365,78 @@ function ClassroomDetail() {
         console.log(`selected ${value}`);
         setToggle({ type: value })
     };
+
+
+
+    const handleEditMeeting = (meetingId: number) => {
+        setEventId(meetingId)
+        setToggle({ type: "meeting" })
+        setIsModalClassroom(true);
+        const currentEvent = getEventByID("meeting", meetingId);
+
+
+        if (currentEvent && currentEvent.type == "meeting") {
+            formMeeting.setFieldsValue({
+                id: currentEvent.id,
+                startTime: dayjs(currentEvent.startTime, 'DD/MM/YYYY HH:mm:ss'),
+                endTime: dayjs(currentEvent.endTime, 'DD/MM/YYYY HH:mm:ss'),
+            })
+        }
+    }
+
+    const handleEditReference = (referenceId: number) => {
+        setEventId(referenceId)
+        setToggle({ type: "reference" })
+        setIsModalClassroom(true);
+        const currentEvent = getEventByID("reference", referenceId);
+
+        if (currentEvent && currentEvent.type == "reference") {
+            formReference.setFieldsValue({
+                id: currentEvent.id,
+                description: currentEvent.description
+            })
+        }
+    }
+
+    const getEventByID = (type: "meeting" | "reference", eId: number): IMeeting | IReference | undefined => {
+        const event = classroomGet?.events.find((e) => e.type === type && e.id === eId);
+        return event; // Replace `defaultEvent` with an appropriate fallback value
+    };
+
+    const handleDeleteMeeting = async (meetingId: number) => {
+        const res = await deleteMeeting(meetingId)
+        if (res.status == 200) {
+            alert("Xóa thành công")
+            setIsDataUpdated((prev) => !prev)
+        }
+    }
+
+    const handleDeleteReference = async (referenceId: number) => {
+        const res = await deleteReference(referenceId)
+        if (res.status == 200) {
+            alert("Xóa thành công")
+            setIsDataUpdated((prev) => !prev)
+        }
+    }
+
+    const handleDeleteReferenceFile = async (referenceFileId: number) => {
+        const res = await deleteReferenceFile(referenceFileId);
+        if (res.status == 200) {
+            alert("Xóa thành công")
+            setIsDataUpdated((prev) => !prev)
+        }
+    }
+
+
     useEffect(() => {
         fetchClassroomById();
         fetchReviewsClassroomById();
         fetchReviewByStudent();
     }, [id])
+
+    useEffect(() => {
+        fetchClassroomById();
+    }, [isDataUpdated])
 
     return <div className="classroomDetail-container">
         <div className="classroomDetail-top">
@@ -367,11 +445,9 @@ function ClassroomDetail() {
             <div className="classroomDetail-text">
                 <div className="classroomDetail-Title">{classroomGet?.name}</div>
                 <div className="classroomDetail-Desc">{classroomGet?.description}</div>
-                <Button onClick={showModalClassroom}>Them ctlh</Button>
             </div>
 
-            <Modal title="Tạo sk" open={isModalClassroom} onOk={handleOkClassroom} onCancel={handleCancelClassroom} >
-
+            <Modal title="Tạo sự kiện" open={isModalClassroom} onOk={handleOkClassroom} onCancel={handleCancelClassroom} >
                 <Col span={24}>
                     <Form.Item
                         label="Chọn loại sự kiện"
@@ -379,6 +455,7 @@ function ClassroomDetail() {
                         wrapperCol={{ span: 16 }}
                     >
                         <Select
+                            value={toggle?.type}
                             onChange={handleChange}
                             style={{
                                 width: "100%",
@@ -392,6 +469,7 @@ function ClassroomDetail() {
                                     value: 'reference',
                                     label: 'Tài liệu',
                                 },
+
                             ]}
                         />
                     </Form.Item>
@@ -445,11 +523,11 @@ function ClassroomDetail() {
                             <Input placeholder="id" type='hidden' />
                         </Form.Item>
 
-                        <Row gutter={16}>
+                        <Row gutter={24}>
                             <Col span={24}>
                                 <Form.Item
                                     name="description"
-                                    label="Mô tả thu muc"
+                                    label="Mô tả thư mục"
                                 >
                                     <TextArea placeholder="Nhập mô tả lớp học" />
                                 </Form.Item>
@@ -467,6 +545,7 @@ function ClassroomDetail() {
                         label: 'Chi tiết lớp học',
                         key: id,
                         children: <div className="classroomDetail-content">
+                            {auth?.user.role != "ROLE_STUDENT" && <Button onClick={showModalClassroom}>Thêm sự kiện cho lớp học</Button>}
                             {classroomGet && classroomGet.events.map((event) => {
                                 if (event.type == "meeting") {
                                     return <Card
@@ -481,11 +560,23 @@ function ClassroomDetail() {
                                                 <div className="classroomDetail-card-top-right">
                                                     <div>Giáo viên đã đăng thông tin cho một cuộc họp</div>
                                                     <div>{formatDate(event.createdAt)}</div>
+                                                    <div>Thời gian: {event.startTime} đến {event.endTime} </div>
                                                 </div>
                                                 <Button onClick={() => navigateToMeetingRoom(event.code)}>Tham gia cuộc họp</Button>
                                             </div>
                                             <div className="classroomDetail-card-topRight">
-                                                <LiaEllipsisVSolid style={{ fontSize: "20px", cursor: "pointer" }} />
+                                                {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditMeeting(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
+                                                    <Popconfirm
+                                                        title="Xóa buổi họp này?"
+                                                        description="Bạn có chắc chắn xóa buổi họp này?"
+                                                        okText="Có"
+                                                        cancelText="Không"
+                                                        onConfirm={() => handleDeleteMeeting(event.id)}
+                                                    >
+                                                        <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
+
+                                                        />
+                                                    </Popconfirm></>}
                                             </div>
                                         </div>
                                     </Card>
@@ -504,29 +595,54 @@ function ClassroomDetail() {
                                         </div>
 
                                         <div className="classroomDetail-card-topRight">
-                                            <LiaEllipsisVSolid style={{ fontSize: "20px", cursor: "pointer" }} />
+
+                                            {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditReference(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
+                                                <Popconfirm
+                                                    title="Xóa tài liệu này?"
+                                                    description="Bạn có chắc chắn xóa tài liệu này?"
+                                                    okText="Có"
+                                                    cancelText="Không"
+                                                    onConfirm={() => handleDeleteReference(event.id)}
+                                                >
+                                                    <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
+                                                    />
+                                                </Popconfirm></>}
+
                                         </div>
                                     </div>
                                     <div className="classroomDetail-card-middle" style={{ margin: "10px 0" }}>{event.description}</div>
                                     <div className="classroomDetail-card-bottom" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
                                         {event.type == "reference" && event.files.length > 0 && event.files.map((file) => {
-                                            return <Card style={{ width: "calc(50% - 20px)", cursor: "pointer" }} key={`file-${file.id}`} onClick={() => handleDownloadFile(file)} >
+                                            return <Card style={{ width: "calc(50% - 20px)", cursor: "pointer", position: "relative" }} key={`file-${file.id}`} onClick={() => handleDownloadFile(file)} >
                                                 <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
                                                     <img style={{ flex: "4", height: "70px", objectFit: "cover" }} src={file.fileUrl} alt="" />
                                                     <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
                                                         <div>{file.fileName}</div>
                                                     </div>
+                                                    {auth?.user.role == "INSTRUCTOR" && <MdOutlineCancel
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteReferenceFile(file.id)
+                                                        }}
+                                                        style={{
+                                                            position: "absolute",
+                                                            top: "8px",
+                                                            right: "8px",
+                                                            fontSize: "20px", /* Adjust size as needed */
+                                                            cursor: "pointer",
+                                                            color: "red"
+                                                        }} />}
                                                 </div>
                                             </Card>
                                         })}
-                                        <Card style={{ width: "calc(50% - 20px)", cursor: "pointer" }} onClick={() => handleAddNewReferenceFolder()} >
+                                        {auth?.user.role != "ROLE_STUDENT" && <Card style={{ width: "calc(50% - 20px)", cursor: "pointer" }} onClick={() => handleAddNewReferenceFolder()} >
                                             <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
                                                 <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
-                                                    <label>Choose file</label>
+                                                    <label>Thêm tài liệu</label>
                                                     <Input ref={fileInputRef} style={{ display: "none" }} type="file" onChange={(e) => handleFileChange(e, event.id)} />
                                                 </div>
                                             </div>
-                                        </Card>
+                                        </Card>}
 
                                     </div>
                                 </Card>
