@@ -21,6 +21,13 @@ export const getById = async (classroomId: number | string | undefined) => {
     return res;
 }
 
+export const deleteClassroom = async (classroomId: number | string | undefined) => {
+    const url = `/classrooms/${classroomId}`
+    const res = await instance.delete(url);
+    return res;
+}
+
+
 export const getByCourseId = async (courseId: number | string | undefined) => {
     const url = `/classrooms/course/${courseId}`
     const res = await instance.get(url);
