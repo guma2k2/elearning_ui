@@ -1,9 +1,9 @@
-import { Avatar, Button, Card, Col, Form, Input, Modal, Row } from 'antd';
+import { Avatar, Button, Card, Col, Form, Input, Modal, Popconfirm, Row } from 'antd';
 import './Classroom.style.scss'
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { ClassroomPostType, ClassroomType } from '../../types/ClassroomType';
-import { getByCourseId, save, update } from '../../services/ClassroomService';
+import { deleteClassroom, getByCourseId, save, update } from '../../services/ClassroomService';
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import { FaPlus } from 'react-icons/fa6';
 import TextArea from 'antd/es/input/TextArea';
@@ -170,6 +170,13 @@ function Classroom() {
         }
     }
 
+
+    const handleDeleteClassroom = async (classroomId: number) => {
+        const res = await deleteClassroom(classroomId);
+        if (res.status == 200) {
+
+        }
+    }
     useEffect(() => {
         fetchClassroomsByCourseId();
     }, [courseId, isDataUpdated])
@@ -239,7 +246,16 @@ function Classroom() {
 
                 {auth?.user.role != "ROLE_STUDENT" && <div className="classroom-action">
                     <Button onClick={(e) => { e.stopPropagation(); handleEditClassroom(classroom.id) }}>Cập nhật</Button>
-                    <Button style={{ marginLeft: "10px" }}>Xóa</Button>
+
+                    <Popconfirm
+                        title="Xóa lớp học này?"
+                        description="Bạn có chắc chắn xóa lớp học này?"
+                        okText="Có"
+                        cancelText="Không"
+                        onConfirm={() => handleDeleteClassroom(classroom.id)}
+                    >
+                        <Button style={{ marginLeft: "10px" }}>Xóa</Button>
+                    </Popconfirm>
                 </div>}
 
             </Card>)}
