@@ -32,7 +32,7 @@ function Classroom() {
     };
 
     const handleOk = () => {
-        // setIsModalOpen(false);
+        setIsModalOpen(false);
         form.submit();
     };
 
