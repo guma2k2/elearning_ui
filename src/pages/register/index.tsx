@@ -1,7 +1,7 @@
 
 import { Button, Form, FormProps, Input } from "antd";
 import { AuthType, RegisterRequest } from "../../types/AuthType";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import './index.style.scss'
 import { registerUser } from "../../services/AuthService";
 import { AxiosError } from "axios";
@@ -9,12 +9,15 @@ import { ErrorType } from "../../types/ErrorType";
 import { useForm } from "antd/es/form/Form";
 function Register() {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
+
     const onFinish: FormProps<RegisterRequest>['onFinish'] = async (values) => {
         try {
             const res = await registerUser(values);
             if (res.status == 200) {
                 const data = res.data as AuthType;
-                alert("Register successful")
+                alert("Vui lòng kiểm tra mail để hoàn tất đăng ký")
+                navigate(`/verify/${values.email}`)
                 form.resetFields();
             }
         } catch (error: AxiosError | any) {
