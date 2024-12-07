@@ -426,10 +426,10 @@ function Learning() {
                         <div className="learning-quiz-btn-answer">
                             <Button disabled={selectingAnswer == -1} onClick={handleAnswer} className='btn-answer'>TRẢ LỜI</Button>
                             {currentCurriculum && currentCurriculum.type == "quiz" && currentCurriculum.questions && selectingQuestion < currentCurriculum.questions?.length - 1
-                                && <Button onClick={handleNextQuestion} className='btn-next-question'>CAU TIEP THEO</Button>}
+                                && <Button onClick={handleNextQuestion} className='btn-next-question'>CÂU TIẾP THEO</Button>}
 
                             {currentCurriculum && currentCurriculum.type == "quiz" && currentCurriculum.questions && selectingQuestion == currentCurriculum.questions?.length - 1 && isAnswer == true
-                                && <Button onClick={handleResetQuestion} className='btn-next-question'>Lam lai</Button>}
+                                && <Button onClick={handleResetQuestion} className='btn-next-question'>LÀM LẠI</Button>}
                         </div>
                         {isAnswer &&
                             currentCurriculum &&

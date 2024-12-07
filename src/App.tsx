@@ -41,6 +41,7 @@ import Classroom from "./pages/classroom";
 import ClassroomDetail from "./pages/classroom/classroomDetail";
 import WhiteBoard from "./components/whiteboard";
 import TestChatApp from "./components/chat/testChatApp";
+import Verify from "./pages/verify";
 function App() {
   const router = createBrowserRouter([
     {
@@ -59,6 +60,10 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/verify/:email",
+          element: <Verify />,
         },
         {
           path: "/profile",
