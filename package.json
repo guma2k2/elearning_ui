@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "2.2.0",
+    "@stomp/stompjs": "^7.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@videosdk.live/react-sdk": "^0.1.103",
     "antd": "^5.13.1",

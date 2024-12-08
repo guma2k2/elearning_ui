@@ -1,6 +1,7 @@
+import ChatSpring from "./ChatSpring";
 import Chat from "./index";
 
 function TestChatApp() {
-    return <Chat roomId="8386"></Chat>
+    return <ChatSpring></ChatSpring>
 }
 export default TestChatApp;

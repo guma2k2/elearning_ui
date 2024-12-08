@@ -196,7 +196,7 @@ function App() {
       path: "/whiteboard",
       element: <WhiteBoard></WhiteBoard>,
     }, {
-      path: "/chat",
+      path: "/chat/:roomId",
       element: <TestChatApp></TestChatApp>,
     },
   ]);
