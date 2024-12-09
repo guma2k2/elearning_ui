@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from "react"
 import './StatisticMonth.style.scss'
 import { getStatisticByTime } from "../../../../services/StatisticService";
+import { formatCurrency } from "../../../../utils/Format";
 type statisticType = {
     name: string,
     total: number
@@ -60,12 +61,17 @@ function StatisticMonth() {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" >
+                    <XAxis dataKey="name" style={{ fontSize: "10px" }} >
                     </XAxis>
-                    <YAxis />
-                    <Tooltip />
+                    <YAxis style={{ fontSize: "10px" }}
+                        tickFormatter={(value) => {
+                            return `${formatCurrency(value)}`
+                        }} />
+                    <Tooltip formatter={(value: number) => {
+                        return `${formatCurrency(value)}`
+                    }} />
                     <Legend verticalAlign="top" margin={{ bottom: 50 }} />
-                    <Bar dataKey="total" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
+                    <Bar name="Tổng tiền" dataKey="total" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
                 </BarChart>
             </ResponsiveContainer>
         </div>
