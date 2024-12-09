@@ -4,27 +4,28 @@ import './StatisticProduct.style.scss'
 import dayjs, { Dayjs } from 'dayjs';
 import { StatisticProductType } from '../../../../types/StatisticType';
 import { getStatisticCourseByTime } from '../../../../services/StatisticService';
+import { formatCurrency } from '../../../../utils/Format';
 function StatisticProduct() {
     const { RangePicker } = DatePicker;
     const [statisticProducts, setStatisticProducts] = useState<StatisticProductType[]>();
     const columns: TableColumnsType<StatisticProductType> = [
         {
-            title: 'Stt',
+            title: 'STT',
             dataIndex: 'stt',
             width: 50
         },
         {
-            title: 'Course',
+            title: 'Khóa học',
             dataIndex: 'course',
             width: 300,
         },
         {
-            title: 'Quantity',
+            title: 'Số lượng',
             dataIndex: 'quantity',
             width: 100,
         },
         {
-            title: 'Total',
+            title: 'Tổng tiền',
             dataIndex: 'price',
             width: 200,
         }
@@ -84,7 +85,7 @@ function StatisticProduct() {
             </div>
             <Table columns={columns} dataSource={statisticProducts} scroll={{ x: 1000 }}
                 footer={() => <div className="statistic-footer">
-                    <span>Tổng doanh thu: {getTotalPrice()}đ</span>
+                    <span>Tổng doanh thu: {formatCurrency(getTotalPrice())}</span>
                 </div>}
             />
 

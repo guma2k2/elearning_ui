@@ -44,6 +44,15 @@ const App: React.FC = () => {
         auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý học sinh', '9', <Link to={"/admin/students"}><DesktopOutlined /></Link>) : null,
 
     ];
+
+    const getRole = (role: string | undefined) => {
+        if (role == "ROLE_ADMIN") {
+            return "Quản trị viên"
+        } else if (role == "ROLE_INSTRUCTOR") {
+            return "Giáo viên"
+        }
+        return "Khác"
+    }
     const [collapsed, setCollapsed] = useState(false);
 
     const {
@@ -57,14 +66,14 @@ const App: React.FC = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical" style={{ height: "80px", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }} >
-                    F4 ADMIN
+                    ADMIN
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
             <Layout >
                 <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }}>
                     <div className="header-admin-info" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginRight: "20px", gap: "20px" }}>
-                        <span>{auth?.user.role}</span>
+                        <span>{getRole(auth?.user.role)}</span>
                         <Popover
                             content={PopoverUserProfile}
                             rootClassName="popover-profiles"
