@@ -8,10 +8,23 @@
         flex-direction: column;
         gap: 10px;
 
-        .statistic-product-input {
-            width: fit-content;
-            margin-bottom: 20px;
+        .statistic-header-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .statistic-product-input {
+                width: fit-content;
+                margin-bottom: 20px;
+            }
+
+            .statistic-product-input-right {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
         }
+
     }
 
     .statistic-footer {

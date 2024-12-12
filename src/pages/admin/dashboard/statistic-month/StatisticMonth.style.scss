@@ -5,9 +5,20 @@
     .dashboard-input-month {
         margin-top: 40px;
         margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
         span {
             margin-right: 20px;
+        }
+
+        .dashboard-input-month-right {
+            .dashboard-input-month-btn-export {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
         }
     }
 

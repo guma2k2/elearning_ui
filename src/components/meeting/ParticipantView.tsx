@@ -2,6 +2,7 @@ import ReactPlayer from "react-player";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParticipant } from "@videosdk.live/react-sdk";
 import { Stream } from "@videosdk.live/react-sdk/dist/types/stream";
+import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash } from "react-icons/fa6";
 interface ParticipantViewProps {
     participantId: string;
 }
@@ -55,12 +56,20 @@ function ParticipantView(prop: ParticipantViewProps) {
     }, [micStream, micOn]);
 
     return (
-        <div>
-            <p>
-                {displayName} | Webcam: {webcamOn ? "ON" : "OFF"} | Mic:{" "}
-                {micOn ? "ON" : "OFF"}
-            </p>
-            <audio ref={micRef} autoPlay playsInline muted={isLocal} />
+        <div
+            style={{
+                position: "relative",
+                width: "100%",
+                height: "200px",
+                margin: "0 10px",
+                marginBottom: "15px",
+                backgroundColor: webcamOn ? "transparent" : "black",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+            }}
+        >
             {webcamOn && (
                 <ReactPlayer
                     playsinline
@@ -70,13 +79,53 @@ function ParticipantView(prop: ParticipantViewProps) {
                     muted={true}
                     playing={true}
                     url={videoStream}
-                    height={"90px"}
-                    width={"161px"}
+                    height={"100%"}
+                    width={"100%"}
+                    style={{ objectFit: "cover", position: "absolute", top: "0", left: "0" }}
                     onError={(err) => {
                         console.log(err, "participant video error");
                     }}
                 />
             )}
+
+            <p
+                style={{
+                    position: "absolute",
+                    bottom: "15px",
+                    left: "5px",
+                    color: "white",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    padding: "2px 8px",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                }}
+            >
+                {displayName}
+            </p>
+
+            <div
+                style={{
+                    position: "absolute",
+                    top: "15px",
+                    right: "10px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                }}
+            >
+                {micOn ? (
+                    <FaMicrophone color="white" size={16} />
+                ) : (
+                    <FaMicrophoneSlash color="white" size={16} />
+                )}
+                {webcamOn ? (
+                    <FaVideo color="white" size={16} />
+                ) : (
+                    <FaVideoSlash color="white" size={16} />
+                )}
+            </div>
+
+            <audio ref={micRef} autoPlay playsInline muted={isLocal} />
         </div>
     );
 }

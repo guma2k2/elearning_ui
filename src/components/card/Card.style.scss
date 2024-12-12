@@ -23,6 +23,17 @@
     .course-price {
         font-size: 14px;
         font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .course-discountPrice {
+            text-decoration: line-through;
+            color: gray;
+            /* Optional: Muted color */
+            font-size: 12px;
+            /* Optional: Adjust font size */
+        }
     }
 
     .course-rating {

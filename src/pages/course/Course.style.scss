@@ -238,6 +238,15 @@
                         font-size: 32px;
                         line-height: 1;
                         font-weight: 700;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+
+                        .course-discountPrice {
+                            text-decoration: line-through;
+                            color: gray;
+                            font-size: 24px;
+                        }
                     }
 
                     .btn-add-to-cart {

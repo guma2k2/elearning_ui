@@ -19,7 +19,7 @@ export type ReviewGet = {
     ratingStar: number,
     createdAt: string,
     updatedAt: string,
-    status: boolean,
+    status: string,
     student: StudentGetType,
     course: CourseGetType
 }

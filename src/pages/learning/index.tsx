@@ -4,7 +4,7 @@ import { PiNote } from "react-icons/pi";
 import { FaPlus } from "react-icons/fa6";
 import { useEffect, useRef, useState } from 'react';
 import { RxCaretLeft, RxCaretRight } from 'react-icons/rx';
-import { Button, Drawer, Progress, Select } from 'antd';
+import { Button, Drawer, Progress, Select, Tabs, TabsProps } from 'antd';
 import SectionLearning from '../../components/section-learning';
 import { ICurriculum, ILecture, IQuiz } from '../../types/CourseType';
 import AnswerLearning from '../../components/answer-learning';
@@ -23,6 +23,8 @@ import { getNotesByCourseId, getNotesBySectionId } from '../../services/NoteServ
 import NoteComponent from '../../components/note';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
+import LectureContent from './LectureContent';
+import QuestionContent from './QuestionContent';
 function Learning() {
     const navigate = useNavigate();
     const { slug } = useParams();
@@ -274,6 +276,25 @@ function Learning() {
         setIsAnswer(false);
     }
 
+
+    const onChangeKey = (key: string) => {
+        console.log(key);
+    };
+
+    const items: TabsProps['items'] = [
+        {
+            key: '1',
+            label: 'Tổng quan',
+            children: currentCurriculum?.type == "lecture" && <LectureContent curriculum={currentCurriculum} setOpen={setOpen} watchingSecond={watchingSecond} />,
+        },
+        {
+            key: '2',
+            label: 'Câu hỏi',
+            children: <QuestionContent />,
+        }
+    ];
+
+
     useEffect(() => {
         try {
             dispatch(fetchCourseBySlug(slug));
@@ -397,15 +418,9 @@ function Learning() {
                         <source src={currentCurriculum?.type == "lecture" ? currentCurriculum.videoId : ""} type='video/mp4' />
                     </video>
                         <div className="learning-curriculum-info">
-                            <div className="learning-curriculum-info-top">
-                                <h2 className='learning-curriculum-title'>{currentCurriculum?.title}</h2>
-                                <Button onClick={() => setOpen(true)}>
-                                    <FaPlus />
-                                    <span>Thêm ghi chú tại {convertSecondToMinute(watchingSecond)}</span>
-                                </Button>
-                            </div>
-                            <div className='learning-curriculum-time'>Cập nhật {currentCurriculum?.updatedAt}</div>
-                            <div className='learning-curriculum-footer'>Made with  Powered by F8</div>
+
+                            <Tabs defaultActiveKey="1" items={items} onChange={onChangeKey} />
+
                         </div>
                     </>}
                     {learning?.type == "quiz" && <div className='learning-quiz-container'>
@@ -487,9 +502,7 @@ function Learning() {
                                 <Select.Option value="course">Trong tất cả các chương</Select.Option>
 
                             </Select>
-                            <Select onChange={handleChange} value={"sample"}>
-                                <Select.Option value="sample">Sample</Select.Option>
-                            </Select>
+
                         </div>
                     </div>
 

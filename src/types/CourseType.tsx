@@ -17,6 +17,7 @@ export type CourseType = {
     updatedAt?: string
     free?: boolean
     isPublish?: boolean,
+    status?: string,
     price: number,
     ratingCount: number,
     averageRating: number,
@@ -27,7 +28,8 @@ export type CourseType = {
     user?: UserProfile,
     learning?: boolean,
     slug: string,
-    breadcrumb: string
+    breadcrumb: string,
+    discountedPrice: number
 }
 
 export type CourseGetType = {
@@ -52,6 +54,7 @@ export type CourseListGetType = {
     averageRating: number
     ratingCount: number
     createdBy: string
+    discountedPrice: number
 }
 
 

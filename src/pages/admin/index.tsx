@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     DesktopOutlined,
     PieChartOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Popover, theme } from 'antd';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import PopoverUserProfile from '../../components/popover-user-photo';
 import { useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
@@ -32,16 +32,41 @@ function getItem(
 
 const App: React.FC = () => {
     const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
+    const location = useLocation();
+    const [selectedKey, setSelectedKey] = useState<string>(location.pathname);
+    const pathToKeyMap: Record<string, string> = {
+        '/admin': '1',
+        '/admin/users': '2',
+        '/admin/categories': '3',
+        '/admin/topics': '4',
+        '/admin/courses': '5',
+        '/admin/coupons': '6',
+        '/admin/orders': '7',
+        '/admin/reviews': '8',
+        '/admin/students': '9',
+        '/admin/promotions': '10',
+    };
+    useEffect(() => {
+        const matchedKey = pathToKeyMap[location.pathname] || '1';
+        console.log(matchedKey);
+        setSelectedKey(matchedKey);
+    }, [location.pathname]);
+
+    const handleMenuClick: MenuProps['onClick'] = (e) => {
+        setSelectedKey(e.key);
+        console.log('Selected key:', e.key);
+    };
     const items: MenuItem[] = [
         getItem('Thống kê', '1', <Link to={"/admin"}><PieChartOutlined /></Link>),
         auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý người dùng', '2', <Link to={"/admin/users"}><DesktopOutlined /></Link>) : null,
         auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý danh mục', '3', <Link to={"/admin/categories"}><DesktopOutlined /></Link>) : null,
         auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý chủ đề', '4', <Link to={"/admin/topics"}><DesktopOutlined /></Link>) : null,
         getItem('Quản lý khóa học', '5', <Link to={"/admin/courses"}><DesktopOutlined /></Link>),
-        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý khuyến mãi', '6', <Link to={"/admin/coupons"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý mã giảm giá', '6', <Link to={"/admin/coupons"}><DesktopOutlined /></Link>) : null,
         auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý đơn hàng', '7', <Link to={"/admin/orders"}><DesktopOutlined /></Link>) : null,
         auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý đánh giá', '8', <Link to={"/admin/reviews"}><DesktopOutlined /></Link>) : null,
         auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý học sinh', '9', <Link to={"/admin/students"}><DesktopOutlined /></Link>) : null,
+        auth?.user.role === "ROLE_ADMIN" ? getItem('Quản lý khuyến mãi', '10', <Link to={"/admin/promotions"}><DesktopOutlined /></Link>) : null,
 
     ];
 
@@ -68,7 +93,7 @@ const App: React.FC = () => {
                 <div className="demo-logo-vertical" style={{ height: "80px", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }} >
                     ADMIN
                 </div>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+                <Menu onClick={handleMenuClick} selectedKeys={[selectedKey]} theme="dark" mode="inline" items={items} />
             </Sider>
             <Layout >
                 <Header style={{ padding: 0, marginBottom: "30px", background: colorBgContainer }}>

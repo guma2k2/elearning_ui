@@ -1,0 +1,33 @@
+.promotion-management-container {
+    height: 100%;
+
+    .promotion-header {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        margin-bottom: 30px;
+
+        span {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .promotion-btn-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .promotion-search {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .promotion-search-input {
+            width: 300px;
+        }
+
+        .promotion-search-btn {}
+    }
+}

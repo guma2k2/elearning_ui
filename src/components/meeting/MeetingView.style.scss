@@ -11,7 +11,9 @@
             background-color: black;
         }
 
-        .meetingView-top-right {}
+        .meetingView-top-right {
+            overflow: auto;
+        }
     }
 
     // Set position to relative to enable absolute positioning inside

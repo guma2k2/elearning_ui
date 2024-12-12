@@ -249,6 +249,7 @@ function CourseDetail() {
         }
     }
 
+
     return <div className="course-container">
         <div className="header">
             <div className="left">
@@ -365,7 +366,10 @@ function CourseDetail() {
                 </div>
                 <div className="course-detail">
                     <div className="course-detail-action">
-                        <span className="course-action-price">{course?.free == false ? formatCurrency(course.price) : "Miễn phí"}</span>
+                        {course && <span className="course-action-price">
+                            <span>{course.free == true ? "Miễn phí" : course.price != course.discountedPrice ? formatCurrency(course.discountedPrice) : formatCurrency(course.price)}</span>
+                            {course.free == false && course.price != course.discountedPrice && <span className='course-discountPrice'>{formatCurrency(course.price)}</span>}
+                        </span>}
                         {course?.learning == false && checkIsAddedToCart() == false && course?.free == false && <Button className='btn-add-to-cart' onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>}
                         {course?.learning == false && isLoggin == true && checkIsAddedToCart() == true && <Button className='btn-add-to-cart' onClick={handleRedirectToCarts}>Chuyển đến giỏ hàng</Button>}
                         {course?.learning == true && <Button className='btn-buy-now' onClick={handleLearning}>Chuyển đến khóa học</Button>}

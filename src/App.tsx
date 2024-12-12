@@ -42,6 +42,7 @@ import ClassroomDetail from "./pages/classroom/classroomDetail";
 import WhiteBoard from "./components/whiteboard";
 import TestChatApp from "./components/chat/testChatApp";
 import Verify from "./pages/verify";
+import PromotionManagement from "./pages/admin/promotion";
 function App() {
   const router = createBrowserRouter([
     {
@@ -172,6 +173,10 @@ function App() {
         {
           path: "/admin/students",
           element: <StudentManagement />
+        },
+        {
+          path: "/admin/promotions",
+          element: <PromotionManagement />
         },
       ]
     },
