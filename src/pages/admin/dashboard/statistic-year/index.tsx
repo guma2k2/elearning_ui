@@ -1,10 +1,11 @@
-import { DatePicker, DatePickerProps } from "antd";
+import { Button, DatePicker, DatePickerProps } from "antd";
 import { Bar, BarChart, CartesianGrid, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import dayjs from 'dayjs';
 import { useEffect, useState } from "react"
 import './StatisticYear.style.scss'
 import { getStatisticByTime } from "../../../../services/StatisticService";
 import { formatCurrency } from "../../../../utils/Format";
+import { FaFileExcel } from "react-icons/fa6";
 type statisticType = {
     name: string,
     total: number
@@ -40,8 +41,13 @@ function StatisticYear() {
     }, [year,])
     return <div className="dashboard-chart-year-container">
         <div className="dashboard-input-year">
-            <span>Chọn năm</span>
-            <DatePicker onChange={onChange} picker="year" defaultValue={currentYear} />
+            <div className="dashboard-input-year-left">
+                <span>Chọn năm</span>
+                <DatePicker onChange={onChange} picker="year" defaultValue={currentYear} />
+            </div>
+            <div className="dashboard-input-year-right">
+                <Button className="dashboard-input-year-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
+            </div>
         </div>
         <div className="dashboard-chart-container">
             <div className="dashboard-chart-header">

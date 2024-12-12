@@ -9,6 +9,13 @@ type Props = {
 }
 function Card(props: Props) {
     const { course } = props;
+
+    const getPrice = () => {
+        if (course.price == course.discountedPrice) {
+            return formatCurrency(course.price)
+        }
+        return
+    }
     return (
         <Link className='card-container' to={`/courses/${course.id}`}  >
             <img className='course-image' src={course.image} alt="course image" />
@@ -19,7 +26,10 @@ function Card(props: Props) {
                 <Rate className='rating' allowHalf disabled defaultValue={course.averageRating} />
                 <span className='count-rating'>{course.ratingCount}</span>
             </span>
-            <span className='course-price'>{course.free == true ? "Miễn phí" : formatCurrency(course.price)}</span>
+            <span className='course-price'>
+                <span>{course.free == true ? "Miễn phí" : course.price != course.discountedPrice ? formatCurrency(course.discountedPrice) : formatCurrency(course.price)}</span>
+                {course.free == false && course.price != course.discountedPrice && <span className='course-discountPrice'>{formatCurrency(course.price)}</span>}
+            </span>
         </Link>
 
     )

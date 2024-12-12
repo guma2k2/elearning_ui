@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Select, Switch, Table, TableColumnsType, TreeSelect } from 'antd';
+import { Button, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Select, Switch, Table, TableColumnsType, Tag, TreeSelect } from 'antd';
 import { useEffect, useState } from 'react'
 import './Course.style.scss'
 import { CourseType } from '../../../types/CourseType';
@@ -19,9 +19,10 @@ type TreeData = {
 }
 
 
-function Course() {
+const Course: React.FC = () => {
     const { auth } = useAppSelector((state: RootState) => state.auth);
 
+    const [status, setStatus] = useState<string>("ALL");
     const [open, setOpen] = useState<boolean>(false);
     const [courses, setCourses] = useState<CourseType[]>([]);
     const [current, setCurrent] = useState<number>(1);
@@ -33,11 +34,11 @@ function Course() {
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("");
 
-    const handleUpdateStatus = async (checked: boolean, id: number) => {
-        const res = await updateStatus(checked, id);
-        if (res.status === 204) {
-            setIsDataUpdated((prev) => !prev);
-        }
+    const handleUpdateStatus = async (checked: string, id: number) => {
+        // const res = await updateStatus(checked, id);
+        // if (res.status === 204) {
+        //     setIsDataUpdated((prev) => !prev);
+        // }
     }
     const handleDelete = async (id: number) => {
         try {
@@ -67,12 +68,21 @@ function Course() {
 
         },
         {
-            title: 'Công khai',
-            dataIndex: 'isPublish',
+            title: 'Trạng thái',
+            dataIndex: 'status',
             width: 100,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                    <Select
+                        value={record.status}
+                        onChange={(value) => handleUpdateStatus(value, record.id)}
+                        style={{ width: 150 }}
+                    >
+                        <Select.Option value="PUBLISHED">Công khai</Select.Option>
+                        <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
+                        <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                    </Select>
+                    {record.status == "UNPUBLISHED" && <Button>Xem ly do</Button>}
                 </Flex>
             ),
         },
@@ -92,7 +102,7 @@ function Course() {
             width: 250,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary"><Link to={`edit/${record.id}`}>Edit</Link></Button>
+                    <Button type="primary"><Link to={`edit/${record.id}`}>Cập nhật</Link></Button>
                     <Popconfirm
                         title="Xóa khóa học này?"
                         description="Bạn có chắc chắn muốn xóa khóa học này?"
@@ -126,6 +136,17 @@ function Course() {
             title: 'Ngày cập nhật',
             dataIndex: 'updatedAt',
             width: 300,
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            width: 100,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Tag>{record.status}</Tag>
+                    {record.status == "UNPUBLISHED" && <Button>Xem ly do</Button>}
+                </Flex>
+            ),
         },
         {
             title: 'Hành động',
@@ -311,6 +332,22 @@ function Course() {
                                 <div className="icon" onClick={handleSearch}>
                                     <SearchOutlined />
                                 </div>
+                            </div>
+                            <div className="course-search-status">
+                                <Select
+
+                                    value={status}
+                                    onChange={(value) => {
+                                        alert(value);
+                                        setStatus(value);
+                                    }}
+                                    style={{ width: "250px", height: "100%" }}
+                                >
+                                    <Select.Option value="ALL">Chọn trạng thái muốn tìm kiếm</Select.Option>
+                                    <Select.Option value="PUBLISHED">Công khai</Select.Option>
+                                    <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
+                                    <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                                </Select>
                             </div>
                         </div>
                         <Button style={{ height: 48, fontSize: "16px" }} onClick={showModel} type="primary">Tạo khóa học</Button>

@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { StatisticProductType } from '../../../../types/StatisticType';
 import { getStatisticCourseByTime } from '../../../../services/StatisticService';
 import { formatCurrency } from '../../../../utils/Format';
+import { FaFileExcel } from 'react-icons/fa6';
 function StatisticProduct() {
     const { RangePicker } = DatePicker;
     const [statisticProducts, setStatisticProducts] = useState<StatisticProductType[]>();
@@ -76,12 +77,17 @@ function StatisticProduct() {
         <div className="statistic-container">
             <div className='statistic-header' >
                 <h3>Bảng thống kê doanh thu theo khóa học theo thời gian</h3>
-                <RangePicker
-                    className='statistic-product-input'
-                    showTime={{ format: 'HH:mm:ss' }}
-                    format="YYYY-MM-DD HH:mm:ss"
-                    onChange={handleChange}
-                />
+                <div className="statistic-header-action">
+                    <RangePicker
+                        className='statistic-product-input'
+                        showTime={{ format: 'HH:mm:ss' }}
+                        format="YYYY-MM-DD HH:mm:ss"
+                        onChange={handleChange}
+                    />
+                    <div className="statistic-product-input-right">
+                        <Button className="statistic-product-input-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
+                    </div>
+                </div>
             </div>
             <Table columns={columns} dataSource={statisticProducts} scroll={{ x: 1000 }}
                 footer={() => <div className="statistic-footer">

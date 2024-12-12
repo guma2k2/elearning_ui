@@ -1,9 +1,10 @@
-import { Button, Flex, Input, PaginationProps, Switch, Table, TableColumnsType } from 'antd';
+import { Button, Flex, Input, PaginationProps, Select, Switch, Table, TableColumnsType } from 'antd';
 import { useEffect, useState } from 'react';
 import { ReviewGet } from '../../../types/ReviewType';
 import { getWithPagination, updateStatus } from '../../../services/ReviewService';
 import './ReviewManagement.style.scss'
 function ReviewManagement() {
+    const [status, setStatus] = useState<string>("ALL");
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
     const [totalElements, setTotalElements] = useState<number>(1);
@@ -11,11 +12,11 @@ function ReviewManagement() {
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>();
     const [keyword, setKeyword] = useState<string>("");
 
-    const handleUpdateStatus = async (checked: boolean, id: number) => {
-        const res = await updateStatus(checked, id);
-        if (res.status === 204) {
-            setIsDataUpdated((prev) => !prev);
-        }
+    const handleUpdateStatus = async (checked: string, id: number) => {
+        // const res = await updateStatus(checked, id);
+        // if (res.status === 204) {
+        //     setIsDataUpdated((prev) => !prev);
+        // }
     }
     const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newKeyword = e.target.value;
@@ -83,7 +84,16 @@ function ReviewManagement() {
             width: 100,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Switch checkedChildren="active" unCheckedChildren="unactive" checked={record.status} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                    <Select
+                        value={record.status}
+                        onChange={(value) => handleUpdateStatus(value, record.id)}
+                        style={{ width: 150 }}
+                    >
+                        <Select.Option value="PUBLISHED">Công khai</Select.Option>
+                        <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
+                        <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                    </Select>
+                    {record.status == "UNPUBLISHED" && <Button>Xem ly do</Button>}
                 </Flex>
             ),
         },
@@ -129,6 +139,22 @@ function ReviewManagement() {
         <div className="review-search">
             <Input placeholder='Nhập nội dung đánh giá' className='review-search-input' onChange={handleChangeKeyword} value={keyword} />
             <Button className='review-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
+            <div className="course-search-status" style={{ marginLeft: "20px" }}>
+                <Select
+
+                    value={status}
+                    onChange={(value) => {
+                        alert(value);
+                        setStatus(value);
+                    }}
+                    style={{ width: "250px", height: "100%" }}
+                >
+                    <Select.Option value="ALL">Chọn trạng thái muốn tìm kiếm</Select.Option>
+                    <Select.Option value="PUBLISHED">Công khai</Select.Option>
+                    <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
+                    <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                </Select>
+            </div>
         </div>
         <Table columns={columns} dataSource={reviewList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
     </div>;

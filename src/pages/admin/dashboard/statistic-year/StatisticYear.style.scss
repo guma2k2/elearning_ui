@@ -5,9 +5,20 @@
     .dashboard-input-year {
         margin-top: 40px;
         margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
         span {
             margin-right: 20px;
+        }
+
+        .dashboard-input-year-right {
+            .dashboard-input-year-btn-export {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
         }
     }
 
