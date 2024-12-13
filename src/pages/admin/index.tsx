@@ -31,7 +31,7 @@ function getItem(
 
 
 const App: React.FC = () => {
-    const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
+    const { auth } = useAppSelector((state: RootState) => state.auth);
     const location = useLocation();
     const [selectedKey, setSelectedKey] = useState<string>(location.pathname);
     const pathToKeyMap: Record<string, string> = {
