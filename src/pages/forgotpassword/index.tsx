@@ -2,16 +2,16 @@ import { Button, Form, FormProps, Input } from "antd";
 import './Forgotpassword.style.scss'
 import { ForgotPasswordRequest } from "../../types/AuthType";
 import { forgotPassword } from "../../services/AuthService";
+import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
+    const navigate = useNavigate();
     const onFinish: FormProps<ForgotPasswordRequest>['onFinish'] = async (values) => {
         const res = await forgotPassword(values);
         if (res.status == 204) {
+            navigate(`/verify/${values.email}/forgot`)
             alert("Please check email to change password")
         }
-    };
-    const onFinishFailed = () => {
-        console.log('Failed:');
     };
     return <div className='forgotPassword-container' >
         <div className="left">
@@ -38,7 +38,6 @@ function ForgotPassword() {
                         remember: true,
                     }}
                     onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
                     <Form.Item<ForgotPasswordRequest>

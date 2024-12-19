@@ -1,7 +1,7 @@
 import { Button, Form, Input } from "antd";
 import { VerifyRequest } from "../../types/AuthType";
 import { useNavigate, useParams } from "react-router-dom";
-import { verifyEmail } from "../../services/AuthService";
+import { resend, verifyEmail } from "../../services/AuthService";
 import { AxiosError } from "axios";
 import { ErrorType } from "../../types/ErrorType";
 import { useEffect, useState } from "react";
@@ -9,30 +9,63 @@ import './Verify.style.scss'
 function Verify() {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-
-    let { email } = useParams();
+    const [btnStatus, setBtnStatus] = useState<boolean>(false);
+    let { email, type } = useParams();
     const [timeLeft, setTimeLeft] = useState<number>(900);
     useEffect(() => {
-        if (timeLeft <= 0) return;
+        if (timeLeft <= 0) {
+            setBtnStatus(true);
+            return;
+        }
         const timerId = setInterval(() => {
             setTimeLeft((prev) => prev - 1);
         }, 1000);
 
         return () => clearInterval(timerId); // Cleanup interval on unmount
     }, [timeLeft]);
-    const onFinish = async (values: VerifyRequest) => {
+
+    const handleResend = async () => {
+        setBtnStatus(false);
+        setTimeLeft(900);
+
         if (email) {
+            try {
+                const resUpdateUser = await resend(email);
+                if (resUpdateUser.status === 200) {
+                    alert("Vui long kiem tra email");
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                }
+            }
+        }
+    }
+    const onFinish = async (values: VerifyRequest) => {
+        if (email && type) {
             const newValues: VerifyRequest = {
                 ...values,
-                email: email
+                email: email,
+                type: type
             }
             console.log(newValues);
 
             try {
                 const resUpdateUser = await verifyEmail(newValues);
-                if (resUpdateUser.status === 204) {
-                    alert("Update user profile success");
-                    navigate("/login")
+                if (resUpdateUser.status === 200) {
+                    alert("Verify success");
+                    if (type) {
+                        if (type == "register") {
+                            navigate("/login")
+                        } else if (type == "forgot") {
+                            const enscryptPass = resUpdateUser.data;
+                            navigate(`/password-confirm?email=${enscryptPass}`)
+                        }
+
+                    }
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
@@ -84,7 +117,10 @@ function Verify() {
             </Form.Item>
 
         </Form>
-        <Button onClick={() => form.submit()} type="primary">Xác nhận</Button>
+        <div className="verify-bottom">
+            <Button onClick={() => form.submit()} type="primary" disabled={btnStatus}>Xác nhận</Button>
+            <Button style={{ marginLeft: "20px" }} onClick={handleResend} type="primary">Gửi lại</Button>
+        </div>
     </div>
 }
 

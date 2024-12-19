@@ -10,7 +10,7 @@ interface MeetingViewProps {
     onMeetingLeave: () => void;
 }
 import './MeetingView.style.scss'
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 import Chat from "../chat";
 import Whiteboard from "../whiteboard";
 
@@ -74,14 +74,23 @@ function MeetingView({ meetingId, onMeetingLeave }: MeetingViewProps) {
                     <Controls meetingId={meetingId} toggleRight={toggleRight} setToggleRight={setToggleRight} />
                 </div>
             ) : joined === "JOINING" ? (
-                <div style={{ textAlign: 'center' }}>
-                    <Spin indicator={<LoadingOutlined spin />} size="small" />
-                    <div style={{ marginTop: '8px', fontSize: '14px', color: '#555' }}>
-                        Joining the meeting...
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#2c2c2c" }}>
+                    <div className="classroom-status" style={{ width: "200px", height: "200px", backgroundColor: "#f0f0f0", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "10px" }} >
+                        <Spin indicator={<LoadingOutlined spin />} size="large" />
+                        <div style={{ marginTop: '8px', fontSize: '14px', color: '#555' }}>
+                            Đang tham gia...
+                        </div>
                     </div>
                 </div>
             ) : (
-                <button onClick={joinMeeting}>Join</button>
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#2c2c2c" }}>
+                    <div className="classroom-status" style={{ width: "200px", height: "200px", backgroundColor: "#f0f0f0", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "10px" }} >
+                        <Spin indicator={<LoadingOutlined spin />} size="large" />
+                        <div style={{ marginTop: '8px', fontSize: '14px', color: '#555' }}>
+                            <Button onClick={joinMeeting}>Xác nhận tham gia</Button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

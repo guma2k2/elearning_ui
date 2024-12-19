@@ -16,15 +16,12 @@ type MessageType = {
     message: string;
     timestamp: string;
     email: string;
-    photoURL?: string;
+    photoURL?: string
+    role: string
 };
 
 const Chat: React.FC<ChatProps> = ({ roomId }) => {
-
-
     const { auth } = useAppSelector((state: RootState) => state.auth);
-
-
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -63,6 +60,7 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
             timestamp,
             email: auth?.user.email,
             photoURL: auth?.user.photoURL,
+            role: auth?.user.role
         })
             .then(() => {
                 console.log("Message sent successfully!");
@@ -78,11 +76,10 @@ const Chat: React.FC<ChatProps> = ({ roomId }) => {
         <div className="chat-container">
             <div className="messages">
                 {messages.map((msg) => (
-                    <div key={msg.id} className={`message ${msg.userId === auth?.user.id ? 'own' : ''}`}>
-                        <img src={msg.photoURL || '/default-avatar.png'} alt="User" className="avatar" />
+                    <div key={msg.id} className={`message ${(msg.userId === auth?.user.id && msg.role == auth.user.role) ? 'own' : ''}`}>
                         <div className="message-content">
-                            {/* <span className="user-name">{msg.email}</span> */}
-                            <span className="message-text">{msg.message}</span>
+                            <span className="user-name">{(msg.userId === auth?.user.id && msg.role == auth.user.role) ? "Bạn" : msg.email}</span>
+                            <div className="message-text">{msg.message}</div>
                             <span className="timestamp">{new Date(msg.timestamp).toLocaleString()}</span>
                         </div>
                     </div>

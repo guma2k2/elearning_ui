@@ -3,10 +3,10 @@ import { Bar, BarChart, CartesianGrid, Legend, Rectangle, ResponsiveContainer, T
 import dayjs from 'dayjs';
 import { useEffect, useState } from "react"
 import './StatisticYear.style.scss'
-import { getStatisticByTime } from "../../../../services/StatisticService";
+import { exportByTime, getStatisticByTime } from "../../../../services/StatisticService";
 import { formatCurrency } from "../../../../utils/Format";
 import { FaFileExcel } from "react-icons/fa6";
-type statisticType = {
+export type statisticType = {
     name: string,
     total: number
 }
@@ -32,6 +32,17 @@ function StatisticYear() {
         }
 
     }
+
+    const handleExport = async () => {
+        if (statisticByYear && statisticByYear.length > 0) {
+            const res = await exportByTime(statisticByYear);
+            if (res.status == 200) {
+                alert("success");
+            }
+        } else {
+            alert("No data to export")
+        }
+    }
     useEffect(() => {
         let time: string = "";
         if (year) {
@@ -46,7 +57,7 @@ function StatisticYear() {
                 <DatePicker onChange={onChange} picker="year" defaultValue={currentYear} />
             </div>
             <div className="dashboard-input-year-right">
-                <Button className="dashboard-input-year-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
+                <Button onClick={handleExport} className="dashboard-input-year-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
             </div>
         </div>
         <div className="dashboard-chart-container">

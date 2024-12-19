@@ -290,7 +290,7 @@ function Learning() {
         {
             key: '2',
             label: 'Câu hỏi',
-            children: <QuestionContent />,
+            children: currentCurriculum?.type == "lecture" && <QuestionContent curriculum={currentCurriculum} />,
         }
     ];
 

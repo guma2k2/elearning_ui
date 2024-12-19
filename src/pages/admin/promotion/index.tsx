@@ -6,7 +6,10 @@ import { ErrorType } from "../../../types/ErrorType";
 import { PromotionPostType, PromotionType } from "../../../types/PromotionType";
 import { deletePromotion, getWithPagination, save, update } from "../../../services/PromotionService";
 import './Promotion.style.scss'
+import { Link, useNavigate } from "react-router-dom";
 function PromotionManagement() {
+
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [pending, setPending] = useState(false);
     const [current, setCurrent] = useState<number>(1);
@@ -32,8 +35,8 @@ function PromotionManagement() {
         if (currentPromotion) {
             form.setFieldsValue({
                 ...currentPromotion,
-                startTime: dayjs(currentPromotion.startTime, 'YYYY-MM-DD HH:mm:ss'),
-                endTime: dayjs(currentPromotion.endTime, 'YYYY-MM-DD HH:mm:ss')
+                startTime: dayjs(currentPromotion.startTime, 'DD/MM/YYYY HH:mm:ss'),
+                endTime: dayjs(currentPromotion.endTime, 'DD/MM/YYYY HH:mm:ss'),
             })
         }
     }
@@ -136,7 +139,7 @@ function PromotionManagement() {
         {
             title: 'Phần trăm khuyến mãi',
             dataIndex: 'discountPercent',
-            width: 250,
+            width: 200,
         },
         {
             title: 'Tên',
@@ -146,17 +149,17 @@ function PromotionManagement() {
         {
             title: 'Thời gian bắt đầu',
             dataIndex: 'startTime',
-            width: 300,
+            width: 250,
         },
         {
             title: 'Thời gian kết thúc',
             dataIndex: 'endTime',
-            width: 300,
+            width: 250,
         },
         {
             title: 'Hành động',
             dataIndex: 'key',
-            width: 250,
+            width: 300,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Button type="primary" onClick={() => handleUpdateCoupon(record.id)}>Cập nhật</Button>
@@ -169,6 +172,7 @@ function PromotionManagement() {
                     >
                         <Button danger>Xóa</Button>
                     </Popconfirm>
+                    <Button type="link"><Link to={`edit/${record.id}`}>Áp dụng</Link></Button>
                 </Flex>
             ),
         },
@@ -248,15 +252,15 @@ function PromotionManagement() {
                         <Form.Item
                             name="discountPercent"
                             label="Phần trăm khuyến mãi"
-                            rules={[{ required: true, message: 'Phần trăm khuyến mãi không được để trống' }]}
+                            rules={[{ required: true, message: 'Phần trăm khuyến mãi không được để trống', min: 1, max: 100 }]}
                         >
-                            <Input type="number" placeholder="Nhập phần trăm khuyến mãi" />
+                            <Input type="number" placeholder="Nhập phần trăm khuyến mãi" step={1} />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="code"
-                            label="Code"
+                            name="name"
+                            label="Tên"
                             rules={[{ required: true, message: 'Mã không được để trống' }]}
                         >
                             <Input placeholder="Nhập mã" />

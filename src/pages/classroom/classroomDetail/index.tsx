@@ -553,10 +553,8 @@ function ClassroomDetail() {
                                         style={{ width: "780px", padding: "0 40px" }}
                                     >
                                         <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-
-
                                             <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
-                                                <img src="https://lh3.googleusercontent.com/a/ACg8ocLf5401BY_QkReNX4ZNaR6_hs5i0n_rgUA7Zrf9z6EQd5ukMw=s40-c-mo" alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                                <img src={classroomGet.user.photo} alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
                                                 <div className="classroomDetail-card-top-right">
                                                     <div>Giáo viên đã đăng thông tin cho một cuộc họp</div>
                                                     <div>{formatDate(event.createdAt)}</div>
@@ -587,7 +585,7 @@ function ClassroomDetail() {
                                 >
                                     <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", marginBottom: "10px", justifyContent: "space-between" }}>
                                         <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
-                                            <img src="https://lh3.googleusercontent.com/a/ACg8ocLf5401BY_QkReNX4ZNaR6_hs5i0n_rgUA7Zrf9z6EQd5ukMw=s40-c-mo" alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                            <img src={classroomGet.user.photo} alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
                                             <div className="classroomDetail-card-top-right">
                                                 <div>Giáo viên</div>
                                                 <div>{formatDate(event.createdAt)}</div>

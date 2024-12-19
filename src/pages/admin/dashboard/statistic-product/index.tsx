@@ -3,7 +3,7 @@ import { useState } from 'react'
 import './StatisticProduct.style.scss'
 import dayjs, { Dayjs } from 'dayjs';
 import { StatisticProductType } from '../../../../types/StatisticType';
-import { getStatisticCourseByTime } from '../../../../services/StatisticService';
+import { exportByCourse, getStatisticCourseByTime } from '../../../../services/StatisticService';
 import { formatCurrency } from '../../../../utils/Format';
 import { FaFileExcel } from 'react-icons/fa6';
 function StatisticProduct() {
@@ -31,6 +31,17 @@ function StatisticProduct() {
             width: 200,
         }
     ];
+
+    const handleExport = async () => {
+        if (statisticProducts && statisticProducts.length > 0) {
+            const res = await exportByCourse(statisticProducts);
+            if (res.status == 200) {
+                alert("success");
+            }
+        } else {
+            alert("No data to export")
+        }
+    }
     const handleChange = async (
         _dates: [Dayjs | null, Dayjs | null] | null,
         dateStrings: [string, string]
@@ -85,7 +96,7 @@ function StatisticProduct() {
                         onChange={handleChange}
                     />
                     <div className="statistic-product-input-right">
-                        <Button className="statistic-product-input-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
+                        <Button onClick={handleExport} className="statistic-product-input-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
                     </div>
                 </div>
             </div>

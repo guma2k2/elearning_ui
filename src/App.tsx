@@ -43,6 +43,8 @@ import WhiteBoard from "./components/whiteboard";
 import TestChatApp from "./components/chat/testChatApp";
 import Verify from "./pages/verify";
 import PromotionManagement from "./pages/admin/promotion";
+import AssignCourse from "./pages/admin/promotion/AssignCourse";
+import QuestionContentUser from "./pages/admin/course/questionContent/QuestionContentUser";
 function App() {
   const router = createBrowserRouter([
     {
@@ -63,7 +65,7 @@ function App() {
           element: <Login />,
         },
         {
-          path: "/verify/:email",
+          path: "/verify/:email/:type",
           element: <Verify />,
         },
         {
@@ -156,7 +158,14 @@ function App() {
         {
           path: "/admin/courses/edit/:id",
           element: <CourseEdit />
-
+        },
+        {
+          path: "/admin/promotions/edit/:id",
+          element: <AssignCourse />
+        },
+        {
+          path: "/admin/courses/question/:id",
+          element: <QuestionContentUser />
         },
         {
           path: "/admin/coupons",

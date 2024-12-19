@@ -1,32 +1,28 @@
-import { Button, Col, Form, Input, Modal, Popconfirm, Row, Select } from "antd";
 import { useEffect, useState } from "react";
-import './QuestionContent.style.scss'
-import { MdOutlineEdit, MdOutlineQuestionAnswer } from "react-icons/md";
-import TextArea from "antd/es/input/TextArea";
-import { ILecture, IQuiz } from "../../types/CourseType";
-import { createQuestionLecture, deleteQuestionLecture, getByCourse, getByLectureId, updateQuestionLecture } from "../../services/QuestionLectureService";
-import { AnswerLecturePostType, AnswerLectureType, QuestionLecturePostType, QuestionLectureType } from "../../types/QuestionLectureType";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
+import { RootState } from "../../../../redux/store";
+import { Button, Col, Form, Input, Modal, Popconfirm, Row, Select } from "antd";
+import { AnswerLecturePostType, AnswerLectureType, QuestionLectureType } from "../../../../types/QuestionLectureType";
+import { createUserAnswerLecture, deleteUserAnswerLecture, updateUserAnswerLecture } from "../../../../services/UserAnswerService";
+import { useParams } from "react-router-dom";
 import { AxiosError } from "axios";
-import { ErrorType } from "../../types/ErrorType";
-import { useAppSelector } from "../../redux/hooks";
-import { RootState } from "../../redux/store";
-import { createStudentAnswerLecture, deleteStudentAnswerLecture, updateStudentAnswerLecture } from "../../services/StudentAnswerService";
+import { ErrorType } from "../../../../types/ErrorType";
+import { getByCourse, getBySection } from "../../../../services/QuestionLectureService";
+import { fetchCourseById } from "../../../../redux/slices/CourseSlice";
+import { MdOutlineEdit, MdOutlineQuestionAnswer } from "react-icons/md";
 import { CiTrash } from "react-icons/ci";
-type prop = {
-    curriculum: ILecture
-}
-
+import { ILecture, IQuiz } from "../../../../types/CourseType";
+import './QuestionContentUser.style.scss'
 type toggleType = {
     type: "question" | "answer"
 }
-function QuestionContent(props: prop) {
+function QuestionContentUser() {
+    const { id } = useParams();
     const { auth } = useAppSelector((state: RootState) => state.auth);
-    const { learning } = useAppSelector((state: RootState) => state.learning)
-
+    const { currentCourse } = useAppSelector((state: RootState) => state.courses);
     const [answerText, setAnswerText] = useState<string>("");
     const [toggle, setToggle] = useState<toggleType>({ type: "question" })
-    const { curriculum } = props;
-    const [selection, setSelection] = useState<string>("LECTURE")
+    const [selection, setSelection] = useState<string>("ALL")
     const [questions, setQuestions] = useState<QuestionLectureType[]>([]);
     const [questionActive, setQuestionActive] = useState<number>();
     const [open, setOpen] = useState<boolean>(false);
@@ -36,34 +32,6 @@ function QuestionContent(props: prop) {
     const [form] = Form.useForm();
     const [formAnswer] = Form.useForm();
 
-    const addDataToFirstItem = (newItem: QuestionLectureType) => {
-        setQuestions((prevQuestions) => [newItem, ...prevQuestions]);
-    };
-
-    const modifyQuestionById = (id: number, updatedData: Partial<QuestionLectureType>) => {
-        setQuestions((prevQuestions) =>
-            prevQuestions.map((question) =>
-                question.id === id ? { ...question, ...updatedData } : question
-            )
-        );
-    };
-
-
-    const getCurrenCurriculum = (sectionId: number, curriculumId: number): (ILecture | IQuiz | undefined) => {
-        if (learning) {
-
-            const section = learning.course.sections.find(sec => sec.id === sectionId);
-            if (section) {
-                return section.curriculums.find(cur => cur.id === curriculumId && cur.type == "lecture");
-            }
-        }
-        return undefined;
-    }
-
-
-    const showModalAnswer = () => {
-        setOpenAnswer(true)
-    }
 
     const handleOkAnswer = () => {
         formAnswer.submit()
@@ -73,16 +41,6 @@ function QuestionContent(props: prop) {
         formAnswer.resetFields();
     };
 
-    const showModal = () => {
-        setOpen(true);
-    };
-    const handleOk = () => {
-        form.submit()
-    };
-    const handleCancel = () => {
-        setOpen(false);
-        form.resetFields();
-    };
 
     const addAnswerToQuestion = (questionId: number | undefined, newAnswer: AnswerLectureType) => {
         setQuestions((prevQuestions) =>
@@ -101,7 +59,7 @@ function QuestionContent(props: prop) {
                 ...values, questionLectureId: questionActive
             }
             if (values.id) {
-                const resUpdate = await updateStudentAnswerLecture(newValues, values.id)
+                const resUpdate = await updateUserAnswerLecture(newValues, values.id)
                 if (resUpdate.status == 200) {
                     const newAnswer = resUpdate.data as AnswerLectureType
                     modifyAnswerInQuestion(questionActive, values.id, newAnswer);
@@ -113,68 +71,6 @@ function QuestionContent(props: prop) {
 
     }
 
-    const onFinish = async (values: QuestionLecturePostType) => {
-        const title = values.title;
-        const newValues: QuestionLecturePostType = {
-            ...values, title: title.trim(), lectureId: curriculum.id ? curriculum.id : 0
-        }
-
-
-        // setPending(true);
-        const type = values.id ? "update" : "create";
-
-
-        if (type === "create") {
-            try {
-                const resSave = await createQuestionLecture(newValues);
-                if (resSave.status === 200) {
-
-                    const data = resSave.data as QuestionLectureType
-
-                    const newData: QuestionLectureType = {
-                        ...data, answers: []
-                    }
-                    addDataToFirstItem(newData);
-                    form.resetFields();
-                    setOpen(false);
-                    alert("Add successful");
-                }
-
-            } catch (error: AxiosError | any) {
-                if (error.response) {
-                    console.log(error.response.data);
-                    const data = error.response.data as ErrorType;
-                    const message = data.details;
-                    // setPending(false)
-                    alert(message)
-                }
-            }
-
-        } else {
-            try {
-                const questionId = values.id;
-                const resUpdate = await updateQuestionLecture(newValues, questionId);
-                if (resUpdate.status === 200) {
-
-                    const resData = resUpdate.data as QuestionLectureType
-                    modifyQuestionById(resData.id, resData)
-                    form.resetFields();
-                    setOpen(false)
-                    alert("Update successful");
-                }
-            } catch (error: AxiosError | any) {
-                if (error.response) {
-                    console.log(error.response.data);
-                    const data = error.response.data as ErrorType;
-                    const message = data.details;
-                    // setPending(false)
-                    alert(message)
-
-                }
-            }
-        }
-    }
-
     const getCurrentQuestionActive = (): QuestionLectureType => {
         const question = questions.find((q) => q.id === questionActive);
         if (!question) {
@@ -183,24 +79,26 @@ function QuestionContent(props: prop) {
         return question;
     };
 
-    const fetchQuestionLectures = async () => {
-        console.log(curriculum);
 
-        const res = await getByLectureId(curriculum.id)
-        console.log(res);
-
-        if (res.status == 200) {
-            const data = res.data as QuestionLectureType[]
-            setQuestions(data)
-        }
-    }
 
 
     const fetchQuestionLecturesByCourse = async () => {
-        console.log(curriculum);
 
-        if (learning) {
-            const res = await getByCourse(learning.course.id)
+        if (currentCourse) {
+            const res = await getByCourse(currentCourse.id)
+
+            if (res.status == 200) {
+                const data = res.data as QuestionLectureType[]
+                setQuestions(data)
+            }
+        }
+    }
+
+    const fetchQuestionLecturesBySection = async () => {
+
+        if (selection) {
+            const secId = parseInt(selection)
+            const res = await getBySection(secId);
 
             if (res.status == 200) {
                 const data = res.data as QuestionLectureType[]
@@ -220,7 +118,7 @@ function QuestionContent(props: prop) {
                     ? {
                         ...question,
                         answers: question.answers.map((answer) =>
-                            answer.id === answerId && answer.user.role == "ROLE_STUDENT"
+                            answer.id === answerId && answer.user.role !== "ROLE_STUDENT"
                                 ? { ...answer, ...updatedAnswerData }
                                 : answer
                         ),
@@ -231,21 +129,25 @@ function QuestionContent(props: prop) {
     };
 
 
-    const deleteStudentAnswer = (questionId: number | undefined, answerId: number) => {
+    const deleteAnswer = (
+        sectionId: number | undefined,
+        answerId: number
+    ) => {
         setQuestions((prevQuestions) =>
             prevQuestions.map((question) =>
-                question.id === questionId
+                question.lecture.sectionId === sectionId // Check sectionId
                     ? {
                         ...question,
                         answers: question.answers.filter(
                             (answer) =>
-                                answer.id !== answerId || answer.user.role !== "ROLE_STUDENT"
-                        ),
+                                answer.id !== answerId || answer.user.role === "ROLE_STUDENT"
+                        ), // Delete if role != "ROLE_STUDENT"
                     }
                     : question
             )
         );
     };
+
 
 
 
@@ -260,8 +162,8 @@ function QuestionContent(props: prop) {
 
 
         if (auth) {
-            if (auth.user.role == "ROLE_STUDENT") {
-                const res = await createStudentAnswerLecture(values);
+            if (auth.user.role != "ROLE_STUDENT") {
+                const res = await createUserAnswerLecture(values);
                 console.log(res);
                 console.log(values);
 
@@ -275,34 +177,13 @@ function QuestionContent(props: prop) {
         }
     }
 
-    const deleteQuestionById = (id: number) => {
-        setQuestions((prevQuestions) => prevQuestions.filter((question) => question.id !== id));
-    };
-
-    const handleDeleteQuestion = async (questionId: number) => {
-        try {
-            const resSave = await deleteQuestionLecture(questionId);
-            if (resSave.status === 204) {
-                deleteQuestionById(questionId)
-                alert("Delete successful");
-            }
-
-        } catch (error: AxiosError | any) {
-            if (error.response) {
-                console.log(error.response.data);
-                const data = error.response.data as ErrorType;
-                const message = data.details;
-                alert(message)
-            }
-        }
-    }
 
 
     const handleDeleteAnswer = async (id: number) => {
         try {
-            const resSave = await deleteStudentAnswerLecture(id);
+            const resSave = await deleteUserAnswerLecture(id);
             if (resSave.status === 204) {
-                deleteStudentAnswer(questionActive, id)
+                deleteAnswer(questionActive, id)
                 alert("Delete successful");
             }
 
@@ -316,23 +197,19 @@ function QuestionContent(props: prop) {
         }
     }
 
+    const getCurrenCurriculum = (sectionId: number, curriculumId: number): (ILecture | IQuiz | undefined) => {
+        if (currentCourse) {
 
-    const handleEditQuestion = async (questionId: number) => {
-        setOpen(true);
-        const question = questions.find((q) => q.id === questionId);
-        if (!question) {
-            throw new Error('Active question not found');
+            const section = currentCourse.sections.find(sec => sec.id === sectionId);
+            if (section) {
+                return section.curriculums.find(cur => cur.id === curriculumId && cur.type == "lecture");
+            }
         }
-
-
-        if (question) {
-            form.setFieldsValue({
-                id: question.id,
-                title: question.title,
-                description: question.description
-            })
-        }
+        return undefined;
     }
+
+
+
 
     const handleEditAnswer = async (ans: AnswerLectureType) => {
         setOpenAnswer(true)
@@ -343,19 +220,19 @@ function QuestionContent(props: prop) {
             })
         }
     }
-
+    const dispatch = useAppDispatch();
     useEffect(() => {
-        if (selection == "LECTURE") {
-            fetchQuestionLectures();
-        } else if (selection == "ALL") {
+        dispatch(fetchCourseById(id));
+        if (selection == "ALL") {
             fetchQuestionLecturesByCourse();
+        } else {
+            fetchQuestionLecturesBySection();
         }
 
-    }, [curriculum, selection])
+    }, [id, selection])
 
-    // console.log(getCurrenCurriculum(getCurrentQuestionActive().lecture.sectionId, getCurrentQuestionActive().lecture.id)?.index);
 
-    return <div className="question-lecture-container">
+    return <div className="question-content-user-container">
         {toggle.type == "question" &&
             <div className="question-lecture-top">
                 <div className="question-lecture-filter">
@@ -364,57 +241,15 @@ function QuestionContent(props: prop) {
                         style={{ width: "250px", height: "100%" }}
                         value={selection}
                         onChange={(value) => {
-                            alert(value);
                             setSelection(value);
                         }}
                     >
                         <Select.Option value="ALL">Tất cả các bài giảng</Select.Option>
-                        <Select.Option value="LECTURE">Trong bài học này</Select.Option>
+                        {currentCourse && currentCourse.sections && currentCourse.sections.length > 0 &&
+                            currentCourse.sections.map((sec, index) => <Select.Option value={sec.id} key={`section-select-question-${sec.id}`}>Chương {index + 1}: {sec.title}</Select.Option>)}
                     </Select>
                 </div>
-                <div className="question-lecture-create">
-                    <Button onClick={showModal}>Tạo câu hỏi</Button>
-                    <Modal
-                        title="Câu hỏi"
-                        open={open}
-                        onOk={handleOk}
-                        confirmLoading={confirmLoading}
-                        onCancel={handleCancel}
-                    >
-                        <Form layout="vertical" onFinish={onFinish} form={form} >
-                            <Form.Item
-                                name="id"
-                                style={{ display: "none" }}
-                            >
-                                <Input type='hidden' />
-                            </Form.Item>
-                            <Row gutter={24}>
-                                <Col span={24}>
-                                    <Form.Item
-                                        name="title"
-                                        label="Tiêu đề hoặc tóm tắt"
-                                        rules={[{ required: true, }]}
-                                    >
-                                        <Input placeholder="Ví dụ: Vì sao lại dùng hàm này?" />
-                                    </Form.Item>
-                                </Col>
 
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={24}>
-                                    <Form.Item
-                                        name="description"
-                                        label="Mô tả"
-                                        rules={[{ required: true, }]}
-                                    >
-                                        <TextArea placeholder="Nhập mã" />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-
-                        </Form>
-                    </Modal>
-                </div>
             </div>
         }
         <div className="question-lecture-wrapper">
@@ -441,21 +276,6 @@ function QuestionContent(props: prop) {
                                 <span>{question.answers.length}</span>
                                 <MdOutlineQuestionAnswer className="question-lecture-icon" />
                             </div>
-                            {auth?.user.role === "ROLE_STUDENT" && auth.user.email == question.student.email &&
-                                <div className="question-lecture-edit">
-                                    <MdOutlineEdit className="question-lecture-edit-icon" onClick={() => handleEditQuestion(question.id)} />
-                                    <Popconfirm
-                                        title="Xóa câu hỏi này?"
-                                        description="Bạn có chắc chắn xóa câu hỏi này?"
-                                        okText="Có"
-                                        cancelText="Không"
-                                        onConfirm={() => handleDeleteQuestion(question.id)}
-                                    >
-                                        <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
-
-                                        />
-                                    </Popconfirm>
-                                </div>}
                         </div>
                     </div>
                 })}
@@ -489,7 +309,7 @@ function QuestionContent(props: prop) {
                                 <span>{ans.createdAt}</span>
                             </div>
                             <div className="answer-lecture-right" >
-                                {auth?.user.role === "ROLE_STUDENT" && auth.user.email == ans.user.email &&
+                                {auth?.user.role !== "ROLE_STUDENT" && auth?.user.email == ans.user.email &&
                                     <>
                                         <MdOutlineEdit className="answer-lecture-edit-icon" onClick={() => handleEditAnswer(ans)} />
                                         <Modal
@@ -546,4 +366,4 @@ function QuestionContent(props: prop) {
     </div>
 }
 
-export default QuestionContent;
+export default QuestionContentUser;

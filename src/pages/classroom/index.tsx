@@ -239,7 +239,7 @@ function Classroom() {
                 }
             >
                 <Meta
-                    avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
+                    avatar={<Avatar src={classroom.user.photo} />}
                     title={classroom.name}
                     description={classroom.description}
                 />

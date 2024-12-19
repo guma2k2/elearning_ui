@@ -1,4 +1,4 @@
-import { CourseType } from "../types/CourseType";
+import { CourseStatusPostType, CourseType } from "../types/CourseType";
 import instance from "../utils/axiosCustomize";
 
 export const getCourseWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
@@ -60,9 +60,9 @@ export const getCourseByMultiQuery = async (query: string) => {
     return res;
 }
 
-export const updateStatus = async (status: boolean, id: number) => {
-    const url = `/admin/courses/${id}/status/${status}`
-    const res = await instance.put(url);
+export const updateStatus = async (status: CourseStatusPostType, id: number | undefined) => {
+    const url = `/admin/courses/${id}/status`
+    const res = await instance.put(url, status);
     return res;
 }
 
@@ -70,3 +70,8 @@ export const updateStatus = async (status: boolean, id: number) => {
 
 
 
+export const getByPromotionId = async (promotionId: number | string | undefined) => {
+    const url = `/admin/courses/promotions/${promotionId}`
+    const res = await instance.get(url);
+    return res;
+}
