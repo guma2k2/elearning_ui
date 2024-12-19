@@ -1,9 +1,11 @@
+import { AuthType } from "./AuthType"
+
 export type ClassroomType = {
     id: number
     name: string
     description?: string
-    image: string
-
+    image: string,
+    user: AuthType
 }
 
 export type ClassroomPostType = {
@@ -19,7 +21,8 @@ export type ClassroomGetType = {
     name: string
     description: string
     image: string
-    events: (IMeeting | IReference)[]
+    events: (IMeeting | IReference)[],
+    user: AuthType
 
 }
 

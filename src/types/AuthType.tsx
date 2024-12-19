@@ -46,5 +46,6 @@ export type ConfirmPassword = {
 
 export type VerifyRequest = {
     verificationCode: string,
-    email: string
+    email: string,
+    type: string
 }

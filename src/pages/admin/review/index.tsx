@@ -1,8 +1,13 @@
-import { Button, Flex, Input, PaginationProps, Select, Switch, Table, TableColumnsType } from 'antd';
+import { Button, Col, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Row, Select, Switch, Table, TableColumnsType } from 'antd';
 import { useEffect, useState } from 'react';
-import { ReviewGet } from '../../../types/ReviewType';
-import { getWithPagination, updateStatus } from '../../../services/ReviewService';
+import { ReviewGet, ReviewStatusPostType } from '../../../types/ReviewType';
+import { getWithPagination, updateStatus, updateStatusReview } from '../../../services/ReviewService';
 import './ReviewManagement.style.scss'
+type StatusType = {
+    id?: number
+    status: string,
+    reason: string
+}
 function ReviewManagement() {
     const [status, setStatus] = useState<string>("ALL");
     const [current, setCurrent] = useState<number>(1);
@@ -11,13 +16,17 @@ function ReviewManagement() {
     const [reviewList, setReviewList] = useState<ReviewGet[]>([]);
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>();
     const [keyword, setKeyword] = useState<string>("");
+    const [openStatus, setOpenStatus] = useState<boolean>(false);
+    const [formStatus] = Form.useForm();
 
-    const handleUpdateStatus = async (checked: string, id: number) => {
-        // const res = await updateStatus(checked, id);
-        // if (res.status === 204) {
-        //     setIsDataUpdated((prev) => !prev);
-        // }
-    }
+
+    const updateStatusReviewState = (id: number | undefined, newStatus: ReviewStatusPostType) => {
+        setReviewList((prevReviews) =>
+            prevReviews.map((review) =>
+                review.id === id ? { ...review, status: newStatus.status, reason: newStatus.reason } : review
+            )
+        );
+    };
     const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newKeyword = e.target.value;
         setKeyword(newKeyword)
@@ -39,6 +48,49 @@ function ReviewManagement() {
             setTotalElements(res.data.totalElements)
         }
     }
+
+    const onFinishStatus = async (values: StatusType) => {
+        console.log(values);
+
+        const body: ReviewStatusPostType = {
+            status: "UNPUBLISHED",
+            reason: values.reason
+        }
+        const resUpdate = await updateStatusReview(body, values.id);
+        if (resUpdate.status === 204) {
+            updateStatusReviewState(values.id, body)
+            alert("success");
+            setOpenStatus(false);
+        }
+    }
+
+    const handleUpdateStatus = async (checked: string, id: number) => {
+        if (checked === "UNPUBLISHED") {
+            formStatus.setFieldsValue({
+                id: id,
+            })
+            setOpenStatus(true);
+        } else {
+            const body: ReviewStatusPostType = {
+                status: checked,
+                reason: ""
+            }
+            const resUpdate = await updateStatusReview(body, id);
+            if (resUpdate.status === 204) {
+                updateStatusReviewState(id, body)
+                alert("success");
+            }
+        }
+    }
+    const handleOkStatus = () => {
+        // setConfirmLoading(true);
+        formStatus.submit()
+    };
+
+    const handleCancelStatus = () => {
+        formStatus.resetFields()
+        setOpenStatus(false);
+    };
 
     useEffect(() => {
         const fetchReviews = async () => {
@@ -81,7 +133,7 @@ function ReviewManagement() {
         {
             title: 'Trạng thái',
             dataIndex: 'active',
-            width: 100,
+            width: 300,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Select
@@ -91,9 +143,45 @@ function ReviewManagement() {
                     >
                         <Select.Option value="PUBLISHED">Công khai</Select.Option>
                         <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
-                        <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                        <Select.Option value="UNDER_REVIEW">Đang đánh giá</Select.Option>
                     </Select>
-                    {record.status == "UNPUBLISHED" && <Button>Xem ly do</Button>}
+                    <Modal
+                        title="Trạng thái"
+                        open={openStatus}
+                        onOk={handleOkStatus}
+                        // confirmLoading={confirmLoading}
+                        onCancel={handleCancelStatus}
+                    >
+                        <Form layout="vertical" onFinish={onFinishStatus} form={formStatus} >
+                            <Form.Item
+                                name="id"
+                                style={{ display: "none" }}
+                            >
+                                <Input type='hidden' />
+                            </Form.Item>
+                            <Row gutter={24}>
+                                <Col span={24}>
+                                    <Form.Item
+                                        name="reason"
+                                        label="Lý do từ chối"
+                                        rules={[{ required: true, }]}
+                                    >
+                                        <Input placeholder="Nhập lý do" />
+                                    </Form.Item>
+                                </Col>
+
+                            </Row>
+
+                        </Form>
+                    </Modal>
+                    {record.status == "UNPUBLISHED" && <Popconfirm
+                        title="NGUYÊN NHÂN?"
+                        description={`Nguyên nhận: ${record.reason}`}
+                        okText="Xác nhận"
+                        cancelText="Hủy"
+                    >
+                        <Button danger>Xem lý do</Button>
+                    </Popconfirm>}
                 </Flex>
             ),
         },

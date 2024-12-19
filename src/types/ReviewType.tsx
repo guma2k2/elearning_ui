@@ -12,6 +12,10 @@ export type ReviewLearningCourse = {
     review: ReviewGet
 }
 
+export type ReviewStatusPostType = {
+    status: string,
+    reason: string
+}
 
 export type ReviewGet = {
     id: number,
@@ -20,6 +24,7 @@ export type ReviewGet = {
     createdAt: string,
     updatedAt: string,
     status: string,
+    reason: string,
     student: StudentGetType,
     course: CourseGetType
 }

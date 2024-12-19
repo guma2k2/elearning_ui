@@ -1,4 +1,4 @@
-import { OrderPostDto } from "../types/OrderType";
+import { OrderPostDto, OrderStatusPostType } from "../types/OrderType";
 import instance from "../utils/axiosCustomize";
 
 export const save = async (orderPost: OrderPostDto) => {
@@ -34,6 +34,13 @@ export const updateOrderStatus = async (orderId: number, status: string) => {
 export const getBestSellerCourse = async () => {
     const url = "/orders/beseller-courses"
     const res = await instance.get(url);
+    return res;
+}
+
+
+export const updateStatusOrder = async (status: OrderStatusPostType, id: number | undefined) => {
+    const url = `/admin/orders/${id}/status`
+    const res = await instance.put(url, status);
     return res;
 }
 

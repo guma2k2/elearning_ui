@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
 import { useParams } from "react-router-dom";
 
 interface Message {

@@ -1,8 +1,15 @@
-import { Button, Descriptions, DescriptionsProps, Divider, Drawer, Flex, Form, Input, PaginationProps, Popconfirm, Table, TableColumnsType } from 'antd';
+import { Button, Col, Descriptions, DescriptionsProps, Divider, Drawer, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Row, Select, Table, TableColumnsType } from 'antd';
 import { useEffect, useState } from 'react';
-import { OrderDetailType, OrderType } from '../../../types/OrderType';
+import { OrderDetailType, OrderStatusPostType, OrderType } from '../../../types/OrderType';
 import './OrderManagement.style.scss'
-import { getOrderWithPagination } from '../../../services/OrderService';
+import { getOrderWithPagination, updateStatusOrder } from '../../../services/OrderService';
+
+
+type StatusType = {
+    id?: number
+    status: string,
+    reason: string
+}
 function OrderManagement() {
     const [open, setOpen] = useState(false);
     const [current, setCurrent] = useState<number>(1);
@@ -13,6 +20,8 @@ function OrderManagement() {
 
     const [currentOrder, setCurrentOrder] = useState<OrderType>();
 
+    const [openStatus, setOpenStatus] = useState<boolean>(false);
+    const [formStatus] = Form.useForm();
     const handleShowDetailOrder = (orderId: number) => {
         setOpen(true);
         const order = orderList.find((order) => order.id === orderId)
@@ -21,6 +30,57 @@ function OrderManagement() {
 
     const onClose = () => {
         setOpen(false);
+    };
+
+    const updateOrderStatus = (id: number | undefined, newStatus: OrderStatusPostType) => {
+        setOrderList((prevOrders) =>
+            prevOrders.map((order) =>
+                order.id === id ? { ...order, status: newStatus.status, reason: newStatus.reason } : order
+            )
+        );
+    };
+
+    const onFinishStatus = async (values: StatusType) => {
+        console.log(values);
+
+        const body: OrderStatusPostType = {
+            status: "UNPUBLISHED",
+            reason: values.reason
+        }
+        const resUpdate = await updateStatusOrder(body, values.id);
+        if (resUpdate.status === 204) {
+            updateOrderStatus(values.id, body)
+            alert("success");
+            setOpenStatus(false);
+        }
+    }
+
+    const handleUpdateStatus = async (checked: string, id: number) => {
+        if (checked === "UNPUBLISHED") {
+            formStatus.setFieldsValue({
+                id: id,
+            })
+            setOpenStatus(true);
+        } else {
+            const body: OrderStatusPostType = {
+                status: checked,
+                reason: ""
+            }
+            const resUpdate = await updateStatusOrder(body, id);
+            if (resUpdate.status === 204) {
+                updateOrderStatus(id, body)
+                alert("success");
+            }
+        }
+    }
+    const handleOkStatus = () => {
+        // setConfirmLoading(true);
+        formStatus.submit()
+    };
+
+    const handleCancelStatus = () => {
+        formStatus.resetFields()
+        setOpenStatus(false);
     };
 
     useEffect(() => {
@@ -46,6 +106,9 @@ function OrderManagement() {
         const newKeyword = e.target.value;
         setKeyword(newKeyword)
     }
+
+
+
 
     const handleSearch = async () => {
         const res = await getOrderWithPagination(current - 1, pageSize, keyword);
@@ -83,12 +146,62 @@ function OrderManagement() {
         {
             title: 'Thời gian tạo',
             dataIndex: 'createdAt',
-            width: 300,
+            width: 200,
         },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            width: 100,
+            width: 300,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <Select
+                        value={record.status}
+                        onChange={(value) => handleUpdateStatus(value, record.id)}
+                        style={{ width: 150 }}
+                    >
+                        <Select.Option value="PUBLISHED">Công khai</Select.Option>
+                        <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
+                        <Select.Option value="UNDER_REVIEW">Đang đánh giá</Select.Option>
+                    </Select>
+                    <Modal
+                        title="Trạng thái"
+                        open={openStatus}
+                        onOk={handleOkStatus}
+                        // confirmLoading={confirmLoading}
+                        onCancel={handleCancelStatus}
+                    >
+                        <Form layout="vertical" onFinish={onFinishStatus} form={formStatus} >
+                            <Form.Item
+                                name="id"
+                                style={{ display: "none" }}
+                            >
+                                <Input type='hidden' />
+                            </Form.Item>
+                            <Row gutter={24}>
+                                <Col span={24}>
+                                    <Form.Item
+                                        name="reason"
+                                        label="Lý do từ chối"
+                                        rules={[{ required: true, }]}
+                                    >
+                                        <Input placeholder="Nhập lý do" />
+                                    </Form.Item>
+                                </Col>
+
+                            </Row>
+
+                        </Form>
+                    </Modal>
+                    {record.status == "UNPUBLISHED" && <Popconfirm
+                        title="NGUYÊN NHÂN?"
+                        description={`Nguyên nhận: ${record.reason}`}
+                        okText="Xác nhận"
+                        cancelText="Hủy"
+                    >
+                        <Button danger>Xem lý do</Button>
+                    </Popconfirm>}
+                </Flex>
+            ),
         },
         {
             title: 'Tổng tiền',

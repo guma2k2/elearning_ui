@@ -29,7 +29,13 @@ export type CourseType = {
     learning?: boolean,
     slug: string,
     breadcrumb: string,
-    discountedPrice: number
+    discountedPrice: number,
+    reason?: string
+}
+
+export type CourseStatusPostType = {
+    status: string,
+    reason?: string
 }
 
 export type CourseGetType = {
@@ -57,6 +63,11 @@ export type CourseListGetType = {
     discountedPrice: number
 }
 
+export type CourseAssignPromotion = {
+    id: number,
+    title: string,
+    assigned: boolean
+}
 
 export type SectionType = {
     id: number

@@ -1,13 +1,13 @@
-import { Button, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Select, Switch, Table, TableColumnsType, Tag, TreeSelect } from 'antd';
+import { Button, Col, Flex, Form, Input, Modal, PaginationProps, Popconfirm, Row, Select, Switch, Table, TableColumnsType, Tag, TreeSelect } from 'antd';
 import { useEffect, useState } from 'react'
 import './Course.style.scss'
-import { CourseType } from '../../../types/CourseType';
+import { CourseStatusPostType, CourseType } from '../../../types/CourseType';
 import { createCourse, deleteCourse, getCourseWithPagination, updateStatus } from '../../../services/CourseService';
 import { SearchOutlined } from '@ant-design/icons';
 import { getCategoryParents } from '../../../services/CategoryService';
 import { TopicType } from '../topic/TopicType';
 import { getTopicsByCategoryId } from '../../../services/TopicService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../../types/ErrorType';
 import { RootState } from '../../../redux/store';
@@ -18,12 +18,21 @@ type TreeData = {
     children?: TreeData[];
 }
 
+type CourseStatus = {
+    id?: number
+    status: string,
+    reason: string
+}
 
 const Course: React.FC = () => {
+    const navigate = useNavigate();
     const { auth } = useAppSelector((state: RootState) => state.auth);
 
     const [status, setStatus] = useState<string>("ALL");
     const [open, setOpen] = useState<boolean>(false);
+    const [openStatus, setOpenStatus] = useState<boolean>(false);
+    const [formStatus] = Form.useForm();
+
     const [courses, setCourses] = useState<CourseType[]>([]);
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
@@ -34,12 +43,49 @@ const Course: React.FC = () => {
     const [isDataUpdated, setIsDataUpdated] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("");
 
+
+    const updateStatusCourse = (id: number | undefined, newStatus: CourseStatusPostType) => {
+        setCourses((prevCourses) =>
+            prevCourses.map((course) =>
+                course.id === id ? { ...course, status: newStatus.status, reason: newStatus.reason } : course
+            )
+        );
+    };
     const handleUpdateStatus = async (checked: string, id: number) => {
-        // const res = await updateStatus(checked, id);
-        // if (res.status === 204) {
-        //     setIsDataUpdated((prev) => !prev);
-        // }
+        if (checked === "UNPUBLISHED") {
+            formStatus.setFieldsValue({
+                id: id,
+            })
+            setOpenStatus(true);
+        } else {
+            const body: CourseStatusPostType = {
+                status: checked,
+                reason: ""
+            }
+            const resUpdate = await updateStatus(body, id);
+            if (resUpdate.status === 204) {
+                updateStatusCourse(id, body)
+                alert("success");
+            }
+        }
     }
+
+
+    const onFinishStatus = async (values: CourseStatus) => {
+        console.log(values);
+
+        const body: CourseStatusPostType = {
+            status: "UNPUBLISHED",
+            reason: values.reason
+        }
+        const resUpdate = await updateStatus(body, values.id);
+        if (resUpdate.status === 204) {
+            updateStatusCourse(values.id, body)
+            alert("success");
+            setOpenStatus(false);
+        }
+    }
+
     const handleDelete = async (id: number) => {
         try {
             const res = await deleteCourse(id);
@@ -59,12 +105,12 @@ const Course: React.FC = () => {
         {
             title: 'Mã khóa học',
             dataIndex: 'id',
-            width: 200,
+            width: 120,
         },
         {
             title: 'Tiêu đề khóa học',
             dataIndex: 'title',
-            width: 150,
+            width: 300,
 
         },
         {
@@ -80,26 +126,62 @@ const Course: React.FC = () => {
                     >
                         <Select.Option value="PUBLISHED">Công khai</Select.Option>
                         <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
-                        <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                        <Select.Option value="UNDER_REVIEW">Đanh đánh giá</Select.Option>
                     </Select>
-                    {record.status == "UNPUBLISHED" && <Button>Xem ly do</Button>}
+                    <Modal
+                        title="Trạng thái"
+                        open={openStatus}
+                        onOk={handleOkStatus}
+                        // confirmLoading={confirmLoading}
+                        onCancel={handleCancelStatus}
+                    >
+                        <Form layout="vertical" onFinish={onFinishStatus} form={formStatus} >
+                            <Form.Item
+                                name="id"
+                                style={{ display: "none" }}
+                            >
+                                <Input type='hidden' />
+                            </Form.Item>
+                            <Row gutter={24}>
+                                <Col span={24}>
+                                    <Form.Item
+                                        name="reason"
+                                        label="Lý do từ chối"
+                                        rules={[{ required: true, }]}
+                                    >
+                                        <Input placeholder="Nhập lý do" />
+                                    </Form.Item>
+                                </Col>
+
+                            </Row>
+
+                        </Form>
+                    </Modal>
+                    {record.status == "UNPUBLISHED" && <Popconfirm
+                        title="NGUYÊN NHÂN?"
+                        description={`Nguyên nhận: ${record.reason}`}
+                        okText="Xác nhận"
+                        cancelText="Hủy"
+                    >
+                        <Button danger>Xem lý do</Button>
+                    </Popconfirm>}
                 </Flex>
             ),
         },
         {
             title: 'Ngày tạo',
             dataIndex: 'createdAt',
-            width: 300,
+            width: 200,
         },
         {
             title: 'Ngày cập nhật',
             dataIndex: 'updatedAt',
-            width: 300,
+            width: 200,
         },
         {
             title: 'Hành động',
             dataIndex: 'key',
-            width: 250,
+            width: 350,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Button type="primary"><Link to={`edit/${record.id}`}>Cập nhật</Link></Button>
@@ -112,6 +194,7 @@ const Course: React.FC = () => {
                     >
                         <Button danger>Xóa</Button>
                     </Popconfirm>
+                    <Button type="primary"><Link to={`question/${record.id}`}>Câu hỏi</Link></Button>
                 </Flex>
             ),
         },
@@ -130,12 +213,12 @@ const Course: React.FC = () => {
         {
             title: 'Ngày tạo',
             dataIndex: 'createdAt',
-            width: 300,
+            width: 200,
         },
         {
             title: 'Ngày cập nhật',
             dataIndex: 'updatedAt',
-            width: 300,
+            width: 200,
         },
         {
             title: 'Trạng thái',
@@ -151,10 +234,10 @@ const Course: React.FC = () => {
         {
             title: 'Hành động',
             dataIndex: 'key',
-            width: 250,
+            width: 350,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Button type="primary"><Link to={`edit/${record.id}`}>Edit</Link></Button>
+                    <Button type="primary" onClick={() => { navigate(`edit/${record.id}`) }} >Cập nhật</Button>
                     <Popconfirm
                         title="Xóa khóa học này?"
                         description="Bạn có chắc chắn muốn xóa khóa học này?"
@@ -164,6 +247,7 @@ const Course: React.FC = () => {
                     >
                         <Button danger>Xóa</Button>
                     </Popconfirm>
+                    <Button type="primary"><Link to={`question/${record.id}`}>Câu hỏi</Link></Button>
                 </Flex>
             ),
         },
@@ -196,6 +280,12 @@ const Course: React.FC = () => {
         // setConfirmLoading(true);
         form.submit()
     };
+
+    const handleOkStatus = () => {
+        // setConfirmLoading(true);
+        formStatus.submit()
+    };
+
     const showModel = () => {
         setOpen(true);
     };
@@ -203,6 +293,12 @@ const Course: React.FC = () => {
         form.resetFields()
         setOpen(false);
     };
+
+    const handleCancelStatus = () => {
+        formStatus.resetFields()
+        setOpenStatus(false);
+    };
+
     const handleChangeTreeSelect = async (value: number) => {
         console.log(value)
         const res = await getTopicsByCategoryId(value)

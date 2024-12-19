@@ -32,8 +32,8 @@ function CouponManagement() {
         if (currentCoupon) {
             form.setFieldsValue({
                 ...currentCoupon,
-                startTime: dayjs(currentCoupon.startTime, 'YYYY-MM-DD HH:mm:ss'),
-                endTime: dayjs(currentCoupon.endTime, 'YYYY-MM-DD HH:mm:ss')
+                startTime: dayjs(currentCoupon.startTime, 'DD/MM/YYYY HH:mm:ss'),
+                endTime: dayjs(currentCoupon.endTime, 'DD/MM/YYYY HH:mm:ss'),
             })
         }
     }
@@ -130,7 +130,7 @@ function CouponManagement() {
 
     const columns: TableColumnsType<CouponType> = [
         {
-            title: 'Mã khuyến mãi',
+            title: 'Mã',
             dataIndex: 'id',
             width: 200,
         },
@@ -140,7 +140,7 @@ function CouponManagement() {
             width: 250,
         },
         {
-            title: 'Mã',
+            title: 'Mã giảm giá',
             dataIndex: 'code',
             width: 200,
         },
@@ -209,7 +209,7 @@ function CouponManagement() {
             <Button className='coupon-search-btn'>Tìm kiếm</Button>
         </div>
         <Drawer
-            title={`${currentCouponId ? "Cập nhật khuyến mãi" : "Tạo mới khuyến mãi"}`}
+            title={`${currentCouponId ? "Cập nhật mã giảm giá" : "Tạo mới mã giảm giá"}`}
             width={720}
             onClose={onClose}
             open={open}

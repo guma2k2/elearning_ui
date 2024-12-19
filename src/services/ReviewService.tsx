@@ -1,4 +1,4 @@
-import { ReviewPost } from "../types/ReviewType";
+import { ReviewPost, ReviewStatusPostType } from "../types/ReviewType";
 import instance from "../utils/axiosCustomize";
 
 export const getReviewsByCourseId = async (courseId: number | string | undefined, pageNum: number | undefined, ratingStar: number | undefined) => {
@@ -12,6 +12,13 @@ export const getReviewsByCourseId = async (courseId: number | string | undefined
             ratingStar: ratingStar ? ratingStar : null
         }
     })
+    return res;
+}
+
+
+export const updateStatusReview = async (status: ReviewStatusPostType, id: number | undefined) => {
+    const url = `/admin/reviews/${id}/status`
+    const res = await instance.put(url, status);
     return res;
 }
 

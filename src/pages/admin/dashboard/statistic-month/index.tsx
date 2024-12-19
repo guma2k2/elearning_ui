@@ -3,7 +3,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Rectangle, ResponsiveContainer, T
 import dayjs from 'dayjs';
 import { useEffect, useState } from "react"
 import './StatisticMonth.style.scss'
-import { getStatisticByTime } from "../../../../services/StatisticService";
+import { exportByTime, getStatisticByTime } from "../../../../services/StatisticService";
 import { formatCurrency } from "../../../../utils/Format";
 import { FaFileExcel } from "react-icons/fa6";
 type statisticType = {
@@ -28,6 +28,19 @@ function StatisticMonth() {
         }
 
     }
+
+
+    const handleExport = async () => {
+        if (statisticByMonth && statisticByMonth.length > 0) {
+            const res = await exportByTime(statisticByMonth);
+            if (res.status == 200) {
+                alert("success");
+            }
+        } else {
+            alert("No data to export")
+        }
+    }
+
     useEffect(() => {
         let param: string = "";
         if (time) {
@@ -48,7 +61,7 @@ function StatisticMonth() {
                 <DatePicker onChange={onChange} picker="month" defaultValue={currentMonth} />
             </div>
             <div className="dashboard-month-year-right">
-                <Button className="dashboard-month-year-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
+                <Button onClick={handleExport} className="dashboard-month-year-btn-export" icon={<FaFileExcel />}>Xuất file</Button>
             </div>
         </div>
         <div className="dashboard-chart-container">

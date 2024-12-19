@@ -7,18 +7,20 @@ import { LoginRequest } from '../../types/AuthType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 import { login } from '../../redux/slices/AuthenticationSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ROLE_ADMIN, ROLE_INSTRUCTOR } from '../../utils/Constants'
 
 
 function Login() {
-
     const dispatch = useAppDispatch();
+    const [loading, setLoading] = useState<boolean>(false);
     const { isLoggin, auth } = useAppSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
 
     const onFinish: FormProps<LoginRequest>['onFinish'] = async (values) => {
+        setLoading(true)
         dispatch(login(values));
+        setLoading(false)
     };
     const onFinishFailed = () => {
         console.log('Failed:');
@@ -61,6 +63,7 @@ function Login() {
                 </h2>
                 <div className="form">
                     <Form
+                        disabled={loading}
                         layout='vertical'
                         name="basic"
                         labelCol={{

@@ -40,3 +40,9 @@ export const verifyEmail = async (request: VerifyRequest) => {
     const res = await instance.post(url, request);
     return res;
 }
+
+export const resend = async (email: string | undefined) => {
+    const url = `auth/resend?email=${email}`;
+    const res = await instance.post(url);
+    return res;
+}

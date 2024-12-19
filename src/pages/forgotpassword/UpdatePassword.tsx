@@ -3,15 +3,22 @@ import { ConfirmPassword, UpdatePasswordRequest } from "../../types/AuthType";
 import { updatePassword } from "../../services/AuthService";
 import { AxiosError } from "axios";
 import { ErrorType } from "../../types/ErrorType";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 
 
 function UpdatePassword() {
+    const [form] = Form.useForm();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(false);
     const onFinish: FormProps<ConfirmPassword>['onFinish'] = async (values) => {
+        setLoading(true);
         const pass = values.password;
         const confirmPass = values.confirmPassword;
         if (pass != confirmPass) {
             alert("Password and confirm password is not the same");
+            setLoading(false)
         } else {
             const searchParams = new URLSearchParams(location.search);
             const email = searchParams.get('email');
@@ -24,12 +31,18 @@ function UpdatePassword() {
                     const res = await updatePassword(updateRequest);
                     if (res.status == 204) {
                         alert("update password successful");
+                        setLoading(false)
+
+                        form.resetFields();
+                        navigate("/login")
                     }
                 } catch (error: AxiosError | any) {
                     if (error.response) {
                         console.log(error.response.data);
                         const data = error.response.data as ErrorType;
                         const message = data.details;
+                        setLoading(false)
+
                         alert(message)
                     }
                 }
@@ -48,10 +61,12 @@ function UpdatePassword() {
         </div>
         <div className="right">
             <h2 className="header">
-                Change password
+                Thay đổi mật khẩu
             </h2>
             <div className="form">
                 <Form
+                    disabled={loading}
+                    form={form}
                     layout='vertical'
                     name="basic"
                     labelCol={{
@@ -80,7 +95,7 @@ function UpdatePassword() {
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your email!',
+                                message: 'Mật khẩu không được để trống',
                             },
                         ]}
                     >
@@ -96,7 +111,7 @@ function UpdatePassword() {
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your email!',
+                                message: 'Mật khẩu không được để trống',
                             },
                         ]}
                     >
@@ -107,8 +122,8 @@ function UpdatePassword() {
                             span: 24,
                         }}
                     >
-                        <Button type="primary" htmlType="submit" style={{ width: "100%", height: "48px", borderRadius: "0", fontSize: "16px" }}>
-                            Xac nhan thay doi
+                        <Button disabled={loading} type="primary" htmlType="submit" style={{ width: "100%", height: "48px", borderRadius: "0", fontSize: "16px" }}>
+                            Xác nhận thay đổi
                         </Button>
                     </Form.Item>
                 </Form>

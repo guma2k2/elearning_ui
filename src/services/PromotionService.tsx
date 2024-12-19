@@ -25,3 +25,15 @@ export const update = async (couponPost: PromotionPostType, promotioinId: number
     const res = await instance.put(url, couponPost);
     return res;
 }
+
+export const assignCourse = async (courseId: number, promotionId: number | string | undefined) => {
+    const url = `/admin/add/course/${courseId}/to/promotion/${promotionId}`;
+    const res = await instance.post(url);
+    return res;
+}
+
+export const removeCourse = async (courseId: number, promotionId: number | string | undefined) => {
+    const url = `/admin/remove/course/${courseId}/from/promotion/${promotionId}`;
+    const res = await instance.delete(url);
+    return res;
+}

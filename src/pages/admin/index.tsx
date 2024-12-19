@@ -9,7 +9,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import PopoverUserProfile from '../../components/popover-user-photo';
 import { useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
-
+import { match } from 'path-to-regexp';
 const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -40,14 +40,28 @@ const App: React.FC = () => {
         '/admin/categories': '3',
         '/admin/topics': '4',
         '/admin/courses': '5',
+        '/admin/courses/edit/:id': '5',
+        '/admin/courses/question/:id': '5',
         '/admin/coupons': '6',
         '/admin/orders': '7',
         '/admin/reviews': '8',
         '/admin/students': '9',
         '/admin/promotions': '10',
+        '/admin/promotions/edit/:id': '10',
     };
+
+    function getKeyForPath(path: string): string {
+        for (const [route, key] of Object.entries(pathToKeyMap)) {
+            const matcher = match(route, { decode: decodeURIComponent });
+            if (matcher(path)) {
+                return key;
+            }
+        }
+        return '1'; // Default key if no match is found
+    }
+
     useEffect(() => {
-        const matchedKey = pathToKeyMap[location.pathname] || '1';
+        const matchedKey = getKeyForPath(location.pathname);
         console.log(matchedKey);
         setSelectedKey(matchedKey);
     }, [location.pathname]);
@@ -91,7 +105,7 @@ const App: React.FC = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical" style={{ height: "80px", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }} >
-                    ADMIN
+                    Quản trị
                 </div>
                 <Menu onClick={handleMenuClick} selectedKeys={[selectedKey]} theme="dark" mode="inline" items={items} />
             </Sider>

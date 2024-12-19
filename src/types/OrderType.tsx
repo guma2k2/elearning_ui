@@ -10,6 +10,10 @@ export type OrderPostDto = {
     orderDetails: OrderDetailPostDto[]
 }
 
+export type OrderStatusPostType = {
+    status: string,
+    reason: string
+}
 
 export type OrderType = {
     id: number,
@@ -18,6 +22,7 @@ export type OrderType = {
     createdAt: string,
     status: string,
     totalPrice: number,
+    reason: string,
     orderDetails: OrderDetailType[]
 }
 

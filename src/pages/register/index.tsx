@@ -7,26 +7,42 @@ import { registerUser } from "../../services/AuthService";
 import { AxiosError } from "axios";
 import { ErrorType } from "../../types/ErrorType";
 import { useForm } from "antd/es/form/Form";
+import { useState } from "react";
 function Register() {
     const [form] = Form.useForm();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const onFinish: FormProps<RegisterRequest>['onFinish'] = async (values) => {
         try {
+            setLoading(true);
             const res = await registerUser(values);
             if (res.status == 200) {
-                const data = res.data as AuthType;
                 alert("Vui lòng kiểm tra mail để hoàn tất đăng ký")
-                navigate(`/verify/${values.email}`)
                 form.resetFields();
+                setLoading(false)
+                navigate(`/verify/${values.email}/register`)
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
-                console.log(error.response.data);
-                const data = error.response.data as ErrorType;
-                const message = data.details;
-                alert(message)
+                console.log(error.response);
+                if (error.response.status == 400) {
+                    form.resetFields();
+                    console.log(error.response);
+                    const message = error.response.data.details
+                    alert(message)
+                    setLoading(false)
+
+                    navigate(`/verify/${values.email}/register`)
+                } else {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    setLoading(false)
+                    alert(message)
+                }
             }
+
         }
 
     };
@@ -43,6 +59,7 @@ function Register() {
             </h2>
             <div className="form">
                 <Form
+                    disabled={loading}
                     form={form}
                     layout='vertical'
                     name="basic"

@@ -63,12 +63,7 @@ function Meeting() {
         return ""
     }
 
-    // Function to get meeting ID and token
-    // const getMeetingAndToken = async (id: string | null) => {
-    //     console.log(authToken);
-    //     const newMeetingId = id == null ? await createMeeting({ token: authToken }) : id;
-    //     setMeetingId(newMeetingId);
-    // };
+
 
     // Reset meetingId when meeting is left
     const onMeetingLeave = () => {
