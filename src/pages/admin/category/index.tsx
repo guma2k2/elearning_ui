@@ -73,12 +73,12 @@ function Category() {
         {
             title: 'Trạng thái',
             dataIndex: 'isPublish',
-            width: 100,
+            width: 200,
             render: (_text, record) => {
                 console.log(record.isPublish);
 
                 return <Flex gap="small" wrap="wrap">
-                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatusCateogry(checked, record.id)} />
+                    <Switch checkedChildren="Công khai" unCheckedChildren="Không công khai" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatusCateogry(checked, record.id)} />
                 </Flex>
             }
             ,

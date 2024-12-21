@@ -33,7 +33,8 @@ function FilterCourse(props: PropType) {
             </div>
         </div>
         <div className="filter-right-course-right">
-            {formatCurrency(course.price)}
+            <span>{course.free == true ? "Miễn phí" : course.price != course.discountedPrice ? formatCurrency(course.discountedPrice) : formatCurrency(course.price)}</span>
+            {course.free == false && course.price != course.discountedPrice && <span className='course-discountPrice'>{formatCurrency(course.price)}</span>}
         </div>
     </div>
 }

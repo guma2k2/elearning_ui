@@ -14,7 +14,10 @@ function CourseEdit() {
     const { currentCourse, isLoading } = useAppSelector((state: RootState) => state.courses);
 
     useEffect(() => {
-        dispatch(fetchCourseById(id));
+        if (id) {
+            console.log(id);
+            dispatch(fetchCourseById(id));
+        }
     }, [id])
 
     return (

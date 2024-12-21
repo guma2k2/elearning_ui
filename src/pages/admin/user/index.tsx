@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Table, Button, Flex, Col, Drawer, Form, Input, Row, Select, Space, Popconfirm, message, Switch, InputNumber } from 'antd';
 import type { PaginationProps, GetProp, UploadProps, TableColumnsType } from 'antd';
 import UserPhoto from "../../../assets/userPhoto.png"
@@ -37,8 +37,8 @@ for (let i = 1; i <= 12; i++) {
         label: `Thang ${i}`
     })
 }
-
-function User() {
+const User: React.FC = () => {
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { auth } = useAppSelector((state: RootState) => state.auth);
     const dispatch = useAppDispatch();
     const [open, setOpen] = useState(false);
@@ -56,9 +56,18 @@ function User() {
     const handleUpdateStatus = async (checked: boolean, id: number) => {
         const res = await updateStatus(checked, id);
         if (res.status === 204) {
-            setIsDataUpdated((prev) => !prev);
+            toggleActiveField(id, checked);
+            alert("Update success")
         }
     }
+
+    const toggleActiveField = (id: number, newActive: boolean) => {
+        setUserList((prevUserList) =>
+            prevUserList.map((user) =>
+                user.id === id ? { ...user, active: newActive } : user
+            )
+        );
+    };
     useEffect(() => {
         const fetchUsers = async () => {
             const res = await getWithPagination(current - 1, pageSize, null);
@@ -79,12 +88,19 @@ function User() {
         fetchUsers()
     }, [current, pageSize, isDataUpdated])
 
+    const updateUser = (updatedUser: UserType) => {
+        setUserList((prevUserList) =>
+            prevUserList.map((user) =>
+                user.id === updatedUser.id ? updatedUser : user
+            )
+        );
+    };
 
     const columns: TableColumnsType<UserType> = [
         {
             title: 'Mã người dùng',
             dataIndex: 'id',
-            width: 200,
+            width: 130,
         }, {
             title: 'Ảnh ',
             dataIndex: 'photo',
@@ -106,20 +122,20 @@ function User() {
         {
             title: 'Họ',
             dataIndex: 'firstName',
-            width: 200,
+            width: 150,
         },
         {
             title: 'Tên',
             dataIndex: 'lastName',
-            width: 200,
+            width: 150,
         },
         {
             title: 'Trạng thái',
             dataIndex: 'active',
-            width: 100,
+            width: 200,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Switch checkedChildren="active" unCheckedChildren="unactive" checked={record.active} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                    <Switch checkedChildren="Đang hoạt động" unCheckedChildren="Ẩn" checked={record.active} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
                 </Flex>
             ),
         },
@@ -127,11 +143,23 @@ function User() {
             title: 'Giới tính',
             dataIndex: 'gender',
             width: 100,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    {record.gender == "MALE" && "Nam"}
+                    {record.gender == "FEMALE" && "Nữ"}
+                </Flex>
+            ),
         },
         {
             title: 'Vai trò',
             dataIndex: 'role',
-            width: 100,
+            width: 150,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    {record.role == "ROLE_INSTRUCTOR" && "Giáo viên"}
+                    {record.role == "ROLE_ADMIN" && "Quản trị viên"}
+                </Flex>
+            ),
         },
         {
             title: 'Hành động',
@@ -140,7 +168,7 @@ function User() {
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Button type="primary" onClick={() => handleUpdateUser(record.id)}>Cập nhật</Button>
-                    <Popconfirm
+                    {/* <Popconfirm
                         title="Xóa người dùng này?"
                         description="Bạn có chắc chắn xóa người dùng này?"
                         okText="Có"
@@ -148,7 +176,7 @@ function User() {
                         onConfirm={() => handleDelete(record.id)}
                     >
                         <Button danger>Xóa</Button>
-                    </Popconfirm>
+                    </Popconfirm> */}
                 </Flex>
             ),
         },
@@ -187,9 +215,6 @@ function User() {
 
     const onFinish = async (values: UserType) => {
         const emailUser = values.email;
-        const newValues: UserType = {
-            ...values, email: emailUser.trim()
-        }
         setPending(true);
         console.log(values);
         const type = currentUser ? "update" : "create";
@@ -199,13 +224,17 @@ function User() {
         if (checkIsUploadFile) {
             var formData = new FormData();
             formData.append("file", fileType);
-            formData.append("type", "photo");
+            formData.append("type", "image");
             const res = await uploadFile(formData);
             if (res.status === 200) {
                 photo = res.data.url;
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""; // Reset the file input value
+                }
             }
         }
-        values = { ...values, photo: photo }
+        console.log(photo);
+        const newValues: UserType = { ...values, photo: photo, email: emailUser.trim() }
         console.log(values);
         if (type === "create") {
             try {
@@ -215,6 +244,7 @@ function User() {
                     alert("Add user successful");
                     form.resetFields();
                     setOpen(false);
+                    setIsDataUpdated((isDataUpdated) => !isDataUpdated)
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
@@ -239,6 +269,8 @@ function User() {
                 if (resUpdateUser.status === 200) {
                     alert("Update user successful");
                     const data = resUpdateUser.data as AuthType;
+                    const actualData = resUpdateUser.data as UserType
+                    updateUser(actualData)
                     form.resetFields();
                     setOpen(false)
                     if (userId == auth?.user.id) {
@@ -258,7 +290,6 @@ function User() {
             }
 
         }
-        setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         setPending(false)
     };
 
@@ -364,25 +395,25 @@ function User() {
                             name="id"
                             style={{ display: "none" }}
                         >
-                            <Input placeholder="Please enter user name" type='hidden' />
+                            <Input type='hidden' />
                         </Form.Item>
                         <Row gutter={16}>
                             <Col span={12}>
                                 <Form.Item
                                     name="firstName"
-                                    label="First name"
-                                    rules={[{ required: true, message: 'Please enter user name' }]}
+                                    label="Họ"
+                                    rules={[{ required: true, message: 'Họ không được để trống' }]}
                                 >
-                                    <Input placeholder="Please enter user name" />
+                                    <Input placeholder="Nhập họ" />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
                                 <Form.Item
                                     name="lastName"
-                                    label="Last name"
-                                    rules={[{ required: true, message: 'Please enter last name' }]}
+                                    label="Tên"
+                                    rules={[{ required: true, message: 'Tên không được để trống' }]}
                                 >
-                                    <Input placeholder="Please enter user name" />
+                                    <Input placeholder="Nhập tên" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -390,10 +421,10 @@ function User() {
                             <Col span={12}>
                                 <Form.Item
                                     name="password"
-                                    label="Password"
-                                    rules={currentUser == null ? [{ required: true, message: 'Please select an owner' }, { min: 6, message: "the password must be at least 6 characters" }] : []}
+                                    label="Mật khẩu"
+                                    rules={currentUser == null ? [{ required: true, message: 'Mật khẩu không được để trống' }, { min: 6, message: "the password must be at least 6 characters" }] : []}
                                 >
-                                    <Input type='password' />
+                                    <Input type='password' placeholder="Nhập mật khẩu" />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
@@ -402,7 +433,7 @@ function User() {
                                     label="Email"
                                     rules={[{ required: true, message: 'Email không được bỏ trống' }]}
                                 >
-                                    <Input type='email' />
+                                    <Input type='email' placeholder="Nhập email" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -410,24 +441,23 @@ function User() {
                             <Col span={12}>
                                 <Form.Item
                                     name="gender"
-                                    label="Gender"
-                                    rules={[{ required: true, message: 'Please choose the gender' }]}
+                                    label="Giới tính"
                                 >
                                     <Select>
-                                        <Select.Option value="MALE">MALE</Select.Option>
-                                        <Select.Option value="FEMALE">FEMALE</Select.Option>
+                                        <Select.Option value="MALE">Nam</Select.Option>
+                                        <Select.Option value="FEMALE">Nữ</Select.Option>
                                     </Select>
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
                                 <Form.Item
                                     name="role"
-                                    label="Role"
-                                    rules={[{ required: true, message: 'Please choose role for user' }]}
+                                    label="Vai trò"
+                                    rules={[{ required: true, message: 'Hãy chọn vai trò cho người dùng' }]}
                                 >
                                     <Select >
-                                        <Select.Option value="ROLE_ADMIN">ROLE_ADMIN</Select.Option>
-                                        <Select.Option value="ROLE_INSTRUCTOR">ROLE_INSTRUCTOR</Select.Option>
+                                        <Select.Option value="ROLE_ADMIN">Quản trị viên</Select.Option>
+                                        <Select.Option value="ROLE_INSTRUCTOR">Giáo viên</Select.Option>
                                     </Select>
                                 </Form.Item>
                             </Col>
@@ -436,8 +466,8 @@ function User() {
                             <Col span={8}>
                                 <Form.Item
                                     name="day"
-                                    label="Day"
-                                    rules={[{ required: true, message: 'Please choose the day' }]}
+                                    label="Ngày"
+                                    rules={[{ required: true, message: 'Hãy chọn ngày' }]}
                                 >
                                     <Select >
                                         {day.map((item) => <Select.Option key={item.value} value={item.value}>{item.value}</Select.Option>)}
@@ -447,8 +477,8 @@ function User() {
                             <Col span={8}>
                                 <Form.Item
                                     name="month"
-                                    label="Month"
-                                    rules={[{ required: true, message: 'Please choose the month' }]}
+                                    label="Tháng"
+                                    rules={[{ required: true, message: 'Hãy chọn tháng' }]}
                                 >
                                     <Select >
                                         {month.map((item) => <Select.Option key={item.value} value={item.value}>{item.label}</Select.Option>)}
@@ -458,8 +488,8 @@ function User() {
                             <Col span={8}>
                                 <Form.Item
                                     name="year"
-                                    label="Year"
-                                    rules={[{ required: true, message: 'Please choose the year' }]}
+                                    label="Năm"
+                                    rules={[{ required: true, message: 'Hãy chọn năm' }]}
                                 >
                                     <InputNumber style={{ minWidth: "100%" }} />
                                 </Form.Item>
@@ -467,15 +497,15 @@ function User() {
                         </Row>
                         <Row gutter={16}>
                             <Col span={24}>
-                                <Form.Item name="active" label="Active" valuePropName="checked">
+                                <Form.Item name="active" label="Trạng thái" valuePropName="checked">
                                     <Switch />
                                 </Form.Item>
                             </Col>
                         </Row>
 
                     </Form>
-                    {imageUrl && <img className='user-profile-photo' src={imageUrl} alt="avatar" />}
-                    <Input type="file" onChange={handleFileChange} />
+                    {imageUrl && <img className='user-profile-photo' src={imageUrl} alt="avatar" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100px", height: "100px", objectFit: "cover" }} />}
+                    <input ref={fileInputRef} type="file" onChange={handleFileChange} />
                 </Drawer>
                 <Table columns={columns} dataSource={userList} pagination={{ defaultPageSize: pageSize, defaultCurrent: current, total: totalElements, showSizeChanger: true }} scroll={{ x: 1000 }} onChange={(page) => handleChangePage(page)} />
             </div>

@@ -146,6 +146,7 @@ export const courseSlice = createSlice({
                 state.currentCourse.categoryId = payload.categoryId;
                 state.currentCourse.topicId = payload.topicId;
                 state.currentCourse.price = payload.price
+                state.currentCourse.status = payload.status
             }
         }
 
@@ -159,7 +160,9 @@ export const courseSlice = createSlice({
             })
             .addCase(fetchCourseById.fulfilled, (state, action) => {
                 console.log(action);
+
                 state.currentCourse = action.payload
+                console.log(action.payload);
                 state.isError = false;
                 state.isLoading = false;
             })

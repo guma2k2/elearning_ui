@@ -15,10 +15,10 @@ type filterType = {
     categoryName: string
 }
 function Filter() {
-    const [filter, setFilter] = useState<string>();
-    const [pageNum, setPageNum] = useState<number>(0);
+    const [filter, setFilter] = useState<string>("");
+    // const [pageNum, setPageNum] = useState<number>(0);
     const [courses, setCourses] = useState<CourseListGetType[]>();
-    const [totalElements, setTotalElements] = useState<number>(0);
+    // const [totalElements, setTotalElements] = useState<number>(0);
     const [form] = Form.useForm();
     const [category, setCategory] = useState<CategoryListGetType>()
 
@@ -26,6 +26,8 @@ function Filter() {
 
     const handleOnValuesChange = (_values: string, allValues: filterType) => {
         let newFilter: string = "";
+        console.log(allValues);
+
         if (allValues.level) {
             allValues.level.forEach((l) => {
                 newFilter += `&level=${l}`
@@ -49,22 +51,27 @@ function Filter() {
     const handleReset = () => {
         form.resetFields();
         setFilter("");
-        setPageNum(0);
+        // setPageNum(0);
     }
-    const handleChangeCurrent = (value: number) => {
-        setPageNum(value);
+    const handleChangeCurrent = (_value: number) => {
+        // setPageNum(value);
     }
     useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const keyword = searchParams.get('keyword');
-        const catName = searchParams.get('catName');
-        const topicId = searchParams.get('topicId');
-        if (catName) {
-            fetchCategoryChild(catName);
-        }
-        fetchCourses(keyword, catName, topicId);
+        if (filter == "") {
+            const searchParams = new URLSearchParams(location.search);
+            const keyword = searchParams.get('keyword');
+            const catName = searchParams.get('catName');
+            const topicId = searchParams.get('topicId');
+            if (catName) {
+                fetchCategoryChild(catName);
+            }
+            fetchCourses(keyword, catName, topicId);
 
-    }, [filter, pageNum])
+        } else {
+            fetchCourses("", "", "");
+        }
+
+    }, [filter])
 
     const fetchCategoryChild = async (catName: string) => {
         const res = await getByName(catName);
@@ -89,20 +96,21 @@ function Filter() {
         if (filter) {
             query += `&${filter}`;
         }
-        if (pageNum) {
-            query += `&pageNum=${pageNum - 1}`;
-        }
+        // if (pageNum) {
+        //     query += `&pageNum=${pageNum - 1}`;
+        // }
         const res = await getCourseByMultiQuery(query);
 
         if (res.status == 200) {
             console.log(res.data);
-            const data = res.data;
-            const total = data.totalElements;
-            setTotalElements(total);
-            const content = data.content as CourseListGetType[];
-            setCourses(content);
+            const data = res.data as CourseListGetType[];
+            // const total = data.totalElements;
+            // setTotalElements(total);
+            // const content = data.content as CourseListGetType[];
+            setCourses(data);
         }
     }
+
     return (
         <div className='filter-container'>
             <div className="filter-left">
@@ -118,16 +126,6 @@ function Filter() {
                             <IoFilter />
                             <span>Reset</span>
                         </Button>
-                        {/* <Form.Item
-                            name="sortBy"
-                            className='filter-select-sort'
-                        >
-                            <Select className='filer-selection'>
-                                <Option value="china">China</Option>
-                                <Option value="usa">U.S.A</Option>
-                                <Option value="none">Sap xep theo</Option>
-                            </Select>
-                        </Form.Item> */}
                     </div>
                     {category && category.childrens.length > 0 && <div className="filter-form-item">
                         <Divider className='filter-form-devider' />
@@ -243,8 +241,7 @@ function Filter() {
                     })}
 
                 </div>
-
-                <Pagination current={pageNum} total={totalElements} pageSize={5} onChange={handleChangeCurrent} />
+                {/* <Pagination current={pageNum} total={totalElements} pageSize={5} onChange={handleChangeCurrent} /> */}
             </div>
         </div>
     )

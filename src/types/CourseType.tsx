@@ -41,8 +41,10 @@ export type CourseStatusPostType = {
 export type CourseGetType = {
     id: number,
     title: string,
-    image: string
-    price: number
+    free: boolean,
+    image: string,
+    price: number,
+    discountedPrice: number
 }
 
 export type CourseListGetType = {

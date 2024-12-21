@@ -64,6 +64,14 @@
         flex: 2;
         display: flex;
         justify-content: flex-end;
+        font-weight: bold;
+        gap: 8px;
+
+        .course-discountPrice {
+            text-decoration: line-through;
+            color: gray;
+            font-size: 12px;
+        }
     }
 
     &:hover {

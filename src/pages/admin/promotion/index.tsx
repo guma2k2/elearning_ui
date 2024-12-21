@@ -252,7 +252,7 @@ function PromotionManagement() {
                         <Form.Item
                             name="discountPercent"
                             label="Phần trăm khuyến mãi"
-                            rules={[{ required: true, message: 'Phần trăm khuyến mãi không được để trống', min: 1, max: 100 }]}
+                            rules={[{ required: true, message: 'Phần trăm khuyến mãi không được để trống' }]}
                         >
                             <Input type="number" placeholder="Nhập phần trăm khuyến mãi" step={1} />
                         </Form.Item>

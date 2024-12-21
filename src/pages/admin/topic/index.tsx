@@ -35,7 +35,10 @@ function Topic() {
             console.log(topicPut);
 
             const resOfUpdate = await update(topicPut, id);
-            setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+            if (resOfUpdate.status == 204) {
+                alert("Update success")
+                setIsDataUpdated((isDataUpdated) => !isDataUpdated)
+            }
         }
     }
     const columns: TableColumnsType<TopicType> = [
@@ -57,10 +60,10 @@ function Topic() {
         {
             title: 'Trạng thái',
             dataIndex: 'isPublish',
-            width: 100,
+            width: 200,
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
-                    <Switch checkedChildren="published" unCheckedChildren="unpublished" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
+                    <Switch checkedChildren="Công khai" unCheckedChildren="Không công khai" checked={record.isPublish} onChange={(checked: boolean) => handleUpdateStatus(checked, record.id)} />
                 </Flex>
             ),
         },

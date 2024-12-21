@@ -16,7 +16,7 @@ function Cart() {
     const { carts } = useAppSelector((state: RootState) => state.carts);
     const navigate = useNavigate()
     const cartLength = carts ? carts.length : 0;
-    const totalPrice = carts ? carts.reduce((total, item) => item.buyLater == false ? total + item.course.price : total, 0) : 0
+    const totalPrice = carts ? carts.reduce((total, item) => item.buyLater == false ? (total + (item.course.price != item.course.discountedPrice ? item.course.discountedPrice : item.course.price)) : total, 0) : 0
     const cartBuyLaters = carts && carts.filter(item => item.buyLater) as CartType[]
     const cartBuyLaterLength = cartBuyLaters ? cartBuyLaters.length : 0;
     const [disabledDiscount, setDisabledDiscount] = useState<boolean>(false);
@@ -39,7 +39,6 @@ function Cart() {
     }
     const handleRedirectToPaymentPage = () => {
         if (coupon) {
-            console.log("navigate to my destiny");
             const url = `/payment/checkout/?discountPercent=${coupon.discountPercent}&couponCode=${coupon.code}`;
             console.log(url);
             navigate(url)
@@ -112,7 +111,6 @@ function Cart() {
                             <li>
                                 Đã áp dụng <b>{coupon.code}</b>
                             </li>
-                            <li>Coupon của Udemy</li>
                         </ul>
                     </div>
                     <span className="coupon-used-right" onClick={handleCancelCoupon}>
@@ -120,7 +118,7 @@ function Cart() {
                     </span>
                 </div>}
                 <div className="coupon-input">
-                    <Input disabled={disabledDiscount} className='coupon-input' placeholder='Nhập khuyến mãi' value={couponValue} onChange={handleChangeCouponValue} />
+                    <Input disabled={disabledDiscount} className='coupon-input' placeholder='Nhập mã giảm giá' value={couponValue} onChange={handleChangeCouponValue} />
                     <Button disabled={disabledDiscount} onClick={handleSearchCoupon} className='coupon-btn'>Áp dụng</Button>
                 </div>
                 {errorMessage && errorMessage !== "" && <span className='coupon-error'>{errorMessage}</span>}
