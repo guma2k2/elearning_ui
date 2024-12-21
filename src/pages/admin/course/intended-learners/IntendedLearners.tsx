@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import './IntendedLearners.style.scss'
 import IntendedLeaner from '../../../../components/intended-learner';
-import { CourseType } from '../../../../types/CourseType';
+import { CourseStatusPostType, CourseType } from '../../../../types/CourseType';
 import { Button, Spin } from 'antd';
 import { useAppDispatch } from '../../../../redux/hooks';
-import { updateCourseById } from '../../../../services/CourseService';
+import { updateCourseById, updateStatus } from '../../../../services/CourseService';
 import { updateCourse } from '../../../../redux/slices/CourseSlice';
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../../../types/ErrorType';
@@ -19,6 +19,7 @@ type Probs = {
 }
 function IntendedLeaners(probs: Probs) {
     const { course } = probs;
+    const [btnStatus, setBtnStatus] = useState<boolean>(false);
     const minLengthObjective: number = 4;
     const minLengthRequirement: number = 4;
     const minLengthTargetAudience: number = 1;
@@ -123,11 +124,12 @@ function IntendedLeaners(probs: Probs) {
             }
             setIsDataLoading(false);
         } else {
-            throw new Error("Cannot save course");
+            alert("Cannot save course");
         }
     }
     useEffect(() => {
         if (course) {
+            console.log(course);
             setIsDataLoading(true);
             console.log(course);
             console.log(course.objectives);
@@ -137,17 +139,39 @@ function IntendedLeaners(probs: Probs) {
             setIsDataLoading(false);
         }
     }, [])
+
+    const handleUpdateStatusCourse = async () => {
+        if (course) {
+            if (course.status == "UNPUBLISHED") {
+                const body: CourseStatusPostType = {
+                    status: "UNDER_REVIEW",
+                    reason: ""
+                }
+                const resUpdate = await updateStatus(body, course.id);
+                if (resUpdate.status == 204) {
+                    const data: CourseType = {
+                        ...course,
+                        status: "UNDER_REVIEW"
+                    }
+                    dispatch(updateCourse(data))
+                }
+            }
+        }
+    }
     return (
         <Spin spinning={isDataLoading}>
             <div className="course-intendedLearners-container">
                 <div className="header">
                     <h2>Học viên mục tiêu</h2>
-                    <Button onClick={handleUpdateCourse}>Lưu</Button>
+                    <div className="course-header-action">
+                        <Button onClick={handleUpdateCourse}>Lưu</Button>
+                        {course?.status != "PUBLISHED" && <Button onClick={handleUpdateStatusCourse} style={{ marginLeft: "10px" }} disabled={course?.status == "UNDER_REVIEW"}>{course?.status == "UNPUBLISHED" ? "CÔNG KHAI" : "CHỜ ĐÁNH GIÁ"}</Button>}
+                    </div>
                 </div>
                 <div className="wrapper">
                     <IntendedLeaner
                         type={AddType.Objective}
-                        desc={"Bạn phải nhập ít nhất 4 mục tiêu hoặc kết quả học tập mà học viên có thể mong đợi đạt được sau khi hoàn thành khóa học."}
+                        desc={"Bạn nên nhập ít nhất 4 mục tiêu hoặc kết quả học tập mà học viên có thể mong đợi đạt được sau khi hoàn thành khóa học."}
                         title={"Học viên sẽ học được gì trong khóa học của bạn?"}
                         handleChange={handleChange}
                         handleAdd={handleAdd}

@@ -18,6 +18,7 @@ type toggleType = {
 }
 function QuestionContentUser() {
     const { id } = useParams();
+    const dispatch = useAppDispatch();
     const { auth } = useAppSelector((state: RootState) => state.auth);
     const { currentCourse } = useAppSelector((state: RootState) => state.courses);
     const [answerText, setAnswerText] = useState<string>("");
@@ -220,13 +221,15 @@ function QuestionContentUser() {
             })
         }
     }
-    const dispatch = useAppDispatch();
     useEffect(() => {
-        dispatch(fetchCourseById(id));
-        if (selection == "ALL") {
-            fetchQuestionLecturesByCourse();
-        } else {
-            fetchQuestionLecturesBySection();
+        if (id) {
+            if (selection == "ALL") {
+                fetchQuestionLecturesByCourse();
+            } else {
+                fetchQuestionLecturesBySection();
+            }
+            dispatch(fetchCourseById(id));
+
         }
 
     }, [id, selection])

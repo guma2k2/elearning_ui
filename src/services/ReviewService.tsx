@@ -37,14 +37,12 @@ export const updateReview = async (reviewPut: ReviewPost, reviewId: number) => {
 }
 
 
-export const getWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
-    let url: string = ""
-    if (keyword != null) {
-        url = `/admin/reviews/paging?pageNum=${current}&pageSize=${pageSize}&keyword=${keyword}`
-    } else {
-        url = `/admin/reviews/paging?pageNum=${current}&pageSize=${pageSize}`
-    }
-    const res = await instance.get(url);
+export const getWithPagination = async (current: number, pageSize: number, keyword: string | null, status: string | null) => {
+    let url: string = `/admin/reviews/paging?pageNum=${current}&pageSize=${pageSize}`
+    let keywordParam: string = keyword != null && keyword != "" ? `&keyword=${keyword}` : "";
+    let statusParam: string = status != "ALL" ? `&status=${status}` : "";
+    let params = url + keywordParam + statusParam
+    const res = await instance.get(params);
     return res;
 }
 

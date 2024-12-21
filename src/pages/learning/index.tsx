@@ -321,7 +321,7 @@ function Learning() {
 
     }, [slug])
 
-    const fetchNoteBySection = async (sectionId: number) => {
+    const fetchNoteBySection = async (sectionId: number | undefined) => {
         const res = await getNotesBySectionId(sectionId);
         if (res.status == 200) {
             const data = res.data as NoteType[]
@@ -360,14 +360,16 @@ function Learning() {
             videoElement.addEventListener('timeupdate', handleTimeUpdate);
         }
 
+        if (learning) {
+            const secId = learning.sectionId;
+            fetchNoteBySection(secId);
+        }
+
         return () => {
             if (videoElement) {
                 videoElement.removeEventListener('timeupdate', handleTimeUpdate);
             }
-            if (learning?.sectionId) {
-                const secId = learning.sectionId;
-                fetchNoteBySection(secId);
-            }
+
         };
     }, [learning])
 
@@ -500,7 +502,6 @@ function Learning() {
                             <Select onChange={handleChange} value={selectionFetchNote} className='learning-note-fetch'>
                                 <Select.Option value="section">Trong chương hiện tại</Select.Option>
                                 <Select.Option value="course">Trong tất cả các chương</Select.Option>
-
                             </Select>
 
                         </div>

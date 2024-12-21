@@ -32,7 +32,7 @@ function PaymentCourse() {
             const orderDetailList: OrderDetailPostDto[] = [
                 {
                     courseId: course.id,
-                    price: course.price,
+                    price: course.price != course.discountedPrice ? course.discountedPrice : course.price
                 }
             ]
 
@@ -77,15 +77,16 @@ function PaymentCourse() {
             const searchParams = new URLSearchParams(location.search);
             const discountPercentParam = searchParams.get('discountPercent');
             console.log(discountPercentParam);
+            const currentPrice = data.price != data.discountedPrice ? data.discountedPrice : data.price
             if (discountPercentParam != null) {
                 console.log(discountPercentParam);
                 let discountPercentNumber = parseInt(discountPercentParam);
                 console.log(discountPercentNumber);
                 setDiscountPercent(discountPercentNumber)
-                const newTotal = data?.price - discountPercentNumber * data?.price / 100
+                const newTotal = currentPrice - discountPercentNumber * currentPrice / 100
                 setTotal(newTotal);
             } else {
-                setTotal(data.price)
+                setTotal(currentPrice)
             }
         }
     }
@@ -117,7 +118,10 @@ function PaymentCourse() {
                                 <img src={course?.image} alt="course image" />
                                 <span className='payment-left-order-course-name'>{course?.title}</span>
                             </div>
-                            <span className="payment-left-order-right">{course ? formatCurrency(course?.price) : 0}</span>
+                            {course && <div className="payment-left-order-right">
+                                <span>{course.free == true ? "Miễn phí" : course.price != course.discountedPrice ? formatCurrency(course.discountedPrice) : formatCurrency(course.price)}</span>
+                                {course.free == false && course.price != course.discountedPrice && <span className='course-discountPrice'>{formatCurrency(course.price)}</span>}
+                            </div>}
                         </div>
                     </div>
                 </div>

@@ -49,6 +49,8 @@ export const learningCourseSlice = createSlice({
                         if (state.learningCourses) {
                             state.learningCourses[index].review.ratingStar = newReview.ratingStar
                             state.learningCourses[index].review.content = newReview.content
+                            state.learningCourses[index].review.status = newReview.status
+                            state.learningCourses[index].review.reason = newReview.reason
                         }
                     }
                 })

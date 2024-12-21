@@ -9,6 +9,7 @@ import { createLearningLecture } from '../../services/LearningLectureService'
 import { LearningQuizPost } from '../../types/learning/LearningQuizType'
 import { createLearningQuiz } from '../../services/LearningQuizService'
 import { LearningSelection, LearningStatus, LearningWatchingSecond, updateSelection, updateStatusOfCurriculum, updateWatchingSecond } from '../../redux/slices/LearningSlice'
+import { getLearningCourse } from '../../redux/slices/LearningCourseSlice'
 type PropType = {
     curriculum: ILecture | IQuiz,
     sectionId: number,
@@ -64,7 +65,6 @@ function CurriculumLearning(probs: PropType) {
         }
     }
     const onChange: CheckboxProps['onChange'] = async (e) => {
-        e.stopPropagation();
         const type = curriculum.type;
         const status = e.target.checked
         console.log(status);
@@ -99,6 +99,7 @@ function CurriculumLearning(probs: PropType) {
                 dispatch(updateStatusOfCurriculum(learningStatus))
             }
         }
+        dispatch(getLearningCourse())
     };
 
     // console.log(curriculum.id);

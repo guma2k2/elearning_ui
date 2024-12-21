@@ -11,6 +11,7 @@ type StatusType = {
     reason: string
 }
 function OrderManagement() {
+    const [status, setStatus] = useState<string>("ALL");
     const [open, setOpen] = useState(false);
     const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
@@ -44,7 +45,7 @@ function OrderManagement() {
         console.log(values);
 
         const body: OrderStatusPostType = {
-            status: "UNPUBLISHED",
+            status: "FAILURE",
             reason: values.reason
         }
         const resUpdate = await updateStatusOrder(body, values.id);
@@ -56,7 +57,7 @@ function OrderManagement() {
     }
 
     const handleUpdateStatus = async (checked: string, id: number) => {
-        if (checked === "UNPUBLISHED") {
+        if (checked === "FAILURE") {
             formStatus.setFieldsValue({
                 id: id,
             })
@@ -85,7 +86,7 @@ function OrderManagement() {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const res = await getOrderWithPagination(current - 1, pageSize, null);
+            const res = await getOrderWithPagination(current - 1, pageSize, null, status);
 
             if (res && res.status === 200) {
                 console.log(res);
@@ -101,7 +102,7 @@ function OrderManagement() {
             }
         }
         fetchUsers()
-    }, [current, pageSize])
+    }, [current, pageSize, status])
     const handleChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newKeyword = e.target.value;
         setKeyword(newKeyword)
@@ -111,7 +112,7 @@ function OrderManagement() {
 
 
     const handleSearch = async () => {
-        const res = await getOrderWithPagination(current - 1, pageSize, keyword);
+        const res = await getOrderWithPagination(current - 1, pageSize, keyword, status);
 
         if (res && res.status === 200) {
             console.log(res);
@@ -159,9 +160,9 @@ function OrderManagement() {
                         onChange={(value) => handleUpdateStatus(value, record.id)}
                         style={{ width: 150 }}
                     >
-                        <Select.Option value="PUBLISHED">Công khai</Select.Option>
-                        <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
-                        <Select.Option value="UNDER_REVIEW">Đang đánh giá</Select.Option>
+                        <Select.Option value="PENDING">Đang tiến hành</Select.Option>
+                        <Select.Option value="SUCCESS">Thành công</Select.Option>
+                        <Select.Option value="FAILURE">Thất bại</Select.Option>
                     </Select>
                     <Modal
                         title="Trạng thái"
@@ -181,7 +182,7 @@ function OrderManagement() {
                                 <Col span={24}>
                                     <Form.Item
                                         name="reason"
-                                        label="Lý do từ chối"
+                                        label="Lý do thất bại"
                                         rules={[{ required: true, }]}
                                     >
                                         <Input placeholder="Nhập lý do" />
@@ -192,9 +193,9 @@ function OrderManagement() {
 
                         </Form>
                     </Modal>
-                    {record.status == "UNPUBLISHED" && <Popconfirm
+                    {record.status == "FAILURE" && <Popconfirm
                         title="NGUYÊN NHÂN?"
-                        description={`Nguyên nhận: ${record.reason}`}
+                        description={`Nguyên nhân: ${record.reason}`}
                         okText="Xác nhận"
                         cancelText="Hủy"
                     >
@@ -269,6 +270,21 @@ function OrderManagement() {
         <div className="order-search">
             <Input className='order-search-input' placeholder='Nhập mã đơn hàng' onChange={handleChangeKeyword} value={keyword} />
             <Button className='order-search-btn' onClick={handleSearch}>Tìm kiếm</Button>
+            <div className="order-search-status" style={{ marginLeft: "20px" }}>
+                <Select
+
+                    value={status}
+                    onChange={(value) => {
+                        setStatus(value);
+                    }}
+                    style={{ width: "250px", height: "100%" }}
+                >
+                    <Select.Option value="ALL">Chọn trạng thái muốn tìm kiếm</Select.Option>
+                    <Select.Option value="PENDING">Đang tiến hành</Select.Option>
+                    <Select.Option value="SUCCESS">Thành công</Select.Option>
+                    <Select.Option value="FAILURE">Thất bại</Select.Option>
+                </Select>
+            </div>
         </div>
         <Drawer
             title="Thông tin đơn hàng"

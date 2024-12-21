@@ -2,12 +2,13 @@ import { Button, Result } from "antd";
 import { useEffect, useState } from "react";
 import { PaymentPost } from "../../types/PaymentType";
 import { savePayment } from "../../services/PaymentService";
-import { OrderStatus, updateOrderStatus } from "../../services/OrderService";
+import { OrderStatus, updateOrderStatus, updateStatusOrder } from "../../services/OrderService";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../redux/hooks";
 import { getLearningCourse } from "../../redux/slices/LearningCourseSlice";
 import { AxiosError } from "axios";
 import { ErrorType } from "../../types/ErrorType";
+import { OrderStatusPostType } from "../../types/OrderType";
 
 function VnPayCallback() {
     const dispatch = useAppDispatch();
@@ -37,9 +38,21 @@ function VnPayCallback() {
         setResponseCode(vnp_ResponseCode);
         if (vnp_ResponseCode == "00") {
             createPayment(paymentPost, orderId);
+        } else {
+            let reason: string = "Giao dịch không thành công";
+            const body: OrderStatusPostType = {
+                status: "FAILURE",
+                reason: reason
+            }
+            handleUpdateOrderStatus(body, orderId)
         }
 
     }, []);
+    const handleUpdateOrderStatus = async (body: OrderStatusPostType, orderId: string) => {
+        const resUpdate = await updateStatusOrder(body, orderId);
+        if (resUpdate.status === 204) {
+        }
+    }
 
     const createPayment = async (paymentPost: PaymentPost, orderId: string) => {
         try {

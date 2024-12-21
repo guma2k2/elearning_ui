@@ -8,14 +8,12 @@ export const save = async (orderPost: OrderPostDto) => {
 }
 
 
-export const getOrderWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
-    let url: string = ""
-    if (keyword != null) {
-        url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}&orderId=${keyword}`
-    } else {
-        url = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}`
-    }
-    const res = await instance.get(url);
+export const getOrderWithPagination = async (current: number, pageSize: number, keyword: string | null, status: string | null) => {
+    let url: string = `/admin/orders/paging?pageNum=${current}&pageSize=${pageSize}`
+    let keywordParam: string = keyword != null && keyword != "" ? `&keyword=${keyword}` : "";
+    let statusParam: string = status != "ALL" ? `&status=${status}` : "";
+    let params = url + keywordParam + statusParam
+    const res = await instance.get(params);
     return res;
 }
 
@@ -38,7 +36,7 @@ export const getBestSellerCourse = async () => {
 }
 
 
-export const updateStatusOrder = async (status: OrderStatusPostType, id: number | undefined) => {
+export const updateStatusOrder = async (status: OrderStatusPostType, id: number | undefined | string) => {
     const url = `/admin/orders/${id}/status`
     const res = await instance.put(url, status);
     return res;

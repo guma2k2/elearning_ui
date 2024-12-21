@@ -69,6 +69,9 @@ const Course: React.FC = () => {
             }
         }
     }
+    const navigateToClassroom = (courseId: number) => {
+        navigate(`/classrooms/course/${courseId}`)
+    }
 
 
     const onFinishStatus = async (values: CourseStatus) => {
@@ -126,7 +129,7 @@ const Course: React.FC = () => {
                     >
                         <Select.Option value="PUBLISHED">Công khai</Select.Option>
                         <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
-                        <Select.Option value="UNDER_REVIEW">Đanh đánh giá</Select.Option>
+                        <Select.Option value="UNDER_REVIEW">Đang đánh giá</Select.Option>
                     </Select>
                     <Modal
                         title="Trạng thái"
@@ -195,6 +198,7 @@ const Course: React.FC = () => {
                         <Button danger>Xóa</Button>
                     </Popconfirm>
                     <Button type="primary"><Link to={`question/${record.id}`}>Câu hỏi</Link></Button>
+                    <Button type="primary" onClick={() => navigateToClassroom(record.id)}>Lớp học</Button>
                 </Flex>
             ),
         },
@@ -203,7 +207,7 @@ const Course: React.FC = () => {
         {
             title: 'Mã khóa học',
             dataIndex: 'id',
-            width: 200,
+            width: 130,
         },
         {
             title: 'Tiêu đề',
@@ -227,7 +231,14 @@ const Course: React.FC = () => {
             render: (_text, record) => (
                 <Flex gap="small" wrap="wrap">
                     <Tag>{record.status}</Tag>
-                    {record.status == "UNPUBLISHED" && <Button>Xem ly do</Button>}
+                    {record.status == "UNPUBLISHED" && <Popconfirm
+                        title="NGUYÊN NHÂN?"
+                        description={`Nguyên nhân: ${record.reason}`}
+                        okText="Xác nhận"
+                        cancelText="Hủy"
+                    >
+                        <Button danger>Xem lý do</Button>
+                    </Popconfirm>}
                 </Flex>
             ),
         },
@@ -248,6 +259,8 @@ const Course: React.FC = () => {
                         <Button danger>Xóa</Button>
                     </Popconfirm>
                     <Button type="primary"><Link to={`question/${record.id}`}>Câu hỏi</Link></Button>
+                    <Button type="primary" onClick={() => navigateToClassroom(record.id)}>Lớp học</Button>
+
                 </Flex>
             ),
         },
@@ -311,9 +324,9 @@ const Course: React.FC = () => {
             if (res.status == 201) {
                 // setConfirmLoading(false);
                 setIsDataUpdated((prev) => !prev)
-                // handleShowMessage("success", "Save course success", null, dispatch);
                 form.resetFields()
                 setOpen(false);
+                alert("Success")
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
@@ -333,7 +346,7 @@ const Course: React.FC = () => {
     }
 
     const handleSearch = async () => {
-        const res = await getCourseWithPagination(current - 1, pageSize, keyword);
+        const res = await getCourseWithPagination(current - 1, pageSize, keyword, status);
         if (res && res.status === 200) {
             console.log(res);
             const content = res.data.content.map((course: CourseType) => (
@@ -351,7 +364,7 @@ const Course: React.FC = () => {
 
     useEffect(() => {
         const fetchCourses = async () => {
-            const res = await getCourseWithPagination(current - 1, pageSize, null);
+            const res = await getCourseWithPagination(current - 1, pageSize, keyword, status);
             console.log(res);
             if (res && res.status === 200) {
                 console.log(res);
@@ -368,7 +381,7 @@ const Course: React.FC = () => {
             }
         }
         fetchCourses()
-    }, [current, pageSize, isDataUpdated])
+    }, [current, pageSize, isDataUpdated, status])
 
     useEffect(() => {
         const fetchCategoryParents = async () => {
@@ -431,10 +444,8 @@ const Course: React.FC = () => {
                             </div>
                             <div className="course-search-status">
                                 <Select
-
                                     value={status}
                                     onChange={(value) => {
-                                        alert(value);
                                         setStatus(value);
                                     }}
                                     style={{ width: "250px", height: "100%" }}
@@ -442,7 +453,7 @@ const Course: React.FC = () => {
                                     <Select.Option value="ALL">Chọn trạng thái muốn tìm kiếm</Select.Option>
                                     <Select.Option value="PUBLISHED">Công khai</Select.Option>
                                     <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
-                                    <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                                    <Select.Option value="UNDER_REVIEW">Đang đánh giá</Select.Option>
                                 </Select>
                             </div>
                         </div>

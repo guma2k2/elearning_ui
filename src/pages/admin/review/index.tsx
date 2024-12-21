@@ -33,7 +33,7 @@ function ReviewManagement() {
     }
 
     const handleSearch = async () => {
-        const res = await getWithPagination(current - 1, pageSize, keyword);
+        const res = await getWithPagination(current - 1, pageSize, keyword, status);
         if (res && res.status === 200) {
             console.log(res);
             const content = res.data.content.map((review: ReviewGet) => (
@@ -94,7 +94,7 @@ function ReviewManagement() {
 
     useEffect(() => {
         const fetchReviews = async () => {
-            const res = await getWithPagination(current - 1, pageSize, null);
+            const res = await getWithPagination(current - 1, pageSize, keyword, status);
 
             if (res && res.status === 200) {
                 console.log(res);
@@ -103,7 +103,6 @@ function ReviewManagement() {
                         ...review, key: review.id
                     }
                 ))
-                console.log(content)
                 setReviewList(content);
                 setCurrent(res.data.pageNum + 1);
                 setPageSize(res.data.pageSize)
@@ -111,7 +110,7 @@ function ReviewManagement() {
             }
         }
         fetchReviews()
-    }, [current, pageSize, isDataUpdated])
+    }, [current, pageSize, isDataUpdated, status])
 
 
     const columns: TableColumnsType<ReviewGet> = [
@@ -232,7 +231,6 @@ function ReviewManagement() {
 
                     value={status}
                     onChange={(value) => {
-                        alert(value);
                         setStatus(value);
                     }}
                     style={{ width: "250px", height: "100%" }}
@@ -240,7 +238,7 @@ function ReviewManagement() {
                     <Select.Option value="ALL">Chọn trạng thái muốn tìm kiếm</Select.Option>
                     <Select.Option value="PUBLISHED">Công khai</Select.Option>
                     <Select.Option value="UNPUBLISHED">Không công khai</Select.Option>
-                    <Select.Option value="UNDER_REVIEW">ĐANG ĐÁNH GIÁ</Select.Option>
+                    <Select.Option value="UNDER_REVIEW">Đang đánh giá</Select.Option>
                 </Select>
             </div>
         </div>

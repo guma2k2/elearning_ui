@@ -77,9 +77,7 @@ function CourseLandingPage(probs: Probs) {
         }
     };
 
-    const navigateToClassroom = () => {
-        navigate(`/classrooms/course/${course?.id}`)
-    }
+
     const resetFileInput = () => {
         if (fileRef.current) {
             fileRef.current.value = '';
@@ -219,11 +217,10 @@ function CourseLandingPage(probs: Probs) {
         <Spin spinning={isDataLoading}>
             <div className="course-landingpage-container" >
                 <div className="header">
-                    <h2>Course Landing Page</h2>
+                    <h2>Trang tổng quan khóa học</h2>
                     <Button onClick={handleUpdateCourse}>Lưu</Button>
                 </div>
                 <div className="wrapper">
-                    <Button onClick={navigateToClassroom}>Xem danh sach lop hoc</Button>
                     <div className="form-item">
                         <span className='title'>Tiêu đề khóa học</span>
                         <input type="text" value={courseTitle} onChange={(e) => { setCourseTitle(e.target.value) }} />

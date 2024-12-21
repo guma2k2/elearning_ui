@@ -21,7 +21,7 @@ function Payment() {
     const cartBuyLaters = carts && carts.filter(item => !item.buyLater) as CartType[]
     const [bankCode, setBankCode] = useState<string>("NCB");
     const [discountPercent, setDiscountPercent] = useState<number>();
-    const totalPrice = carts ? carts.reduce((total, item) => item.buyLater == false ? total + item.course.price : total, 0) : 0
+    const totalPrice = carts ? carts.reduce((total, item) => item.buyLater == false ? (total + item.course.price != item.course.discountedPrice ? item.course.discountedPrice : item.course.price) : total, 0) : 0
     const [total, setTotal] = useState<number>(totalPrice);
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
@@ -35,7 +35,7 @@ function Payment() {
                 .filter(cart => cart.buyLater === false) // Filter carts where buyLater is false
                 .map(cart => ({
                     courseId: cart.course.id,
-                    price: cart.course.price
+                    price: cart.course.price != cart.course.discountedPrice ? cart.course.discountedPrice : cart.course.price
                 }));
             dispatch(deleteCartBuyLater());
             const searchParams = new URLSearchParams(location.search);
@@ -106,7 +106,10 @@ function Payment() {
                                     <img src={cart.course.image} alt="course image" />
                                     <span className='payment-left-order-course-name'>{cart.course.title}</span>
                                 </div>
-                                <span className="payment-left-order-right">{formatCurrency(cart.course.price)}</span>
+                                {cart.course && <div className="payment-left-order-right" style={{ marginLeft: "10px" }}>
+                                    <span>{cart.course.free == true ? "Miễn phí" : cart.course.price != cart.course.discountedPrice ? formatCurrency(cart.course.discountedPrice) : formatCurrency(cart.course.price)}</span>
+                                    {cart.course.free == false && cart.course.price != cart.course.discountedPrice && <span className='course-discountPrice'>{formatCurrency(cart.course.price)}</span>}
+                                </div>}
                             </div>
                         })}
                     </div>

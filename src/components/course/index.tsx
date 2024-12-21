@@ -10,6 +10,7 @@ type PropType = {
 }
 function Course(props: PropType) {
     const { cart } = props;
+    const course = cart.course;
     const dispatch = useAppDispatch();
     const handleDeleteCart = async () => {
         const cartId = cart.id as number;
@@ -44,9 +45,12 @@ function Course(props: PropType) {
                 </div>
                 <div className="course-action">
                     <div className="delete" onClick={handleDeleteCart}>Xóa</div>
-                    <div className="save-for-later" onClick={handleSaveForLater}>Lưu lại để xem sau</div>
+                    <div className="save-for-later" onClick={handleSaveForLater}>{cart.buyLater == false ? "Lưu lại để mua sau" : "Chuyển vào giỏ hàng"}</div>
                 </div>
-                <div className="course-price">{formatCurrency(cart.course.price)}</div>
+                <div className="course-price">
+                    <span>{course.free == true ? "Miễn phí" : course.price != course.discountedPrice ? formatCurrency(course.discountedPrice) : formatCurrency(course.price)}</span>
+                    {course.free == false && course.price != course.discountedPrice && <span className='course-discountPrice'>{formatCurrency(course.price)}</span>}
+                </div>
             </div>
         </>
     )

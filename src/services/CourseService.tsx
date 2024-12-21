@@ -1,16 +1,17 @@
 import { CourseStatusPostType, CourseType } from "../types/CourseType";
 import instance from "../utils/axiosCustomize";
 
-export const getCourseWithPagination = async (current: number, pageSize: number, keyword: string | null) => {
-    let url: string = ""
-    if (keyword != null) {
-        url = `/admin/courses/paging?pageNum=${current}&pageSize=${pageSize}&keyword=${keyword}`
-    } else {
-        url = `/admin/courses/paging?pageNum=${current}&pageSize=${pageSize}`
-    }
-    const res = await instance.get(url);
+export const getCourseWithPagination = async (current: number, pageSize: number, keyword: string | null, status: string | null) => {
+    console.log(status);
+    let url: string = `/admin/courses/paging?pageNum=${current}&pageSize=${pageSize}`
+    let keywordParam: string = keyword != null && keyword != "" ? `&keyword=${keyword}` : "";
+    let statusParam: string = status != "ALL" ? `&status=${status}` : "";
+    let params = url + keywordParam + statusParam
+    const res = await instance.get(params);
     return res;
 }
+
+
 
 export const deleteCourse = async (courseId: number) => {
     const url = `/admin/courses/${courseId}`

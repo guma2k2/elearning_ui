@@ -284,9 +284,9 @@ function Curriculum(probs: CurriculumType) {
                                 </video>
                                 <div className="curriculum-lecture-video-right">
                                     <h3>lecture{curriculum.index}.mp4</h3>
-                                    <div className="lecture-content-edit">
+                                    <div className="lecture-content-edit" style={{ cursor: "pointer" }}>
                                         <MdModeEdit className="icon-edit" />
-                                        <span onClick={() => setToggle({ type: "content" })}>Chinh sua noi dung </span>
+                                        <span onClick={() => setToggle({ type: "content" })}>Chỉnh sửa nội dung</span>
                                     </div>
                                 </div>
                             </div></Fragment>}

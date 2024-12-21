@@ -26,7 +26,7 @@ export type ReviewGet = {
     status: string,
     reason: string,
     student: StudentGetType,
-    course: CourseGetType
+    course: CourseGetType,
 }
 
 export type PageReviewResponse = {

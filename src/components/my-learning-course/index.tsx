@@ -1,10 +1,10 @@
-import { Button, Form, Input, Modal, Progress, Rate } from "antd";
+import { Button, Flex, Form, Input, Modal, Progress, Rate } from "antd";
 import './MyLearningCourse.style.scss'
 import { Fragment, useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 import { LearningCourse } from "../../types/learning/LearningCourseType";
-import { ReviewGet, ReviewLearningCourse, ReviewPost } from "../../types/ReviewType";
-import { createReview, updateReview } from "../../services/ReviewService";
+import { ReviewGet, ReviewLearningCourse, ReviewPost, ReviewStatusPostType } from "../../types/ReviewType";
+import { createReview, updateReview, updateStatusReview } from "../../services/ReviewService";
 import { useAppDispatch } from "../../redux/hooks";
 import { createReviewForLearningCourse, updateReviewOfLearningCourse } from "../../redux/slices/LearningCourseSlice";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,6 @@ type PropType = {
 function MyLearningCourse(props: PropType) {
     const navigate = useNavigate();
     const { learingCourse } = props;
-    console.log(learingCourse);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [ratingText, setRatingText] = useState<string>("Tuyệt vời, trên cả mong đợi!");
     const [form] = Form.useForm();
@@ -70,6 +69,7 @@ function MyLearningCourse(props: PropType) {
         }
     }
 
+
     const handleNavigateToClassroom = () => {
         navigate(`/classrooms/course/${learingCourse.course.id}`)
     }
@@ -109,6 +109,26 @@ function MyLearningCourse(props: PropType) {
                 break;
         }
     }
+    const handleUpdateStatusReview = async (reviewId: number, status: string) => {
+        if (learingCourse) {
+            const body: ReviewStatusPostType = {
+                status: status,
+                reason: ""
+            }
+            const resUpdate = await updateStatusReview(body, reviewId);
+            if (resUpdate.status === 204) {
+                const currentReview = learingCourse.review;
+                const review: ReviewGet = {
+                    ...currentReview, status: status
+                }
+                const reviewLearningCourse: ReviewLearningCourse = {
+                    review, id: learingCourse.id,
+                }
+                dispatch(updateReviewOfLearningCourse(reviewLearningCourse))
+                alert("success");
+            }
+        }
+    }
     return <Fragment>
         <div className="my-learning-course-container" onClick={handleRedirectToLearningCourse}>
             <img src={learingCourse.course.image} alt="course-image" className="my-learning-course-image" />
@@ -125,7 +145,11 @@ function MyLearningCourse(props: PropType) {
             </div>
             <Button onClick={(e) => { e.stopPropagation(); handleNavigateToClassroom() }}>Danh sách lớp học</Button>
         </div>;
-        <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} rootClassName="review-modal" okText={"Lưu và tiếp tục"}>
+        <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} cancelText="Hủy" rootClassName="review-modal" okText={"Lưu và tiếp tục"}>
+            <Flex gap={10}>
+                {learingCourse.review && learingCourse.review.status != "PUBLISHED" && <Button onClick={() => handleUpdateStatusReview(learingCourse.review.id, "UNDER_REVIEW")} style={{ marginLeft: "10px" }} disabled={learingCourse.review.status == "UNDER_REVIEW"}>{learingCourse.review.status == "UNPUBLISHED" ? "CÔNG KHAI" : "CHỜ ĐÁNH GIÁ"}</Button>}
+                {learingCourse.review && learingCourse.review.status == "UNPUBLISHED" && learingCourse.review.reason != "" && <Button onClick={() => { alert(learingCourse.review.reason) }}>Xem lý do từ chối duyệt</Button>}
+            </Flex>
             <h1>Vì sao bạn xếp hạng ở mức này?</h1>
             <span className="review-modal-rating-text">{ratingText}</span>
             <Form

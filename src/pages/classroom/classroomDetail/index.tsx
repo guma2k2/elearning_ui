@@ -274,6 +274,7 @@ function ClassroomDetail() {
                 const res = await createMeeting(body);
                 if (res.status == 200) {
                     setIsDataUpdated((isDataUpdated) => !isDataUpdated);
+                    alert("Thêm cuộc họp thành công")
                 }
             } else {
                 if (eventId) {
