@@ -154,6 +154,10 @@
                 box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
                 transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 
+                .ant-spin-nested-loading {
+                    width: 100% !important;
+                }
+
                 .card-exercise-top-header {
                     display: flex;
                     width: 100%;

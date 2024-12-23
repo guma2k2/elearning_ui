@@ -18,9 +18,6 @@ function Login() {
     const { isLoggin, auth } = useAppSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
 
-    const handleShowToast = () => {
-        dispatch(showToast({ message: 'Login success', type: 'success' }));
-    };
     const onFinish: FormProps<LoginRequest>['onFinish'] = async (values) => {
         setLoading(true)
         dispatch(login(values));
@@ -46,7 +43,6 @@ function Login() {
 
     useEffect(() => {
         if (isLoggin === true) {
-            handleShowToast();
             if (auth) {
                 const role = auth.user.role as string;
                 if (role === ROLE_ADMIN || role === ROLE_INSTRUCTOR) {

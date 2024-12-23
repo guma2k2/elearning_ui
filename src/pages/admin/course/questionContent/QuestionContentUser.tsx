@@ -26,11 +26,7 @@ function QuestionContentUser() {
     const [selection, setSelection] = useState<string>("ALL")
     const [questions, setQuestions] = useState<QuestionLectureType[]>([]);
     const [questionActive, setQuestionActive] = useState<number>();
-    const [open, setOpen] = useState<boolean>(false);
     const [openAnswer, setOpenAnswer] = useState<boolean>(false);
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-    const [answerActive, setAnswerActive] = useState<number>();
-    const [form] = Form.useForm();
     const [formAnswer] = Form.useForm();
 
 
@@ -84,19 +80,18 @@ function QuestionContentUser() {
 
 
     const fetchQuestionLecturesByCourse = async () => {
-
-        if (currentCourse) {
-            const res = await getByCourse(currentCourse.id)
+        if (id) {
+            const res = await getByCourse(id)
 
             if (res.status == 200) {
                 const data = res.data as QuestionLectureType[]
+                console.log(data);
                 setQuestions(data)
             }
         }
     }
 
     const fetchQuestionLecturesBySection = async () => {
-
         if (selection) {
             const secId = parseInt(selection)
             const res = await getBySection(secId);
@@ -229,7 +224,6 @@ function QuestionContentUser() {
                 fetchQuestionLecturesBySection();
             }
             dispatch(fetchCourseById(id));
-
         }
 
     }, [id, selection])

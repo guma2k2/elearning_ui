@@ -7,6 +7,7 @@ import { resetCart } from "../../redux/slices/CartSlice";
 import { resetLearningCoures } from "../../redux/slices/LearningCourseSlice";
 import { RootState } from "../../redux/store";
 import { Fragment } from "react";
+import { clearToast } from "../../redux/slices/toastSlice";
 function PopoverUserProfile() {
     const dispatch = useAppDispatch();
     const { auth } = useAppSelector((state: RootState) => state.auth);
@@ -16,6 +17,8 @@ function PopoverUserProfile() {
         dispatch(logOut());
         dispatch(resetCart());
         dispatch(resetLearningCoures());
+        dispatch(clearToast());
+
         if (window.location.pathname !== "/") {
             navigate("/")
         }
