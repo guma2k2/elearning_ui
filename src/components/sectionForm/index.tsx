@@ -92,9 +92,9 @@ function SectionForm(probs: Probs) {
                         </Form.Item>
                         <Form.Item<SectionType>
                             name="title"
-                            rules={[{ required: true, message: 'Enter a title!' }]}
+                            rules={[{ required: true, message: 'Hãy nhập một tiêu đề!' }]}
                         >
-                            <Input />
+                            <Input placeholder='Tiêu đề chương' />
                         </Form.Item>
                         <Form.Item<SectionType>
                             name="number"
@@ -103,15 +103,15 @@ function SectionForm(probs: Probs) {
                             <Input hidden />
                         </Form.Item>
                         <Form.Item<SectionType>
-                            label="What will students be able to do at the end of this section?"
+                            label="Mục tiêu của chương?"
                             name="objective"
                         >
-                            <Input />
+                            <Input placeholder='Mục tiêu' />
                         </Form.Item>
                     </Form>
                     <div className="section-form-action">
-                        <div className="cancel" onClick={() => setToggle && setToggle({ type: "button" })} >Cancel</div>
-                        <Button onClick={() => form.submit()} type="primary">Save Section</Button>
+                        <div className="cancel" onClick={() => setToggle && setToggle({ type: "button" })} >Hủy</div>
+                        <Button onClick={() => form.submit()} type="primary">Lưu</Button>
                     </div>
                 </div>
             </span>

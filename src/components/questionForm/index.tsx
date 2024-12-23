@@ -1,8 +1,11 @@
 import { Button } from "antd";
-import ReactQuill from "react-quill"
 import Answer from "../answer";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useCallback, useRef } from "react";
 import { AnswerType } from "../../types/CourseType";
+import ReactQuill from "react-quill";
+
+
+
 const questionModules = {
   toolbar: [
     ['bold', 'italic'],
@@ -15,7 +18,7 @@ const questionFormats = [
 ];
 type Propbs = {
   questionDesc: string,
-  setQuestionDesc: Dispatch<SetStateAction<string>>
+  setQuestionDesc: React.Dispatch<React.SetStateAction<string>>
   answers: AnswerType[]
   handleAddAnswer: () => void
   handleRemoveAnswer: (answerIndex: number) => void
@@ -25,6 +28,7 @@ type Propbs = {
   handleSaveQuestion: () => Promise<void>
 }
 function QuestionForm(probs: Propbs) {
+  const quillRef: React.LegacyRef<ReactQuill> = useRef(null);
   const { answers, handleAddAnswer, handleRemoveAnswer, handleSaveQuestion, indexAnswerActive, questionDesc, setAnswers, setIndexAnswerActive, setQuestionDesc } = probs;
   return (
     <>
@@ -32,6 +36,7 @@ function QuestionForm(probs: Propbs) {
         <span>Question</span>
         <div className="question-rte">
           <ReactQuill
+            ref={quillRef}
             modules={questionModules}
             formats={questionFormats}
             theme="snow"
@@ -40,7 +45,7 @@ function QuestionForm(probs: Propbs) {
         </div>
       </div>
       <div className="curriculum-answers">
-        <span>Answer</span>
+        <span>Câu trả lời</span>
         <div className="curriculum-answers-container">
           {answers && answers.map((answer, index) => {
             return <Answer answer={answer} key={index}
@@ -55,7 +60,7 @@ function QuestionForm(probs: Propbs) {
           )}
         </div>
         <div className="answer-action">
-          <Button onClick={handleSaveQuestion} className="btn-question-save" >Save</Button>
+          <Button onClick={handleSaveQuestion} className="btn-question-save" >Lưu</Button>
         </div>
       </div>
     </>

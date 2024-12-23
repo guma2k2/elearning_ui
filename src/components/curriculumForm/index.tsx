@@ -33,9 +33,6 @@ const formats = [
 ];
 function CurriculumForm(probs: ProbsType) {
     const [descQuiz, setDescQuiz] = useState<string>("");
-
-
-
     const { sectionId, toggle, type, curriculum, nextNum, prevNum, setToggle } = probs;
     const title: string = curriculum ? curriculum.title : "";
     const [quizTitle, setQuizTitle] = useState<string>(title)
@@ -139,37 +136,37 @@ function CurriculumForm(probs: ProbsType) {
     }
     return (
         <div className="section-wraper">
-            {(toggle.type === "button" || toggle.type == "updateSection") && type == "button" && <Button onClick={() => setToggle && setToggle({ type: "select" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Curriculum item</Button>}
+            {(toggle.type === "button" || toggle.type == "updateSection") && type == "button" && <Button onClick={() => setToggle && setToggle({ type: "select" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Mục trong khung chương trình</Button>}
             {toggle.type !== "button" && type == "button" && toggle.type !== "updateSection" && toggle.type !== "addSection" && <LiaTimesSolid className="icon-exist" onClick={() => setToggle && setToggle({ type: "button" })} />}
             {toggle.type !== "" && type == "" && toggle.type !== "updateSection" && toggle.type !== "addSection" && <LiaTimesSolid className="icon-exist" onClick={() => setToggle && setToggle({ type: "" })} />}
 
             {toggle.type === "select" && <div className="add-item-forms">
                 <div className="item-form" onClick={() => setToggle && setToggle({ type: "lecture" })}>
                     <AiOutlinePlus />
-                    <span>Lecture</span>
+                    <span>Bài giảng</span>
                 </div>
                 <div className="item-form" onClick={() => setToggle && setToggle({ type: "quiz" })}>
                     <AiOutlinePlus />
-                    <span>Quiz</span>
+                    <span>Trắc nghiệm</span>
                 </div>
             </div>
             }
             {toggle.type === "lecture" &&
                 <div className="lecture-form">
                     <div className="lecture-form-item">
-                        <div className="label">New Lecture: </div>
+                        <div className="label">Bài giảng mới: </div>
                         <input type="text" placeholder="Enter a Title" value={lectureTitle} onChange={(e) => setLectureTitle(e.target.value)} />
                     </div>
                     <div className="lecture-form-action">
-                        <div className="lecture-form-cancel-btn" onClick={() => setToggle && setToggle({ type: "" })}>Cancel</div>
-                        <Button type="primary" onClick={handleCreateLecture} >{curriculum ? "Update lecture" : "Add Lecture"}</Button>
+                        <div className="lecture-form-cancel-btn" onClick={() => setToggle && setToggle({ type: "" })}>Hủy</div>
+                        <Button type="primary" onClick={handleCreateLecture} >{curriculum ? "Cập nhật bài giảng" : "Thêm bài giảng"}</Button>
                     </div>
                 </div>
             }
             {toggle.type === "quiz" &&
                 <div className="quiz-form">
                     <div className="quiz-form-item">
-                        <div className="label">New Quiz: </div>
+                        <div className="label">Trắc nghiệm mới: </div>
                         <input type="text" placeholder="Enter a Title" value={quizTitle} onChange={(e) => setQuizTitle(e.target.value)} />
                     </div>
                     <div className="quiz-form-item">
@@ -177,8 +174,8 @@ function CurriculumForm(probs: ProbsType) {
                         <div className="quiz-rte"><ReactQuill modules={modules} formats={formats} theme="snow" value={descQuiz} onChange={setDescQuiz} placeholder="Quiz Description" /></div>
                     </div>
                     <div className="quiz-form-action">
-                        <div className="quiz-form-cancel-btn" onClick={() => setToggle && setToggle({ type: "" })}>Cancel</div>
-                        <Button type="primary" onClick={handleCreateQuiz}> {curriculum ? "Update quiz" : "Add quiz"}</Button>
+                        <div className="quiz-form-cancel-btn" onClick={() => setToggle && setToggle({ type: "" })}>Hủy</div>
+                        <Button type="primary" onClick={handleCreateQuiz}> {curriculum ? "Cập nhật trắc nghiệm" : "Thêm trắc nghiệm"}</Button>
                     </div>
                 </div>
             }

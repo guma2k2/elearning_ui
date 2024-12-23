@@ -8,7 +8,7 @@ import learningCourseReducer from './slices/LearningCourseSlice'
 
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
-
+import toastReducer from './slices/toastSlice'
 
 const persistConfig = {
     key: 'root',
@@ -21,7 +21,8 @@ const rootReducer = combineReducers({
     auth: authReducer,
     learning: learningReducer,
     carts: cartReducer,
-    learningCourses: learningCourseReducer
+    learningCourses: learningCourseReducer,
+    toast: toastReducer,
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
