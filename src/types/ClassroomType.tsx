@@ -21,7 +21,7 @@ export type ClassroomGetType = {
     name: string
     description: string
     image: string
-    events: (IMeeting | IReference)[],
+    events: (IMeeting | IReference | IExercise)[],
     user: AuthType
 
 }
@@ -43,6 +43,20 @@ export interface IReference extends IEvent {
     description: string,
     files: ReferenceFileType[]
 }
+
+export interface IExercise extends IEvent {
+    type: "exercise",
+    title: string,
+    description: string,
+    files: ExerciseFileType[]
+}
+
+export type ExerciseFileType = {
+    id: number,
+    fileName: string,
+    fileUrl: string
+}
+
 
 export type ReferenceFileType = {
     id: number,
@@ -68,3 +82,27 @@ export type ReferencePostType = {
     description: string,
     classroomId: number
 }
+
+export type ExercisePostType = {
+    title: string,
+    description: string,
+    classroomId: number
+}
+
+export type ExerciseFilePostType = {
+    fileName: string,
+    fileUrl: string,
+    exerciseId: number
+}
+
+
+export type ExerciseDetailType = {
+    id: number,
+    title: string,
+    description: string,
+    deadline: string,
+    createdAt: string,
+    files: ExerciseFileType[],
+    classroom: ClassroomType
+}
+

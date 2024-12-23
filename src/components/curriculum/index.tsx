@@ -251,14 +251,14 @@ function Curriculum(probs: CurriculumType) {
                     <AiOutlinePlus className="section-icon-insert" />
                 </button>
             </div>}
-            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm sectionId={sectionId} prevNum={prevNum} nextNum={nextNum} curriculum={curriculum} toggle={toggleForm} setToggle={setToggleForm} type="" />}
+            {toggleForm.type !== "" && toggleForm.type !== "updateCurriculum" && <CurriculumForm sectionId={sectionId} prevNum={prevNum} nextNum={nextNum} toggle={toggleForm} setToggle={setToggleForm} type="" />}
             {toggleForm.type == "updateCurriculum" && <CurriculumForm sectionId={sectionId} curriculum={curriculum} toggle={{ type: "lecture" }} setToggle={setToggleForm} type="" />}
             {toggleForm.type !== "updateCurriculum" &&
                 <div className="curriculum-container" onMouseLeave={handlMouseLeave} onMouseEnter={handleMouseEnter}>
                     <div className="curriculum-wrapper">
                         <div className="curriculum-left">
                             <GrStatusGood />
-                            <span>{curriculum.type === "lecture" ? "Lecture" : "Quiz"} {curriculum.index}:</span>
+                            <span>{curriculum.type === "lecture" ? "Bài giảng" : "Trắc nghiệm"} {curriculum.index}:</span>
                             {curriculum.type == "lecture" ? <AiOutlineFile /> : <AiOutlineQuestionCircle />}
                             <span>{curriculum.title}</span>
                             <span className="curriculum-action" ref={curriculumHeaderRef} >
@@ -267,9 +267,9 @@ function Curriculum(probs: CurriculumType) {
                             </span>
                         </div>
                         <div className="curriculum-right">
-                            {toggle.type !== "resources" && toggle.type !== "content" && curriculum.type == "lecture" && !curriculum.videoId && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Content</Button>}
+                            {toggle.type !== "resources" && toggle.type !== "content" && curriculum.type == "lecture" && !curriculum.videoId && <Button onClick={() => setToggle({ type: "content" })} className='btn-curriculum' icon={<AiOutlinePlus />}>Nội dung</Button>}
                             {toggle.type !== "resources" && toggle.type !== "questions" && curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length === 0
-                                && <Button onClick={() => { setToggle({ type: "questions" }); }} className='btn-curriculum' icon={<AiOutlinePlus />}>Questions</Button>}
+                                && <Button onClick={() => { setToggle({ type: "questions" }); }} className='btn-curriculum' icon={<AiOutlinePlus />}>Câu hỏi</Button>}
                             {curriculum.type == "lecture" && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdown" })} />}
                             {curriculum.type == "lecture" && toggle.type == "dropdown" && <IoIosArrowUp onClick={() => setToggle({ type: "" })} />}
                             {curriculum.type == "quiz" && curriculum.questions && curriculum.questions?.length > 0 && toggle.type == "" && <IoIosArrowDown onClick={() => setToggle({ type: "dropdownQuestion" })} />}
@@ -291,7 +291,7 @@ function Curriculum(probs: CurriculumType) {
                                 </div>
                             </div></Fragment>}
 
-                        <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "desc" })} className='btn-desc-curriculum' icon={<AiOutlinePlus />}>Description</Button>
+                        <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "desc" })} className='btn-desc-curriculum' icon={<AiOutlinePlus />}>Mô tả</Button>
 
                         {/* <Button style={{ width: "8rem" }} onClick={() => setToggle({ type: "resources" })} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button> */}
                     </div>
@@ -300,8 +300,8 @@ function Curriculum(probs: CurriculumType) {
                         toggle.type == "dropdownQuestion" && <div className="curriculum-dropdown">
                             <div className="dropdown-questions-top">
                                 <div className="left">
-                                    <span>Questions</span>
-                                    <Button onClick={() => { setToggle({ type: "questions" }); resetForm(); }} >New Question</Button>
+                                    <span>Câu hỏi</span>
+                                    <Button onClick={() => { setToggle({ type: "questions" }); resetForm(); }} >Thêm câu hỏi</Button>
                                 </div>
                                 <div className="right">
                                     {/* <Button>Preview</Button> */}
@@ -332,7 +332,7 @@ function Curriculum(probs: CurriculumType) {
 
                     {toggle.type == "desc" && <div className="curriculum-dropdown">
                         <div className="dropdown-top">
-                            <span>Lecture Description</span>
+                            <span>Mô tả bài giảng</span>
                             <div className="lecture-rte"><ReactQuill modules={lectureModules}
                                 formats={lectureFormats}
                                 theme="snow"
@@ -340,17 +340,17 @@ function Curriculum(probs: CurriculumType) {
                                 onChange={setLectureDesc}
                                 placeholder="Add a description. Include what students will be able to do after completing the lecture." /></div>
                             <div className="lecture-form-action">
-                                <div style={{ cursor: "pointer" }} className="cancel" onClick={() => setToggle({ type: "dropdown" })}>Cancel</div>
-                                <Button type="primary" onClick={handleUpdateLecture}>Save</Button>
+                                <div style={{ cursor: "pointer" }} className="cancel" onClick={() => setToggle({ type: "dropdown" })}>Hủy</div>
+                                <Button type="primary" onClick={handleUpdateLecture}>Lưu</Button>
                             </div>
                         </div>
-                        <Button style={{ width: "8rem" }} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Resources</Button>
+                        {/* <Button style={{ width: "8rem" }} type="default" className='btn-resources-curriculum' icon={<AiOutlinePlus />}>Tài nguyên</Button> */}
                     </div>
                     }
                     {toggle.type == "resources" && <div className="curriculum-dropdown">
                         <div className="dropdown-bottom">
                             <div className="tab-title">
-                                <span>Add Resources</span>
+                                <span>Thêm tài nguyên</span>
                                 <span className="tab-title-icon"
                                     onClick={() => setToggle({ type: "dropdown" })}>
                                     <LiaTimesSolid />
@@ -366,12 +366,12 @@ function Curriculum(probs: CurriculumType) {
                             <div className="dropdown-bottom">
                                 {curriculum.type == "lecture" && <Fragment>
                                     <div className="tab-title">
-                                        <span>Add Video</span>
+                                        <span>Thêm video</span>
                                         <span className="tab-title-icon" onClick={() => {
                                             setToggle({ type: "dropdown" })
                                         }}><LiaTimesSolid /></span>
                                     </div>
-                                    <Spin spinning={pendingLecture} tip="Loading..." ><InputFile fileRef={fileRef} title="Select Video"
+                                    <Spin spinning={pendingLecture} tip="Loading..." ><InputFile fileRef={fileRef} title="Chọn video"
                                         handleFileChange={handleFileChange} /></Spin>
                                 </Fragment>
                                 }

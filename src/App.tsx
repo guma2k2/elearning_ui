@@ -35,7 +35,6 @@ import InstructorProfile from "./pages/instructor-profile";
 import ForgotPassword from "./pages/forgotpassword";
 import UpdatePassword from "./pages/forgotpassword/UpdatePassword";
 import ProfileAdmin from "./pages/profile-admin";
-import ChatApp from "./pages/chat";
 import Meeting from "./components/meeting";
 import Classroom from "./pages/classroom";
 import ClassroomDetail from "./pages/classroom/classroomDetail";
@@ -45,6 +44,9 @@ import Verify from "./pages/verify";
 import PromotionManagement from "./pages/admin/promotion";
 import AssignCourse from "./pages/admin/promotion/AssignCourse";
 import QuestionContentUser from "./pages/admin/course/questionContent/QuestionContentUser";
+import 'react-toastify/dist/ReactToastify.css';
+import ToastNotifier from "./components/toast/ToastNotifier";
+import ExerciseDetail from "./pages/classroom/exerciseDetail";
 function App() {
   const router = createBrowserRouter([
     {
@@ -196,7 +198,7 @@ function App() {
     },
     {
       path: "/meeting/:meetingId",
-      element: <Meeting></Meeting>
+      element: <ProtectedRoute><Meeting /></ProtectedRoute>
     },
     {
       path: "/classrooms/course/:courseId",
@@ -207,6 +209,10 @@ function App() {
       element: <ProtectedRoute><ClassroomDetail /></ProtectedRoute>,
     },
     {
+      path: "/exercise/:id/detail/c/:courseId",
+      element: <ProtectedRoute><ExerciseDetail /></ProtectedRoute>,
+    },
+    {
       path: "/whiteboard",
       element: <WhiteBoard></WhiteBoard>,
     }, {
@@ -215,9 +221,11 @@ function App() {
     },
   ]);
 
+
   return (
     <>
       <RouterProvider router={router} ></RouterProvider>
+      <ToastNotifier />
     </>
   )
 

@@ -43,15 +43,16 @@ function Answer(probs: Probs) {
     };
     const handleChangeDesc = (value: string) => {
         console.log(index);
-        const newAnswers = [...answers];
-        newAnswers.forEach((ans, id) => {
+        const newAnswers = answers.map((ans, id) => {
             if (id === index) {
-                ans.answerText = value;
+                // Return a new object with updated properties
+                return { ...ans, answerText: value };
             }
-        })
-        console.log(newAnswers);
+            return ans; // Return unchanged objects
+        });
         setAnswers(newAnswers);
-    }
+    };
+
 
     // const handleChangeCorrect = (e: ChangeEvent<HTMLInputElement>) => {
     //     console.log(e.target.value);
@@ -59,14 +60,19 @@ function Answer(probs: Probs) {
 
     const handleChangeReason = (event: ChangeEvent<HTMLInputElement>) => {
         const newReason = event.target.value;
-        const newAnswers = [...answers];
-        newAnswers.forEach((ans, id) => {
+
+        // Use map to immutably update the answers
+        const newAnswers = answers.map((ans, id) => {
             if (id === index) {
-                ans.reason = newReason;
+                // Return a new object with the updated reason
+                return { ...ans, reason: newReason };
             }
-        })
+            return ans; // Return unchanged objects
+        });
+
         setAnswers(newAnswers);
-    }
+    };
+
 
     useEffect(() => {
         if (radioRef.current && answer.correct === true) {

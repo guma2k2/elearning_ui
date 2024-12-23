@@ -47,10 +47,10 @@ function CurriculumList(probs: Probs) {
                 })}
             </div>
             {toggle == false && <div className='plus' onClick={() => setToggle(true)}>
-                <Button className='btn-plus' icon={<AiOutlinePlus />}>Section</Button>
+                <Button className='btn-plus' icon={<AiOutlinePlus />}>Chương</Button>
             </div>}
             {toggle == true && <div className="curriculumlist-add-section">
-                <SectionForm prevNum={prevNumber} nextNum={nextNumber} label='New Section' toggle={{ type: "" }} setToggleCurriculumList={setToggle} />
+                <SectionForm prevNum={prevNumber} nextNum={nextNumber} label='Chương mới' toggle={{ type: "" }} setToggleCurriculumList={setToggle} />
             </div>}
 
 

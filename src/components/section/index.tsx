@@ -56,7 +56,7 @@ function Section(props: Probs) {
                     <SectionForm
                         prevNum={prevNum}
                         nextNum={nextNum}
-                        label='New Section'
+                        label='Chương mới'
                         setToggle={setToggle}
                         toggle={toggle} />
                 </div>
@@ -68,7 +68,7 @@ function Section(props: Probs) {
                     {toggle.type !== "updateSection" &&
                         <>
                             <div className="title">
-                                <span>Section {index + 1}:</span>
+                                <span>Chương {index + 1}:</span>
                                 <AiOutlineFile className="icon-file" />
                                 <span>{section.title}</span>
                             </div>
@@ -86,7 +86,7 @@ function Section(props: Probs) {
                             section={section}
                             prevNum={section.number}
                             nextNum={section.number}
-                            label={`Section ${index + 1}:`}
+                            label={`Chương ${index + 1}:`}
                             setToggle={setToggle}
                             toggle={toggle} />
                     </div>}

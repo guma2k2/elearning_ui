@@ -2,12 +2,12 @@ import './ClassroomDetail.style.scss'
 import Background from "../../../assets/img_classroom_background.jpg"
 import { Button, Card, Col, DatePicker, Form, Input, InputRef, Modal, Popconfirm, Rate, Row, Select, Tabs } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ClassroomGetType, IEvent, IMeeting, IReference, MeetingPostType, ReferenceFilePostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
+import { ClassroomGetType, IEvent, IExercise, IMeeting, IReference, MeetingPostType, ReferenceFilePostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { getById } from '../../../services/ClassroomService';
 import { downloadFile, uploadFile } from '../../../services/MediaService';
 import { formatDate } from '../../../utils/Format';
-import { MdOutlineCancel, MdOutlineEdit, MdOutlineKeyboardArrowLeft } from 'react-icons/md';
+import { MdOutlineAssignment, MdOutlineCancel, MdOutlineEdit, MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import dayjs from 'dayjs';
 import { CiTrash } from "react-icons/ci";
 import StarIcon from '../../../assets/star.png'
@@ -36,7 +36,6 @@ function ClassroomDetail() {
     let { id, courseId } = useParams();
     const navigate = useNavigate();
     const [classroomGet, setClassroomGet] = useState<ClassroomGetType>();
-    const [formClassroom] = Form.useForm();
     const [toggle, setToggle] = useState<ToggleType>();
     const [isModalClassroom, setIsModalClassroom] = useState(false);
 
@@ -399,7 +398,7 @@ function ClassroomDetail() {
         }
     }
 
-    const getEventByID = (type: "meeting" | "reference", eId: number): IMeeting | IReference | undefined => {
+    const getEventByID = (type: "meeting" | "reference", eId: number): IMeeting | IReference | IExercise | undefined => {
         const event = classroomGet?.events.find((e) => e.type === type && e.id === eId);
         return event; // Replace `defaultEvent` with an appropriate fallback value
     };
@@ -426,6 +425,51 @@ function ClassroomDetail() {
             alert("Xóa thành công")
             setIsDataUpdated((prev) => !prev)
         }
+    }
+
+    const cardStyle = {
+        cursor: "pointer",
+        width: "780px",
+        padding: "0 40px",
+        backgroundColor: "#fff",
+        borderRadius: "8px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        transition: "background-color 0.3s ease, transform 0.2s ease",
+    };
+
+    const cardStyle1 = {
+        width: "780px",
+        padding: "0 40px",
+        backgroundColor: "#fff",
+        borderRadius: "8px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        transition: "background-color 0.3s ease, transform 0.2s ease",
+    };
+
+    const cardHoverStyle = {
+        backgroundColor: "#f5f5f5", // Hover background color
+        transform: "translateY(-3px)", // Slight lift effect
+    };
+
+    const cardTopStyle = {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+    };
+
+    const cardTopLeftStyle = {
+        display: "flex",
+        gap: "15px",
+    };
+
+    const cardTopRightStyle = {
+        display: "flex",
+        gap: "12px",
+        cursor: "pointer",
+    };
+
+    const handleRedirectToExerciseDetail = (exerciseId: number) => {
+        navigate(`/exercise/${exerciseId}/detail/c/${courseId}`)
     }
 
 
@@ -545,110 +589,145 @@ function ClassroomDetail() {
                     return {
                         label: 'Chi tiết lớp học',
                         key: id,
-                        children: <div className="classroomDetail-content">
-                            {auth?.user.role != "ROLE_STUDENT" && <Button onClick={showModalClassroom}>Thêm sự kiện cho lớp học</Button>}
-                            {classroomGet && classroomGet.events.map((event) => {
-                                if (event.type == "meeting") {
+                        children:
+                            <div className="classroomDetail-content">
+                                {auth?.user.role != "ROLE_STUDENT" && <Button onClick={showModalClassroom}>Thêm sự kiện cho lớp học</Button>}
+                                {classroomGet && classroomGet.events.map((event) => {
+                                    if (event.type == "meeting") {
+                                        return <Card
+                                            key={`meeting-${event.id}`}
+                                            style={cardStyle1}
+
+                                        >
+                                            <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                                <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
+                                                    <img src={classroomGet.user.photo} alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                                    <div className="classroomDetail-card-top-right">
+                                                        <div>Giáo viên đã đăng thông tin cho một cuộc họp</div>
+                                                        <div>{formatDate(event.createdAt)}</div>
+                                                        <div>Thời gian: {event.startTime} đến {event.endTime} </div>
+                                                    </div>
+                                                    <Button onClick={() => navigateToMeetingRoom(event.code)}>Tham gia cuộc họp</Button>
+                                                </div>
+                                                <div className="classroomDetail-card-topRight">
+                                                    {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditMeeting(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
+                                                        <Popconfirm
+                                                            title="Xóa buổi họp này?"
+                                                            description="Bạn có chắc chắn xóa buổi họp này?"
+                                                            okText="Có"
+                                                            cancelText="Không"
+                                                            onConfirm={() => handleDeleteMeeting(event.id)}
+                                                        >
+                                                            <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
+
+                                                            />
+                                                        </Popconfirm></>}
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    } else if (event.type == "exercise") {
+                                        return <Card
+                                            key={`exercise-${event.id}`}
+                                            style={cardStyle}
+                                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = cardHoverStyle.backgroundColor)}
+                                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = cardStyle.backgroundColor)}
+                                            onClick={() => handleRedirectToExerciseDetail(event.id)}
+                                        >
+                                            <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                                <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
+                                                    <MdOutlineAssignment style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                                    <div className="classroomDetail-card-top-right">
+                                                        <div>{classroomGet.user.firstName} {classroomGet.user.lastName} đã đăng một bài tập mới: {event.title}</div>
+                                                        <div>{formatDate(event.createdAt)}</div>
+                                                    </div>
+                                                </div>
+                                                <div className="classroomDetail-card-topRight">
+                                                    {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditMeeting(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
+                                                        <Popconfirm
+                                                            title="Xóa buổi họp này?"
+                                                            description="Bạn có chắc chắn xóa buổi họp này?"
+                                                            okText="Có"
+                                                            cancelText="Không"
+                                                            onConfirm={() => handleDeleteMeeting(event.id)}
+                                                        >
+                                                            <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
+
+                                                            />
+                                                        </Popconfirm></>}
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    }
                                     return <Card
-                                        key={`meeting-${event.id}`}
-                                        style={{ width: "780px", padding: "0 40px" }}
+                                        key={`document-${event.id}`}
+                                        style={cardStyle1}
+
                                     >
-                                        <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                        <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", marginBottom: "10px", justifyContent: "space-between" }}>
                                             <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
                                                 <img src={classroomGet.user.photo} alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
                                                 <div className="classroomDetail-card-top-right">
-                                                    <div>Giáo viên đã đăng thông tin cho một cuộc họp</div>
+                                                    <div>Giáo viên</div>
                                                     <div>{formatDate(event.createdAt)}</div>
-                                                    <div>Thời gian: {event.startTime} đến {event.endTime} </div>
                                                 </div>
-                                                <Button onClick={() => navigateToMeetingRoom(event.code)}>Tham gia cuộc họp</Button>
                                             </div>
+
                                             <div className="classroomDetail-card-topRight">
-                                                {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditMeeting(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
+
+                                                {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditReference(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
                                                     <Popconfirm
-                                                        title="Xóa buổi họp này?"
-                                                        description="Bạn có chắc chắn xóa buổi họp này?"
+                                                        title="Xóa tài liệu này?"
+                                                        description="Bạn có chắc chắn xóa tài liệu này?"
                                                         okText="Có"
                                                         cancelText="Không"
-                                                        onConfirm={() => handleDeleteMeeting(event.id)}
+                                                        onConfirm={() => handleDeleteReference(event.id)}
                                                     >
                                                         <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
-
                                                         />
                                                     </Popconfirm></>}
+
                                             </div>
+                                        </div>
+                                        <div className="classroomDetail-card-middle" style={{ margin: "10px 0" }}>{event.description}</div>
+                                        <div className="classroomDetail-card-bottom" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+                                            {event.type == "reference" && event.files.length > 0 && event.files.map((file) => {
+                                                return <Card style={{ width: "calc(50% - 20px)", cursor: "pointer", position: "relative" }} key={`file-${file.id}`} onClick={() => handleDownloadFile(file)} >
+                                                    <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
+                                                        <img style={{ flex: "4", height: "70px", objectFit: "cover" }} src={file.fileUrl} alt="" />
+                                                        <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
+                                                            <div>{file.fileName}</div>
+                                                        </div>
+                                                        {auth?.user.role != "ROLE_STUDENT" && <MdOutlineCancel
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDeleteReferenceFile(file.id)
+                                                            }}
+                                                            style={{
+                                                                position: "absolute",
+                                                                top: "8px",
+                                                                right: "8px",
+                                                                fontSize: "20px", /* Adjust size as needed */
+                                                                cursor: "pointer",
+                                                                color: "red"
+                                                            }} />}
+                                                    </div>
+                                                </Card>
+                                            })}
+                                            {auth?.user.role != "ROLE_STUDENT" && <Card style={{ width: "calc(50% - 20px)", cursor: "pointer" }} onClick={() => handleAddNewReferenceFolder()} >
+                                                <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
+                                                    <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
+                                                        <label>Thêm tài liệu</label>
+                                                        <Input ref={fileInputRef} style={{ display: "none" }} type="file" onChange={(e) => handleFileChange(e, event.id)} />
+                                                    </div>
+                                                </div>
+                                            </Card>}
+
                                         </div>
                                     </Card>
-                                }
-                                return <Card
-                                    key={`document-${event.id}`}
-                                    style={{ width: "780px", padding: "20px 40px" }}
-                                >
-                                    <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", marginBottom: "10px", justifyContent: "space-between" }}>
-                                        <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
-                                            <img src={classroomGet.user.photo} alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
-                                            <div className="classroomDetail-card-top-right">
-                                                <div>Giáo viên</div>
-                                                <div>{formatDate(event.createdAt)}</div>
-                                            </div>
-                                        </div>
-
-                                        <div className="classroomDetail-card-topRight">
-
-                                            {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditReference(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
-                                                <Popconfirm
-                                                    title="Xóa tài liệu này?"
-                                                    description="Bạn có chắc chắn xóa tài liệu này?"
-                                                    okText="Có"
-                                                    cancelText="Không"
-                                                    onConfirm={() => handleDeleteReference(event.id)}
-                                                >
-                                                    <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
-                                                    />
-                                                </Popconfirm></>}
-
-                                        </div>
-                                    </div>
-                                    <div className="classroomDetail-card-middle" style={{ margin: "10px 0" }}>{event.description}</div>
-                                    <div className="classroomDetail-card-bottom" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-                                        {event.type == "reference" && event.files.length > 0 && event.files.map((file) => {
-                                            return <Card style={{ width: "calc(50% - 20px)", cursor: "pointer", position: "relative" }} key={`file-${file.id}`} onClick={() => handleDownloadFile(file)} >
-                                                <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
-                                                    <img style={{ flex: "4", height: "70px", objectFit: "cover" }} src={file.fileUrl} alt="" />
-                                                    <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
-                                                        <div>{file.fileName}</div>
-                                                    </div>
-                                                    {auth?.user.role == "INSTRUCTOR" && <MdOutlineCancel
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleDeleteReferenceFile(file.id)
-                                                        }}
-                                                        style={{
-                                                            position: "absolute",
-                                                            top: "8px",
-                                                            right: "8px",
-                                                            fontSize: "20px", /* Adjust size as needed */
-                                                            cursor: "pointer",
-                                                            color: "red"
-                                                        }} />}
-                                                </div>
-                                            </Card>
-                                        })}
-                                        {auth?.user.role != "ROLE_STUDENT" && <Card style={{ width: "calc(50% - 20px)", cursor: "pointer" }} onClick={() => handleAddNewReferenceFolder()} >
-                                            <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
-                                                <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
-                                                    <label>Thêm tài liệu</label>
-                                                    <Input ref={fileInputRef} style={{ display: "none" }} type="file" onChange={(e) => handleFileChange(e, event.id)} />
-                                                </div>
-                                            </div>
-                                        </Card>}
-
-                                    </div>
-                                </Card>
-                            })}
+                                })}
 
 
-                        </div>,
+                            </div>,
                     };
                 }
                 return {
