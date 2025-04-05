@@ -48,6 +48,7 @@ export interface IExercise extends IEvent {
     type: "exercise",
     title: string,
     description: string,
+    deadline: string,
     files: ExerciseFileType[]
 }
 
@@ -86,6 +87,7 @@ export type ReferencePostType = {
 export type ExercisePostType = {
     title: string,
     description: string,
+    deadline: string,
     classroomId: number
 }
 
@@ -106,3 +108,27 @@ export type ExerciseDetailType = {
     classroom: ClassroomType
 }
 
+export type StudentExerciseType = {
+    id: number,
+    fileName: string,
+    fileUrl: string,
+    submitted: boolean,
+    submittedTime: string
+}
+
+export type StudentExerciseGetType = {
+    id: number,
+    fileName: string,
+    fileUrl: string,
+    submitted: boolean,
+    submittedTime: string,
+    student: AuthType
+}
+
+
+export type StudentExercisePostType = {
+    fileName: string,
+    fileUrl: string,
+    submitted: boolean,
+    exerciseId?: number
+}

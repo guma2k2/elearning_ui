@@ -40,6 +40,16 @@ function Learning() {
     const [watchingSecond, setWatchingSecond] = useState<number>(0);
     const [selectionFetchNote, setSelectFetchNote] = useState<string>("section");
 
+    const getReason = (): string => {
+        if (currentCurriculum?.type === "quiz") {
+            const question = currentCurriculum.questions?.[selectingQuestion];
+            const answer = question?.answers?.find((a) => a.id === selectingAnswer); // Find answer by ID
+            return answer?.reason ?? ""; // Return the reason if found, otherwise empty string
+        }
+        return "";
+    };
+
+
     const getCurrenCurriculum = (): (ILecture | IQuiz | undefined) => {
         if (learning) {
             const curricumCurrentId = learning.curriculumId;
@@ -373,6 +383,9 @@ function Learning() {
         };
     }, [learning])
 
+    console.log(getReason());
+
+
     const handleChange = async (value: string) => {
         console.log(`selected ${value}`);
         setSelectFetchNote(value)
@@ -454,16 +467,12 @@ function Learning() {
                             currentCurriculum.questions &&
                             currentCurriculum.questions[selectingQuestion] &&
                             currentCurriculum.questions[selectingQuestion].answers &&
-                            currentCurriculum.questions[selectingQuestion].answers[selectingAnswer] &&
-                            currentCurriculum.questions[selectingQuestion].answers[selectingAnswer].reason && (
+                            (
                                 <div className="learning-quiz-explain">
                                     <h2 className="learning-quiz-explain-header">Giải thích</h2>
                                     <div
                                         className="learning-quiz-explain"
-                                        dangerouslySetInnerHTML={{
-                                            __html: currentCurriculum.questions[selectingQuestion].answers[selectingAnswer].reason || "",
-                                        }}
-                                    ></div>
+                                    >{getReason()}</div>
                                 </div>
                             )}
                     </div>}

@@ -33,7 +33,7 @@ export const getByLectureId = async (lectureId: number | undefined) => {
 
 
 
-export const getByCourse = async (courseId: number | undefined) => {
+export const getByCourse = async (courseId: number | undefined | string) => {
     const url = `/question-lecture/course/${courseId}`
     const res = await instance.get(url);
     return res;

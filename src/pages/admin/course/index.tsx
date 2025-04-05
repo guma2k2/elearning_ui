@@ -12,6 +12,7 @@ import { AxiosError } from 'axios';
 import { ErrorType } from '../../../types/ErrorType';
 import { RootState } from '../../../redux/store';
 import { useAppSelector } from '../../../redux/hooks';
+import { ADD_SUCCESS_MESSAGE, DELETE_SUCCESS_MESSAGE, UPDATE_SUCCESS_MESSAGE, showMessage } from '../../../utils/MessageUtil';
 type TreeData = {
     title: string;
     value: string;
@@ -65,7 +66,7 @@ const Course: React.FC = () => {
             const resUpdate = await updateStatus(body, id);
             if (resUpdate.status === 204) {
                 updateStatusCourse(id, body)
-                alert("success");
+                showMessage(UPDATE_SUCCESS_MESSAGE, "success")
             }
         }
     }
@@ -75,7 +76,6 @@ const Course: React.FC = () => {
 
 
     const onFinishStatus = async (values: CourseStatus) => {
-        console.log(values);
 
         const body: CourseStatusPostType = {
             status: "UNPUBLISHED",
@@ -84,7 +84,7 @@ const Course: React.FC = () => {
         const resUpdate = await updateStatus(body, values.id);
         if (resUpdate.status === 204) {
             updateStatusCourse(values.id, body)
-            alert("success");
+            showMessage(UPDATE_SUCCESS_MESSAGE, "success")
             setOpenStatus(false);
         }
     }
@@ -93,6 +93,7 @@ const Course: React.FC = () => {
         try {
             const res = await deleteCourse(id);
             if (res.status == 204) {
+                showMessage(DELETE_SUCCESS_MESSAGE, "success")
                 setIsDataUpdated((prev) => !prev);
             }
         } catch (error: AxiosError | any) {
@@ -100,7 +101,7 @@ const Course: React.FC = () => {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message)
+                showMessage(message, "error")
             }
         }
     }
@@ -326,14 +327,14 @@ const Course: React.FC = () => {
                 setIsDataUpdated((prev) => !prev)
                 form.resetFields()
                 setOpen(false);
-                alert("Success")
+                showMessage(ADD_SUCCESS_MESSAGE, "success");
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message)
+                showMessage(message, "error");
             }
         }
 

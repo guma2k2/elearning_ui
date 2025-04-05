@@ -2,7 +2,7 @@ import './ClassroomDetail.style.scss'
 import Background from "../../../assets/img_classroom_background.jpg"
 import { Button, Card, Col, DatePicker, Form, Input, InputRef, Modal, Popconfirm, Rate, Row, Select, Tabs } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ClassroomGetType, IEvent, IExercise, IMeeting, IReference, MeetingPostType, ReferenceFilePostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
+import { ClassroomGetType, ExerciseFilePostType, ExercisePostType, IEvent, IExercise, IMeeting, IReference, MeetingPostType, ReferenceFilePostType, ReferenceFileType, ReferencePostType } from '../../../types/ClassroomType';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { getById } from '../../../services/ClassroomService';
 import { downloadFile, uploadFile } from '../../../services/MediaService';
@@ -24,16 +24,31 @@ import { ErrorType } from '../../../types/ErrorType';
 import { LiaEllipsisVSolid } from 'react-icons/lia';
 import { useAppSelector } from '../../../redux/hooks';
 import { RootState } from '../../../redux/store';
+import ReactQuill from 'react-quill';
+import { createExercise, deleteExercise, updateExercise } from '../../../services/ExerciseService';
+import { createExerciseFile, deleteExerciseFile } from '../../../services/ExerciseFileService';
 
+const lectureModules = {
+    toolbar: [
+        ['bold', 'italic'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],  // Customize the toolbar to include only bold and italic options
+    ],
+};
 
+const lectureFormats = [
+    'bold', 'italic', 'list', 'bullet',
+];
 type ToggleType = {
     type: "meeting" | "reference"
 }
 function ClassroomDetail() {
     const fileInputRef = useRef<InputRef | null>(null);
+    const fileInputExerciseRef = useRef<InputRef | null>(null);
+
     const { auth } = useAppSelector((state: RootState) => state.auth);
 
     let { id, courseId } = useParams();
+    const [exerciseDesc, setExerciseDesc] = useState<string>("");
     const navigate = useNavigate();
     const [classroomGet, setClassroomGet] = useState<ClassroomGetType>();
     const [toggle, setToggle] = useState<ToggleType>();
@@ -52,6 +67,20 @@ function ClassroomDetail() {
     const [form] = Form.useForm();
     const [formMeeting] = Form.useForm();
     const [formReference] = Form.useForm();
+    const [formExercise] = Form.useForm();
+    const [openExercise, setOpenExercise] = useState<boolean>(false);
+
+
+    const handleOkExercise = () => {
+        formExercise.submit();
+    };
+
+    const handleCancleExercise = () => {
+        setOpenExercise(false);
+        formExercise.resetFields();
+        setEventId(undefined)
+        setExerciseDesc("");
+    };
 
     const handleOkClassroom = () => {
         if (toggle) {
@@ -172,6 +201,10 @@ function ClassroomDetail() {
         setIsModalOpen(true);
     };
 
+    const showModaExercise = () => {
+        setOpenExercise(true);
+    };
+
     const handleOk = () => {
         setIsModalOpen(false);
         form.submit();
@@ -272,17 +305,57 @@ function ClassroomDetail() {
             if (type == "create") {
                 const res = await createMeeting(body);
                 if (res.status == 200) {
-                    setIsDataUpdated((isDataUpdated) => !isDataUpdated);
                     alert("Thêm cuộc họp thành công")
+                    setIsDataUpdated((isDataUpdated) => !isDataUpdated);
                 }
             } else {
                 if (eventId) {
                     const res = await updateMeeting(body, eventId);
                     if (res.status == 200) {
+                        alert("Cập nhật thành công")
                         setIsDataUpdated((isDataUpdated) => !isDataUpdated);
                     }
                 }
             }
+            setIsModalClassroom(false);
+        }
+    };
+
+
+    const onFinishExercise = async (values: ExercisePostType) => {
+        const type: string = eventId ? "update" : "create";
+
+        const formatedDeadline = dayjs(values.deadline).format('YYYY-MM-DD HH:mm:ss');
+
+
+        if (id) {
+            const body: ExercisePostType = {
+                ...values,
+                description: exerciseDesc,
+                deadline: formatedDeadline,
+                classroomId: parseInt(id)
+            }
+            console.log(body);
+
+            if (type == "create") {
+                const res = await createExercise(body);
+                if (res.status == 200) {
+                    setExerciseDesc("")
+                    setIsDataUpdated((isDataUpdated) => !isDataUpdated);
+                    alert("Thêm bài tập thành công")
+                }
+            } else {
+                if (eventId) {
+                    const res = await updateExercise(body, eventId);
+                    if (res.status == 200) {
+                        setExerciseDesc("")
+                        alert("Cập nhật thành công")
+                        setIsDataUpdated((isDataUpdated) => !isDataUpdated);
+
+                    }
+                }
+            }
+            setOpenExercise(false);
         }
     };
 
@@ -305,16 +378,17 @@ function ClassroomDetail() {
             if (type == "create") {
                 const res = await createReference(body);
                 if (res.status == 200) {
-
+                    alert("Thêm thành công")
                 }
             } else {
                 if (eventId) {
                     const res = await updateReference(body, eventId);
                     if (res.status == 200) {
-
+                        alert("Cập nhật thành công")
                     }
                 }
             }
+            setIsModalClassroom(false);
         }
     };
 
@@ -358,9 +432,58 @@ function ClassroomDetail() {
             }
         }
     }
+
+
+    const handleExerciseFileChange = async (event: ChangeEvent<HTMLInputElement>, id: number) => {
+        const files = event.target.files
+        if (files && files.length > 0) {
+            const selected = files[0] as File;
+            // const url = URL.createObjectURL(selected);
+            console.log(selected);
+            var formData = new FormData();
+            formData.append("file", selected);
+            formData.append("type", "other");
+
+            try {
+                console.log(formData);
+                const res = await uploadFile(formData);
+                if (res.status === 200) {
+                    const urlFile = res.data.url as string;
+                    const body: ExerciseFilePostType = {
+                        fileName: selected.name,
+                        fileUrl: urlFile,
+                        exerciseId: id
+                    }
+
+                    const resCreate = await createExerciseFile(body);
+                    if (resCreate.status == 200) {
+                        console.log(resCreate.data);
+                        alert("Thêm tài liệu thành công");
+                        setIsDataUpdated((prev) => !prev)
+                    }
+                }
+            } catch (error: AxiosError | any) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    const data = error.response.data as ErrorType;
+                    const message = data.details;
+                    alert(message)
+                    return;
+                }
+            }
+        }
+    }
+
+
     const handleAddNewReferenceFolder = () => {
         fileInputRef.current?.input?.click();
     }
+
+
+    const handleAddNewExerciseFolder = () => {
+        fileInputExerciseRef.current?.input?.click();
+    }
+
     const handleChange = (value: "meeting" | "reference") => {
         console.log(`selected ${value}`);
         setToggle({ type: value })
@@ -384,6 +507,24 @@ function ClassroomDetail() {
         }
     }
 
+
+    const handleEditExercise = (exId: number) => {
+        setEventId(exId)
+        setOpenExercise(true);
+        const currentEvent = getEventByID("exercise", exId);
+
+
+        if (currentEvent && currentEvent.type == "exercise") {
+            console.log(currentEvent);
+            formExercise.setFieldsValue({
+                id: currentEvent.id,
+                title: currentEvent.title,
+                deadline: dayjs(currentEvent.deadline, 'DD/MM/YYYY HH:mm:ss'),
+            })
+            setExerciseDesc(currentEvent.description);
+        }
+    }
+
     const handleEditReference = (referenceId: number) => {
         setEventId(referenceId)
         setToggle({ type: "reference" })
@@ -398,9 +539,9 @@ function ClassroomDetail() {
         }
     }
 
-    const getEventByID = (type: "meeting" | "reference", eId: number): IMeeting | IReference | IExercise | undefined => {
+    const getEventByID = (type: "meeting" | "reference" | "exercise", eId: number): IMeeting | IReference | IExercise | undefined => {
         const event = classroomGet?.events.find((e) => e.type === type && e.id === eId);
-        return event; // Replace `defaultEvent` with an appropriate fallback value
+        return event;
     };
 
     const handleDeleteMeeting = async (meetingId: number) => {
@@ -411,11 +552,41 @@ function ClassroomDetail() {
         }
     }
 
+    const handleDeleteExercise = async (exId: number) => {
+
+        try {
+            const res = await deleteExercise(exId)
+            if (res.status == 200) {
+                alert("Xóa thành công")
+                setIsDataUpdated((prev) => !prev)
+            }
+
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message);
+            }
+        }
+
+    }
+
     const handleDeleteReference = async (referenceId: number) => {
-        const res = await deleteReference(referenceId)
-        if (res.status == 200) {
-            alert("Xóa thành công")
-            setIsDataUpdated((prev) => !prev)
+        try {
+            const res = await deleteReference(referenceId)
+            if (res.status == 200) {
+                alert("Xóa thành công")
+                setIsDataUpdated((prev) => !prev)
+            }
+
+        } catch (error: AxiosError | any) {
+            if (error.response) {
+                console.log(error.response.data);
+                const data = error.response.data as ErrorType;
+                const message = data.details;
+                alert(message);
+            }
         }
     }
 
@@ -427,10 +598,19 @@ function ClassroomDetail() {
         }
     }
 
+    const handleDeleteExerciseFile = async (id: number) => {
+        const res = await deleteExerciseFile(id);
+        if (res.status == 200) {
+            alert("Xóa thành công")
+            setIsDataUpdated((prev) => !prev)
+        }
+    }
+
     const cardStyle = {
+        border: "1px solid rgb(224 224 224)",
         cursor: "pointer",
         width: "780px",
-        padding: "0 40px",
+        padding: "20px 40px",
         backgroundColor: "#fff",
         borderRadius: "8px",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
@@ -476,12 +656,18 @@ function ClassroomDetail() {
     useEffect(() => {
         fetchClassroomById();
         fetchReviewsClassroomById();
-        fetchReviewByStudent();
+        if (auth) {
+            if (auth.user.role == "ROLE_STUDENT") {
+                fetchReviewByStudent();
+            }
+        }
     }, [id])
 
     useEffect(() => {
         fetchClassroomById();
     }, [isDataUpdated])
+
+
 
     return <div className="classroomDetail-container">
         <div className="classroomDetail-top">
@@ -580,6 +766,58 @@ function ClassroomDetail() {
                         </Row>
                     </Form>}
             </Modal>
+
+            <Modal width={800} title="Tạo bài tập" open={openExercise} onOk={handleOkExercise} onCancel={handleCancleExercise} >
+                <Form layout="horizontal" onFinish={onFinishExercise} form={formExercise} wrapperCol={{ span: 20 }} labelCol={{ span: 4 }} style={{ maxWidth: "100%" }} >
+                    <Form.Item
+                        name="id"
+                        style={{ display: "none" }}
+                    >
+                        <Input placeholder="id" type='hidden' />
+                    </Form.Item>
+
+                    <Row gutter={24}>
+                        <Col span={24}>
+                            <Form.Item
+                                name="title"
+                                label="Tiêu đề"
+                                rules={[{ required: true, message: 'Tiêu đề không được bỏ trống' }]}
+                            >
+                                <Input placeholder="Nhập tiêu đề" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row gutter={24} align="middle" style={{ marginBottom: "10px" }}>
+                        <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
+                            <label style={{ lineHeight: "32px", alignItems: "start" }}>Mô tả</label>
+                        </Col>
+                        <Col span={20}>
+                            <ReactQuill
+                                modules={lectureModules}
+                                formats={lectureFormats}
+                                theme="snow"
+                                value={exerciseDesc}
+                                onChange={setExerciseDesc}
+                                placeholder="Có thể bỏ trống"
+                            />
+                        </Col>
+                    </Row>
+                    <Row gutter={24}>
+                        <Col span={24}>
+                            <Form.Item
+                                name="deadline"
+                                label="Hạn nộp"
+                                rules={[{ required: true, message: 'Thời hạn không được bỏ trống' }]}
+                            >
+                                <DatePicker
+                                    showTime
+                                    style={{ width: "100%" }}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
+            </Modal>
         </div>
         <Tabs
             tabPosition={'left'}
@@ -591,7 +829,8 @@ function ClassroomDetail() {
                         key: id,
                         children:
                             <div className="classroomDetail-content">
-                                {auth?.user.role != "ROLE_STUDENT" && <Button onClick={showModalClassroom}>Thêm sự kiện cho lớp học</Button>}
+                                {auth?.user.role != "ROLE_STUDENT" && <div style={{ display: "flex", gap: "10px" }} ><Button onClick={showModalClassroom}>Thêm sự kiện cho lớp học</Button> <Button onClick={showModaExercise}>Thêm bài tập</Button></div>}
+
                                 {classroomGet && classroomGet.events.map((event) => {
                                     if (event.type == "meeting") {
                                         return <Card
@@ -601,7 +840,7 @@ function ClassroomDetail() {
                                         >
                                             <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                                 <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
-                                                    <img src={classroomGet.user.photo} alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                                    <img src={classroomGet.user.photo} alt="instructor picture" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "contain" }} />
                                                     <div className="classroomDetail-card-top-right">
                                                         <div>Giáo viên đã đăng thông tin cho một cuộc họp</div>
                                                         <div>{formatDate(event.createdAt)}</div>
@@ -626,37 +865,80 @@ function ClassroomDetail() {
                                             </div>
                                         </Card>
                                     } else if (event.type == "exercise") {
-                                        return <Card
-                                            key={`exercise-${event.id}`}
-                                            style={cardStyle}
-                                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = cardHoverStyle.backgroundColor)}
-                                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = cardStyle.backgroundColor)}
-                                            onClick={() => handleRedirectToExerciseDetail(event.id)}
-                                        >
-                                            <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                                <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
-                                                    <MdOutlineAssignment style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
-                                                    <div className="classroomDetail-card-top-right">
-                                                        <div>{classroomGet.user.firstName} {classroomGet.user.lastName} đã đăng một bài tập mới: {event.title}</div>
-                                                        <div>{formatDate(event.createdAt)}</div>
+                                        return <div style={{ display: "flex", flexDirection: 'column' }} key={`exercise-${event.id}`} >
+                                            <div
+                                                key={`exercise-${event.id}`}
+                                                style={cardStyle}
+                                                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = cardHoverStyle.backgroundColor)}
+                                                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = cardStyle.backgroundColor)}
+                                                onClick={() => handleRedirectToExerciseDetail(event.id)}
+                                            >
+                                                <div className="classroomDetail-card-top" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                                    <div className="classroomDetail-card-topLeft" style={{ display: "flex", gap: "15px" }} >
+                                                        <MdOutlineAssignment style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} />
+                                                        <div className="classroomDetail-card-top-right">
+                                                            <div>{classroomGet.user.firstName} {classroomGet.user.lastName} đã đăng một bài tập mới: {event.title}</div>
+                                                            <div>{formatDate(event.createdAt)}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="classroomDetail-card-topRight">
-                                                    {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={() => handleEditMeeting(event.id)} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
-                                                        <Popconfirm
-                                                            title="Xóa buổi họp này?"
-                                                            description="Bạn có chắc chắn xóa buổi họp này?"
-                                                            okText="Có"
-                                                            cancelText="Không"
-                                                            onConfirm={() => handleDeleteMeeting(event.id)}
-                                                        >
-                                                            <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
+                                                    <div className="classroomDetail-card-topRight">
+                                                        {auth?.user.role != "ROLE_STUDENT" && <><MdOutlineEdit onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEditExercise(event.id);
+                                                        }} style={{ fontSize: "20px", cursor: "pointer", marginRight: "12px" }} />
+                                                            <Popconfirm
+                                                                title="Xóa bài tập này?"
+                                                                description="Bạn có chắc chắn xóa bài tập này?"
+                                                                okText="Có"
+                                                                cancelText="Không"
+                                                                onConfirm={(e) => {
+                                                                    e?.stopPropagation();
+                                                                    handleDeleteExercise(event.id)
+                                                                }}
+                                                            >
+                                                                <CiTrash style={{ fontSize: "20px", cursor: "pointer" }}
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                />
+                                                            </Popconfirm></>}
+                                                    </div>
 
-                                                            />
-                                                        </Popconfirm></>}
                                                 </div>
                                             </div>
-                                        </Card>
+                                            <div className="classroomDetail-card-bottom" style={{ display: "flex", gap: "20px", flexWrap: "wrap", width: "780px", padding: "40px", backgroundColor: "#fff", border: "1px solid rgb(224 224 224)" }}>
+                                                {event.type == "exercise" && event.files.length > 0 && event.files.map((file) => {
+                                                    return <Card style={{ width: "calc(50% - 20px)", cursor: "pointer", position: "relative" }} key={`exercise-file-${file.id}`} onClick={() => handleDownloadFile(file)} >
+                                                        <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
+                                                            <img style={{ flex: "4", height: "70px", objectFit: "contain" }} src="https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-48dp/logo_drive_2020q4_color_1x_web_48dp.png" alt="" />
+                                                            <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
+                                                                <div>{file.fileName}</div>
+                                                            </div>
+                                                            {auth?.user.role != "ROLE_STUDENT" && <MdOutlineCancel
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleDeleteExerciseFile(file.id)
+                                                                }}
+                                                                style={{
+                                                                    position: "absolute",
+                                                                    top: "8px",
+                                                                    right: "8px",
+                                                                    fontSize: "20px", /* Adjust size as needed */
+                                                                    cursor: "pointer",
+                                                                    color: "red"
+                                                                }} />}
+                                                        </div>
+                                                    </Card>
+                                                })}
+                                                {auth?.user.role != "ROLE_STUDENT" && <Card style={{ width: "calc(50% - 20px)", cursor: "pointer" }} onClick={() => handleAddNewExerciseFolder()} >
+                                                    <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
+                                                        <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
+                                                            <label>Thêm tài liệu</label>
+                                                            <Input ref={fileInputExerciseRef} style={{ display: "none" }} type="file" onChange={(e) => handleExerciseFileChange(e, event.id)} />
+                                                        </div>
+                                                    </div>
+                                                </Card>}
+                                            </div>
+
+                                        </div>
                                     }
                                     return <Card
                                         key={`document-${event.id}`}
@@ -693,7 +975,7 @@ function ClassroomDetail() {
                                             {event.type == "reference" && event.files.length > 0 && event.files.map((file) => {
                                                 return <Card style={{ width: "calc(50% - 20px)", cursor: "pointer", position: "relative" }} key={`file-${file.id}`} onClick={() => handleDownloadFile(file)} >
                                                     <div className="classroomDetail-cardBottom-container" style={{ display: "flex" }}>
-                                                        <img style={{ flex: "4", height: "70px", objectFit: "cover" }} src={file.fileUrl} alt="" />
+                                                        <img style={{ flex: "4", height: "70px", objectFit: "contain" }} src="https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-48dp/logo_drive_2020q4_color_1x_web_48dp.png" alt="" />
                                                         <div style={{ flex: "6" }} className="classroomDetail-cardBottom-file-right">
                                                             <div>{file.fileName}</div>
                                                         </div>
@@ -764,7 +1046,7 @@ function ClassroomDetail() {
                                 </Form.Item>
                             </Form>
                         </Modal>
-                        <Button onClick={showModal}>{review ? "Cập nhật" : "Viết"} đánh giá</Button>
+                        {auth && auth.user.role == "ROLE_STUDENT" && <Button onClick={showModal}>{review ? "Cập nhật" : "Viết"} đánh giá</Button>}
                         <div className="review-wrapper">
                             {reviews && reviews.length > 0 && reviews.map((review) => <Review review={review} key={`review-of-classroom-${review.id}`} isFilter={false} />)}
                         </div>
