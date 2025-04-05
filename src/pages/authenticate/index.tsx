@@ -4,6 +4,7 @@ import { AuthType } from "../../types/AuthType";
 import { useAppDispatch } from "../../redux/hooks";
 import { saveUserProfile } from "../../redux/slices/AuthenticationSlice";
 import { useNavigate } from "react-router-dom";
+import { showMessage } from "../../utils/MessageUtil";
 function Authenticate() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ function Authenticate() {
                 const res = await outboundUser(code);
                 const data = res.data as AuthType
                 dispatch(saveUserProfile(data));
+                showMessage("Đăng nhập thành công", "success")
                 navigate("/");
             }
             fetchUserProfileByCode();

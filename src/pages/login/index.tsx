@@ -60,7 +60,7 @@ function Login() {
             </div>
             <div className="right">
                 <h2 className="header">
-                    Log in to your Udemy account
+                    Đăng nhập
                 </h2>
                 <div className="form">
                     <Form

@@ -12,6 +12,7 @@ import { RootState } from '../../../redux/store';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { AuthType } from '../../../types/AuthType';
 import { updateUserProfile } from '../../../redux/slices/AuthenticationSlice';
+import { ADD_SUCCESS_MESSAGE, DELETE_SUCCESS_MESSAGE, UPDATE_SUCCESS_MESSAGE, showMessage } from '../../../utils/MessageUtil';
 
 
 
@@ -57,7 +58,7 @@ const User: React.FC = () => {
         const res = await updateStatus(checked, id);
         if (res.status === 204) {
             toggleActiveField(id, checked);
-            alert("Update success")
+            showMessage(UPDATE_SUCCESS_MESSAGE, "success")
         }
     }
 
@@ -241,7 +242,7 @@ const User: React.FC = () => {
                 const resSaveUser = await save(newValues);
                 console.log(resSaveUser);
                 if (resSaveUser.status === 201) {
-                    alert("Add user successful");
+                    showMessage(ADD_SUCCESS_MESSAGE, "success")
                     form.resetFields();
                     setOpen(false);
                     setIsDataUpdated((isDataUpdated) => !isDataUpdated)
@@ -252,7 +253,7 @@ const User: React.FC = () => {
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
                     const message = data.details;
-                    alert(message)
+                    showMessage(message, "error")
                     return;
 
                 }
@@ -267,7 +268,7 @@ const User: React.FC = () => {
                 }
                 const resUpdateUser = await update(newValues, userId);
                 if (resUpdateUser.status === 200) {
-                    alert("Update user successful");
+                    showMessage(UPDATE_SUCCESS_MESSAGE, "success")
                     const data = resUpdateUser.data as AuthType;
                     const actualData = resUpdateUser.data as UserType
                     updateUser(actualData)
@@ -283,7 +284,7 @@ const User: React.FC = () => {
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
                     const message = data.details;
-                    alert(message)
+                    showMessage(message, "error")
                     setPending(false)
                     return;
                 }
@@ -298,14 +299,14 @@ const User: React.FC = () => {
             const res = await deleteUser(id);
             if (res.status == 204) {
                 setIsDataUpdated((prev) => !prev);
-                alert("Delete user successful");
+                showMessage(DELETE_SUCCESS_MESSAGE, "success");
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message)
+                showMessage(message, "error");
             }
         }
     }

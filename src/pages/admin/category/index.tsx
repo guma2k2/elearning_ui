@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { fetchCategoryParents } from "../../../redux/slices/CategorySlice";
 import { AxiosError } from "axios";
 import { ErrorType } from "../../../types/ErrorType";
+import { ADD_SUCCESS_MESSAGE, DELETE_SUCCESS_MESSAGE, UPDATE_SUCCESS_MESSAGE, showMessage } from "../../../utils/MessageUtil";
 
 function Category() {
     const [open, setOpen] = useState<boolean>(false);
@@ -30,11 +31,8 @@ function Category() {
             const categoryPut = {
                 ...data, isPublish: checked, parentId
             }
-            console.log(checked);
-            console.log(categoryPut);
-
             const resOfUpdate = await update(categoryPut, id);
-            console.log(resOfUpdate);
+            showMessage(UPDATE_SUCCESS_MESSAGE, "success");
             setIsDataUpdated((isDataUpdated) => !isDataUpdated)
         }
     }
@@ -43,14 +41,15 @@ function Category() {
             const res = await deleteCategory(id);
             if (res.status == 204) {
                 setIsDataUpdated((prev) => !prev);
-
+                showMessage(DELETE_SUCCESS_MESSAGE, "success");
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message)
+                showMessage(message, "error")
+                // alert(message)
             }
         }
     }
@@ -156,16 +155,15 @@ function Category() {
                 if (resSave.status === 201) {
                     form.resetFields();
                     setOpen(false);
-                    alert("Add category successful")
+                    showMessage(ADD_SUCCESS_MESSAGE, "success");
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
                     const message = data.details;
-                    alert(message)
+                    showMessage(message, "error")
                     setPending(false);
-
                     return;
                 }
             }
@@ -178,7 +176,7 @@ function Category() {
                     if (resUpdateUser.status === 204) {
                         form.resetFields();
                         setOpen(false)
-                        alert("Update category successful")
+                        showMessage(UPDATE_SUCCESS_MESSAGE, "success");
                     }
                 }
             } catch (error: AxiosError | any) {
@@ -186,7 +184,7 @@ function Category() {
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
                     const message = data.details;
-                    alert(message)
+                    showMessage(message, "error")
                     setPending(false);
                     return;
                 }

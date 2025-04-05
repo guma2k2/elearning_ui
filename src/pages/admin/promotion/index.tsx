@@ -7,6 +7,7 @@ import { PromotionPostType, PromotionType } from "../../../types/PromotionType";
 import { deletePromotion, getWithPagination, save, update } from "../../../services/PromotionService";
 import './Promotion.style.scss'
 import { Link, useNavigate } from "react-router-dom";
+import { ADD_SUCCESS_MESSAGE, DELETE_SUCCESS_MESSAGE, UPDATE_SUCCESS_MESSAGE, showMessage } from "../../../utils/MessageUtil";
 function PromotionManagement() {
 
     const navigate = useNavigate();
@@ -64,7 +65,7 @@ function PromotionManagement() {
                 if (resSave.status === 200) {
                     form.resetFields();
                     setOpen(false);
-                    alert("Add successful");
+                    showMessage(ADD_SUCCESS_MESSAGE, "success")
                 }
 
             } catch (error: AxiosError | any) {
@@ -73,7 +74,8 @@ function PromotionManagement() {
                     const data = error.response.data as ErrorType;
                     const message = data.details;
                     setPending(false)
-                    alert(message)
+                    showMessage(message, "error")
+
                 }
             }
 
@@ -89,7 +91,7 @@ function PromotionManagement() {
                 if (resUpdateUser.status === 200) {
                     form.resetFields();
                     setOpen(false)
-                    alert("Update successful");
+                    showMessage(UPDATE_SUCCESS_MESSAGE, "success")
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
@@ -97,8 +99,7 @@ function PromotionManagement() {
                     const data = error.response.data as ErrorType;
                     const message = data.details;
                     setPending(false)
-                    alert(message)
-
+                    showMessage(message, "error")
                 }
             }
         }
@@ -118,14 +119,14 @@ function PromotionManagement() {
             const res = await deletePromotion(id);
             if (res.status == 204) {
                 setIsDataUpdated((prev) => !prev);
-                alert("Delete successful")
+                showMessage(DELETE_SUCCESS_MESSAGE, "success")
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message)
+                showMessage(message, "error")
             }
         }
     }

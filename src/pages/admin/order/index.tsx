@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { OrderDetailType, OrderStatusPostType, OrderType } from '../../../types/OrderType';
 import './OrderManagement.style.scss'
 import { getOrderWithPagination, updateStatusOrder } from '../../../services/OrderService';
+import { UPDATE_SUCCESS_MESSAGE, showMessage } from '../../../utils/MessageUtil';
 
 
 type StatusType = {
@@ -51,7 +52,7 @@ function OrderManagement() {
         const resUpdate = await updateStatusOrder(body, values.id);
         if (resUpdate.status === 204) {
             updateOrderStatus(values.id, body)
-            alert("success");
+            showMessage(UPDATE_SUCCESS_MESSAGE, "success")
             setOpenStatus(false);
         }
     }
@@ -70,7 +71,7 @@ function OrderManagement() {
             const resUpdate = await updateStatusOrder(body, id);
             if (resUpdate.status === 204) {
                 updateOrderStatus(id, body)
-                alert("success");
+                showMessage(UPDATE_SUCCESS_MESSAGE, "success")
             }
         }
     }

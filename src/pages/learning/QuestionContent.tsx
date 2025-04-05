@@ -251,7 +251,6 @@ function QuestionContent(props: prop) {
 
 
     const handleAddAnswer = async () => {
-        alert("clicked")
         const values: AnswerLecturePostType = {
             content: answerText,
             questionLectureId: questionActive ? questionActive : 0

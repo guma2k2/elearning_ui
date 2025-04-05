@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { fetchCategoryParents } from "../../../redux/slices/CategorySlice";
 import { AxiosError } from "axios";
 import { ErrorType } from "../../../types/ErrorType";
+import { ADD_SUCCESS_MESSAGE, DELETE_SUCCESS_MESSAGE, UPDATE_SUCCESS_MESSAGE, showMessage } from "../../../utils/MessageUtil";
 
 function Topic() {
     const [open, setOpen] = useState<boolean>(false);
@@ -36,7 +37,7 @@ function Topic() {
 
             const resOfUpdate = await update(topicPut, id);
             if (resOfUpdate.status == 204) {
-                alert("Update success")
+                showMessage(UPDATE_SUCCESS_MESSAGE, "success")
                 setIsDataUpdated((isDataUpdated) => !isDataUpdated)
             }
         }
@@ -141,14 +142,14 @@ function Topic() {
                 if (resSave.status === 201) {
                     form.resetFields();
                     setOpen(false);
-                    alert("Add successful");
+                    showMessage(ADD_SUCCESS_MESSAGE, "success")
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
                     const message = data.details;
-                    alert(message)
+                    showMessage(message, "error")
                     setPending(false);
                     return;
                 }
@@ -160,7 +161,7 @@ function Topic() {
                 if (resUpdateUser.status === 204) {
                     form.resetFields();
                     setOpen(false);
-                    alert("Update successful");
+                    showMessage(UPDATE_SUCCESS_MESSAGE, "success")
 
                 }
             } catch (error: AxiosError | any) {
@@ -168,7 +169,7 @@ function Topic() {
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
                     const message = data.details;
-                    alert(message)
+                    showMessage(message, "error")
                     setPending(false);
                     return;
                 }
@@ -195,14 +196,14 @@ function Topic() {
             const res = await deleteTopic(id);
             if (res.status == 204) {
                 setIsDataUpdated((prev) => !prev);
-                alert("delete successful")
+                showMessage(DELETE_SUCCESS_MESSAGE, "success")
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message);
+                showMessage(message, "error")
             }
         }
     }

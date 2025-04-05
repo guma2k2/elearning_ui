@@ -7,14 +7,14 @@ function Footer() {
                 <div className="address">
                     <ul>
                         <li>Học Lập Trình Để Đi Làm</li>
-                        <li>Điện thoại: 0246.329.1102</li>
-                        <li>Email: contact@fullstack.edu.vn</li>
-                        <li>Địa chỉ: Số 1, ngõ 41, Trần Duy Hưng, Cầu Giấy, Hà Nội</li>
+                        <li>Điện thoại: 0352304114</li>
+                        <li>Email: thuanngo3072002@gmail.com</li>
+                        <li>Địa chỉ: Tổ 9, khu phố 4, phường Trảng Dài, Biên Hòa, Đồng Nai</li>
                     </ul>
                 </div>
                 <div className="address">
                     <ul>
-                        <li>VỀ F8</li>
+                        <li>VỀ website</li>
                         <li>Giới thiệu</li>
                         <li>Liên hệ</li>
                         <li>Điều khoản</li>
@@ -41,7 +41,7 @@ function Footer() {
                 </div>
             </div>
             <div className="footer-contact">
-                <span>© 2018 - 2024 F8. Nền tảng học lập trình hàng đầu Việt Nam</span>
+                <span>© 2018 - 2024 . Nền tảng học lập trình hàng đầu Việt Nam</span>
                 <div className="footer-icon">
                     <FaYoutube />
                     <FaFacebook />

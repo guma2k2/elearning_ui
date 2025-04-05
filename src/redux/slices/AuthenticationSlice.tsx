@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice, current, isRejectedWithValue } from '@reduxjs/toolkit'
-import Cookies from 'universal-cookie';
 import { RootState } from '../store'
-import { jwtDecode } from "jwt-decode";
 import { AuthType, LoginRequest, LoginResponse } from '../../types/AuthType'
 import { loginUser } from "../../services/AuthService"
 import { AxiosError } from 'axios';
 import { ErrorType } from '../../types/ErrorType';
+import { Bounce, toast } from 'react-toastify';
+import { showMessage } from '../../utils/MessageUtil';
 interface AuthState {
     auth?: LoginResponse
     isLoading: boolean
@@ -19,6 +19,7 @@ export const login = createAsyncThunk(
         try {
             const response = await loginUser(request);
             const data = response.data as LoginResponse;
+            showMessage("Đăng nhập thành công", "success")
             return data;
         } catch (error: AxiosError | any) {
             if (error.response) {
@@ -28,7 +29,8 @@ export const login = createAsyncThunk(
                 if (message == "User is disabled") {
                     message = "Tài khoản của bạn đã bị khóa";
                 }
-                alert(message);
+                // alert(message);
+                showMessage(message, "error");
             }
             return null;
         }

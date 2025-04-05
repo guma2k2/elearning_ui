@@ -3,6 +3,7 @@ import './OrderHistory.style.scss'
 import { OrderDetailType, OrderType } from '../../types/OrderType';
 import { Button, Descriptions, Divider, Drawer, Flex, PaginationProps, Table, TableColumnsType } from 'antd';
 import { getOrdersByUser } from '../../services/OrderService';
+import { formatCurrency } from '../../utils/Format';
 function OrderHistory() {
     const [open, setOpen] = useState(false);
     const [orderList, setOrderList] = useState<OrderType[]>([]);
@@ -69,6 +70,11 @@ function OrderHistory() {
             title: 'Tổng tiền',
             dataIndex: 'totalPrice',
             width: 200,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <span>{formatCurrency(record.totalPrice)}</span>
+                </Flex>
+            ),
         },
         {
             title: 'Hành động',
@@ -110,9 +116,14 @@ function OrderHistory() {
             ),
         },
         {
-            title: 'Gia tien',
+            title: 'Gía tiền',
             dataIndex: 'price',
             width: 50,
+            render: (_text, record) => (
+                <Flex gap="small" wrap="wrap">
+                    <span>{formatCurrency(record.price)}</span>
+                </Flex>
+            ),
         },
     ];
 

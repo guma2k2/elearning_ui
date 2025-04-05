@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import './CouponManagement.style.scss'
 import { AxiosError } from "axios";
 import { ErrorType } from "../../../types/ErrorType";
+import { ADD_SUCCESS_MESSAGE, DELETE_SUCCESS_MESSAGE, UPDATE_SUCCESS_MESSAGE, showMessage } from "../../../utils/MessageUtil";
 function CouponManagement() {
     const [open, setOpen] = useState(false);
     const [pending, setPending] = useState(false);
@@ -62,7 +63,7 @@ function CouponManagement() {
                 if (resSaveUser.status === 201) {
                     form.resetFields();
                     setOpen(false);
-                    alert("Add successful");
+                    showMessage(ADD_SUCCESS_MESSAGE, "success");
                 }
 
             } catch (error: AxiosError | any) {
@@ -71,7 +72,7 @@ function CouponManagement() {
                     const data = error.response.data as ErrorType;
                     const message = data.details;
                     setPending(false)
-                    alert(message)
+                    showMessage(message, "error")
                 }
             }
 
@@ -87,7 +88,7 @@ function CouponManagement() {
                 if (resUpdateUser.status === 200) {
                     form.resetFields();
                     setOpen(false)
-                    alert("Update successful");
+                    showMessage(UPDATE_SUCCESS_MESSAGE, "success");
                 }
             } catch (error: AxiosError | any) {
                 if (error.response) {
@@ -95,8 +96,7 @@ function CouponManagement() {
                     const data = error.response.data as ErrorType;
                     const message = data.details;
                     setPending(false)
-                    alert(message)
-
+                    showMessage(message, "error");
                 }
             }
         }
@@ -116,14 +116,14 @@ function CouponManagement() {
             const res = await deleteCoupon(id);
             if (res.status == 204) {
                 setIsDataUpdated((prev) => !prev);
-                alert("Delete successful")
+                showMessage(DELETE_SUCCESS_MESSAGE, "success");
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
                 console.log(error.response.data);
                 const data = error.response.data as ErrorType;
                 const message = data.details;
-                alert(message)
+                showMessage(message, "error");
             }
         }
     }
