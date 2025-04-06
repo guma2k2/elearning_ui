@@ -12,6 +12,8 @@ import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { createStudentAnswerLecture, deleteStudentAnswerLecture, updateStudentAnswerLecture } from "../../services/StudentAnswerService";
 import { CiTrash } from "react-icons/ci";
+import { Client } from "@stomp/stompjs";
+
 type prop = {
     curriculum: ILecture
 }
@@ -22,7 +24,7 @@ type toggleType = {
 function QuestionContent(props: prop) {
     const { auth } = useAppSelector((state: RootState) => state.auth);
     const { learning } = useAppSelector((state: RootState) => state.learning)
-
+    const [client, setClient] = useState<Client | null>(null);
     const [answerText, setAnswerText] = useState<string>("");
     const [toggle, setToggle] = useState<toggleType>({ type: "question" })
     const { curriculum } = props;
@@ -105,7 +107,6 @@ function QuestionContent(props: prop) {
                 if (resUpdate.status == 200) {
                     const newAnswer = resUpdate.data as AnswerLectureType
                     modifyAnswerInQuestion(questionActive, values.id, newAnswer);
-                    alert("succcess")
                     setOpenAnswer(false);
                 }
             }
@@ -250,29 +251,7 @@ function QuestionContent(props: prop) {
 
 
 
-    const handleAddAnswer = async () => {
-        const values: AnswerLecturePostType = {
-            content: answerText,
-            questionLectureId: questionActive ? questionActive : 0
-        }
 
-
-
-        if (auth) {
-            if (auth.user.role == "ROLE_STUDENT") {
-                const res = await createStudentAnswerLecture(values);
-                console.log(res);
-                console.log(values);
-
-
-                if (res.status == 200) {
-                    const data = res.data as AnswerLectureType
-                    addAnswerToQuestion(questionActive, data)
-                    setAnswerText("");
-                }
-            }
-        }
-    }
 
     const deleteQuestionById = (id: number) => {
         setQuestions((prevQuestions) => prevQuestions.filter((question) => question.id !== id));
@@ -343,6 +322,64 @@ function QuestionContent(props: prop) {
         }
     }
 
+    const handleAddAnswer = async () => {
+        const values: AnswerLecturePostType = {
+            content: answerText,
+            questionLectureId: questionActive ? questionActive : 0
+        }
+
+        if (auth) {
+            if (auth.user.role == "ROLE_STUDENT") {
+                const res = await createStudentAnswerLecture(values);
+                console.log(res);
+                console.log(values);
+
+
+                if (res.status == 200) {
+                    const data = res.data as AnswerLectureType
+
+                    if (client?.connected) {
+                        client.publish({
+                            destination: `/app/chat/${questionActive}`, // Matches the backend @MessageMapping endpoint
+                            body: JSON.stringify(data),
+                        });
+                    } else {
+                        console.error("STOMP client is not connected!");
+                    }
+                    setAnswerText("");
+                }
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (questionActive) {
+            const stompClient = new Client({
+                brokerURL: "ws://localhost:8080/ws", // WebSocket URL for direct connections
+                // debug: (str) => console.log(str),
+                reconnectDelay: 5000, // Reconnect on failure
+            });
+
+            stompClient.onConnect = () => {
+                console.log("Connected to WebSocket!");
+                stompClient.subscribe(`/topic/questions/${questionActive}`, (message) => {
+                    const newMsg = JSON.parse(message.body) as AnswerLectureType;
+                    addAnswerToQuestion(questionActive, newMsg)
+                });
+            };
+
+            stompClient.onStompError = (error) => {
+                console.error("WebSocket Error:", error);
+            };
+
+            stompClient.activate();
+            setClient(stompClient);
+            return () => {
+                stompClient.deactivate(); // Clean up the connection on unmount
+            };
+        }
+    }, [questionActive]);
+
     useEffect(() => {
         if (selection == "LECTURE") {
             fetchQuestionLectures();
@@ -352,7 +389,6 @@ function QuestionContent(props: prop) {
 
     }, [curriculum, selection])
 
-    // console.log(getCurrenCurriculum(getCurrentQuestionActive().lecture.sectionId, getCurrentQuestionActive().lecture.id)?.index);
 
     return <div className="question-lecture-container">
         {toggle.type == "question" &&

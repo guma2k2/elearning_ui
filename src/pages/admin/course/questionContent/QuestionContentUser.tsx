@@ -13,12 +13,15 @@ import { MdOutlineEdit, MdOutlineQuestionAnswer } from "react-icons/md";
 import { CiTrash } from "react-icons/ci";
 import { ILecture, IQuiz } from "../../../../types/CourseType";
 import './QuestionContentUser.style.scss'
+import { Client } from "@stomp/stompjs";
+
 type toggleType = {
     type: "question" | "answer"
 }
 function QuestionContentUser() {
     const { id } = useParams();
     const dispatch = useAppDispatch();
+    const [client, setClient] = useState<Client | null>(null);
     const { auth } = useAppSelector((state: RootState) => state.auth);
     const { currentCourse } = useAppSelector((state: RootState) => state.courses);
     const [answerText, setAnswerText] = useState<string>("");
@@ -155,8 +158,6 @@ function QuestionContentUser() {
             questionLectureId: questionActive ? questionActive : 0
         }
 
-
-
         if (auth) {
             if (auth.user.role != "ROLE_STUDENT") {
                 const res = await createUserAnswerLecture(values);
@@ -166,12 +167,47 @@ function QuestionContentUser() {
 
                 if (res.status == 200) {
                     const data = res.data as AnswerLectureType
-                    addAnswerToQuestion(questionActive, data)
+                    if (client?.connected) {
+                        client.publish({
+                            destination: `/app/chat/${questionActive}`, // Matches the backend @MessageMapping endpoint
+                            body: JSON.stringify(data),
+                        });
+                    } else {
+                        console.error("STOMP client is not connected!");
+                    }
                     setAnswerText("");
                 }
             }
         }
     }
+
+    useEffect(() => {
+        if (questionActive) {
+            const stompClient = new Client({
+                brokerURL: "ws://localhost:8080/ws", // WebSocket URL for direct connections
+                // debug: (str) => console.log(str),
+                reconnectDelay: 5000, // Reconnect on failure
+            });
+
+            stompClient.onConnect = () => {
+                console.log("Connected to WebSocket!");
+                stompClient.subscribe(`/topic/questions/${questionActive}`, (message) => {
+                    const newMsg = JSON.parse(message.body) as AnswerLectureType;
+                    addAnswerToQuestion(questionActive, newMsg)
+                });
+            };
+
+            stompClient.onStompError = (error) => {
+                console.error("WebSocket Error:", error);
+            };
+
+            stompClient.activate();
+            setClient(stompClient);
+            return () => {
+                stompClient.deactivate(); // Clean up the connection on unmount
+            };
+        }
+    }, [questionActive]);
 
 
 
