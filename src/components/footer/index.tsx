@@ -9,12 +9,12 @@ function Footer() {
                         <li>Học Lập Trình Để Đi Làm</li>
                         <li>Điện thoại: 0352304114</li>
                         <li>Email: thuanngo3072002@gmail.com</li>
-                        <li>Địa chỉ: Tổ 9, khu phố 4, phường Trảng Dài, Biên Hòa, Đồng Nai</li>
+                        <li>Địa chỉ: Thủ Đức, Tp Hồ Chí Minh</li>
                     </ul>
                 </div>
                 <div className="address">
                     <ul>
-                        <li>VỀ website</li>
+                        <li>Về website</li>
                         <li>Giới thiệu</li>
                         <li>Liên hệ</li>
                         <li>Điều khoản</li>
@@ -23,7 +23,7 @@ function Footer() {
                 </div>
                 <div className="address">
                     <ul>
-                        <li>SẢN PHẨM</li>
+                        <li>Sản phẩm</li>
                         <li>Giới thiệu</li>
                         <li>Liên hệ</li>
                         <li>Điều khoản</li>
@@ -32,7 +32,7 @@ function Footer() {
                 </div>
                 <div className="address">
                     <ul>
-                        <li>CÔNG CỤ</li>
+                        <li>Công cụ</li>
                         <li>Giới thiệu</li>
                         <li>Liên hệ</li>
                         <li>Điều khoản</li>
@@ -41,7 +41,7 @@ function Footer() {
                 </div>
             </div>
             <div className="footer-contact">
-                <span>© 2018 - 2024 . Nền tảng học lập trình hàng đầu Việt Nam</span>
+                <span>© 2023 - 2025 . Nền tảng học lập trình hàng đầu Việt Nam</span>
                 <div className="footer-icon">
                     <FaYoutube />
                     <FaFacebook />
