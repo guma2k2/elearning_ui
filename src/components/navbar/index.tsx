@@ -43,15 +43,14 @@ function Navbar() {
 
     const handleChangeKeyword = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const newKeyword = e.target.value;
-        console.log(newKeyword);
         setOpenSearch(true);
         if (newKeyword && newKeyword != "") {
             const params = `keyword=${newKeyword}`;
             const res = await getCourseByMultiQuery(params);
-            console.log(res);
             if (res.status == 200) {
-                const data = res.data.content as CourseGetType[];
-                setCourses(data);
+                const data = res.data as CourseGetType[];
+                const result = data.length > 10 ? data.slice(0, 10) : data;
+                setCourses(result);
             }
         } else {
             setCourses([]);
@@ -119,7 +118,6 @@ function Navbar() {
 
 
     const handleShowCategoryChildTooltip = (parentId: number) => {
-        console.log(parentId);
         let xCategoryTooltipPosition: number = 0;
         if (categoryRef.current) {
             const { x } = categoryRef.current.getBoundingClientRect();

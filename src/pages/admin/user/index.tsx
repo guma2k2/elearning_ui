@@ -106,9 +106,7 @@ const User: React.FC = () => {
             title: 'Ảnh ',
             dataIndex: 'photo',
             width: 100,
-            render: (text, record) => {
-                console.log(text);
-
+            render: (_text, record) => {
                 if (record.photoURL === "" || record.photoURL == null) {
                     return <img src={UserPhoto} alt='User photo' style={{ width: "50px", height: "50px", objectFit: "cover" }} />
                 }
@@ -220,6 +218,7 @@ const User: React.FC = () => {
         console.log(values);
         const type = currentUser ? "update" : "create";
         const checkIsUploadFile = fileType != undefined;
+        console.log(checkIsUploadFile);
         const checkIsChangePassword = values.password?.length ? true : false;
         let photo = "";
         if (checkIsUploadFile) {
@@ -234,7 +233,6 @@ const User: React.FC = () => {
                 }
             }
         }
-        console.log(photo);
         const newValues: UserType = { ...values, photo: photo, email: emailUser.trim() }
         console.log(values);
         if (type === "create") {
@@ -252,15 +250,21 @@ const User: React.FC = () => {
                     setPending(false)
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
-                    const message = data.details;
-                    showMessage(message, "error")
+                    const message = data.details as string;
+                    var fieldError: string = ""
+                    if (data.fieldErrors && data.fieldErrors.length > 0) {
+                        var fieldError: string = ""
+                        data.fieldErrors.forEach((err) => {
+                            fieldError += err + ", ";
+                        })
+                    }
+                    showMessage(message + ": " + fieldError, "error")
                     return;
 
                 }
             }
 
         } else {
-
             try {
                 const userId = currentUser?.id;
                 if (checkIsChangePassword === false) {
