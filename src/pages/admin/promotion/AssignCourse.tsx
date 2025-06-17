@@ -4,6 +4,7 @@ import { CourseAssignPromotion } from "../../../types/CourseType";
 import { getByPromotionId } from "../../../services/CourseService";
 import { Button, Flex, Popconfirm, Table, TableColumnsType } from "antd";
 import { assignCourse, removeCourse } from "../../../services/PromotionService";
+import { DELETE_SUCCESS_MESSAGE, showMessage } from "../../../utils/MessageUtil";
 
 function AssignCourse() {
 
@@ -16,7 +17,7 @@ function AssignCourse() {
             if (!course.assigned) {
                 const res = await assignCourse(course.id, id);
                 if (res.status == 204) {
-                    alert("success")
+                    showMessage("Áp dụng thành công", "success")
                     const updatedArray = courses.map(item =>
                         item.id === course.id ? { ...item, assigned: true } : item
                     );
@@ -25,7 +26,7 @@ function AssignCourse() {
             } else {
                 const res = await removeCourse(course.id, id);
                 if (res.status == 204) {
-                    alert("success")
+                    showMessage("Hủy áp dụng thành công", "success")
                     const updatedArray = courses.map(item =>
                         item.id === course.id ? { ...item, assigned: false } : item
                     );
