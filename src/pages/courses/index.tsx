@@ -70,7 +70,7 @@ function Courses() {
     };
     return (
         <Fragment>
-            <div className="navbar-bottom-container">
+            {/* <div className="navbar-bottom-container">
                 {categoryParents?.map((item, index) => {
                     return <div key={item.id}
                         onClick={() => handleRedirectToFilterPage(item.name)}
@@ -135,7 +135,7 @@ function Courses() {
                     </Slider>
                 </div>
 
-            </div>
+            </div> */}
         </Fragment>
 
     )

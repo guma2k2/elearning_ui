@@ -18,7 +18,7 @@ import Cart from "./pages/cart";
 import CourseDetail from "./pages/course";
 import Learning from "./pages/learning";
 import Filter from "./pages/filter";
-import './index.scss'
+import './styles/index.scss'
 import MyLearning from "./pages/my-learning";
 import ProtectedRoute from "./components/protected-route";
 import NotFound from "./components/not-found";

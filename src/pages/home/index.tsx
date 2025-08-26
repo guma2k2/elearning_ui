@@ -1,12 +1,12 @@
 import { Outlet, useNavigate } from "react-router-dom"
 import Footer from "../../components/footer"
-import Navbar from "../../components/navbar"
 import './index.style.scss'
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { RootState } from "../../redux/store"
 import { getCartsByUser } from "../../redux/slices/CartSlice"
 import { getLearningCourse } from "../../redux/slices/LearningCourseSlice"
+import Header from "../../components/header"
 function Home() {
     const dispatch = useAppDispatch();
     const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
@@ -26,7 +26,7 @@ function Home() {
     }, [isLoggin])
     return (
         <div className="home-container">
-            <Navbar />
+            <Header />
             <div className="outlet-container">
                 <Outlet />
             </div>
