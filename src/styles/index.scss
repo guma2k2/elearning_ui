@@ -1,8 +1,15 @@
+@import url(./_grid.scss);
+
+
+@import url(./_util.scss);
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  font-synthesis: none;
   text-rendering: optimizeLegibility;
   --color-gray-600: #101112;
   --color-gray-550: #1c1d1f;
@@ -20,11 +27,41 @@
 
 }
 
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+html {
+  font-size: 62.5%;
+  --primary-color: ;
+  --header-bg: #fff;
+  --header-shadow-bg: rgba(237, 237, 246, 0.20);
+  --text-color: #032E32;
+  --body-bg: #f6f6f7;
+  --icon-color: brightness(0) saturate(100%) invert(8%) sepia(10%) saturate(4042%) hue-rotate(212deg) brightness(90%) contrast(95%);
+  --header-search-border-color: #444;
+  --header-form-border-color: rgb(232, 232, 232);
+
 }
+
+html.dark {
+  --header-bg: #171C28;
+  --header-shadow-bg: rgba(0, 0, 0, 0.20);
+  --icon-color: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7482%) hue-rotate(72deg) brightness(99%) contrast(99%);
+  --text-color: #fff;
+  --body-bg: #272a31;
+  --header-search-border-color: rgb(232, 232, 232);
+  --header-form-border-color: rgb(249, 249, 251, 0.2)
+}
+
+
+
+
+
+body {
+  font-size: 1.6rem;
+  font-family: "Inter", sans-serif;
+  color: var(--text-color);
+  background: var(--body-bg);
+}
+
+
 
 a {
   color: inherit;
@@ -35,6 +72,34 @@ ul,
 li {
   list-style: none;
 }
+
+.icon {
+  filter: var(--icon-color);
+}
+
+a,
+img,
+button,
+input,
+label,
+textarea,
+select {
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  outline: none;
+  border: none;
+}
+
+input,
+textarea {
+  background: transparent;
+  font-size: inherit;
+}
+
+
+
+
 
 .drawer-learning-note {
   .ant-drawer-content {
