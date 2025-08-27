@@ -29,8 +29,11 @@
 
 html {
   font-size: 62.5%;
-  --primary-color: ;
+  --primary-color: #FF6934;
+  --bg-primary-color: #FFB499;
+  --primary-icon-color: brightness(0) saturate(100%) invert(75%) sepia(53%) saturate(7082%) hue-rotate(337deg) brightness(100%) contrast(103%);
   --header-bg: #fff;
+  --header-menu-top: #eee;
   --header-shadow-bg: rgba(237, 237, 246, 0.20);
   --text-color: #032E32;
   --body-bg: #f6f6f7;
@@ -42,12 +45,13 @@ html {
 
 html.dark {
   --header-bg: #171C28;
+  --header-menu-top: #171C28;
   --header-shadow-bg: rgba(0, 0, 0, 0.20);
   --icon-color: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7482%) hue-rotate(72deg) brightness(99%) contrast(99%);
   --text-color: #fff;
   --body-bg: #272a31;
   --header-search-border-color: rgb(232, 232, 232);
-  --header-form-border-color: rgb(249, 249, 251, 0.2)
+  --header-form-border-color: rgb(249, 249, 251, 0.2);
 }
 
 
@@ -75,6 +79,7 @@ li {
 
 .icon {
   filter: var(--icon-color);
+  display: block;
 }
 
 a,

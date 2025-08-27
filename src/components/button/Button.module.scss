@@ -44,4 +44,14 @@
             background: #FFB499;
         }
     }
+
+    &.circle {
+        background: var(--header-bg);
+        border-radius: 50%;
+        border: none;
+
+        &:hover {
+            background: #FFB499;
+        }
+    }
 }

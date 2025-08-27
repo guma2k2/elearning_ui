@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { clsx } from "clsx";
 import styles from "./Button.module.scss";
 
-type ButtonVariant = "primary" | "outline" | "text" | "icon";
+type ButtonVariant = "primary" | "outline" | "text" | "circle";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariant;
