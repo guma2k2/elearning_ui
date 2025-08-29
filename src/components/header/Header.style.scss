@@ -2,6 +2,7 @@
 
 .header {
     --nav-right: 60%;
+    --multi-level-menu-height: 500px;
     position: relative;
     padding: 20px 0;
     background: var(--header-bg);
@@ -21,7 +22,7 @@
     transition-duration: 0.25s;
 
     &-text {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         line-height: 1.4;
     }
 
@@ -58,9 +59,15 @@
 .navbar {
 
     &__inner {
-        &:hover .dropdown {
-            opacity: 1;
-            visibility: visible;
+        &:hover {
+            .dropdown {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .header-category {
+                color: var(--primary-color); // đổi màu text khi hover để show dropdown
+            }
         }
     }
 
@@ -160,12 +167,16 @@
     transition-duration: 0.25s;
 
     &__inner {
-        background-color: #eee;
+        background-color: var(--header-bg);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         position: relative;
         width: 260px;
+        height: var(--multi-level-menu-height);
 
         @include screen(lg) {
             width: 100%;
+            height: 100vh;
+            overflow-y: auto;
         }
     }
 }
@@ -186,7 +197,7 @@
     }
 
     .navbar:not(.show) &__item:has(.header-category__submenu:hover)>.header__link {
-        background: var(--bg-primary-color);
+        // background: var(--bg-primary-color);
         color: var(--primary-color);
     }
 
@@ -221,9 +232,11 @@
     top: 0;
     left: 100%;
     background: var(--header-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: opacity visibility;
     transition-duration: 0.25s;
     width: 260px;
+    height: var(--multi-level-menu-height);
 
     @include screen(lg) {
         position: fixed;
@@ -236,6 +249,7 @@
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
+        height: 100%;
     }
 
     @include screen(sm) {
@@ -254,7 +268,6 @@
     }
 
     .navbar:not(.show) &-item:has(.header-topic__submenu:hover)>.header__link {
-        background: var(--bg-primary-color);
         color: var(--primary-color);
     }
 
@@ -275,7 +288,9 @@
     transition: opacity visibility;
     transition-duration: 0.25s;
     background: var(--header-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     width: 260px;
+    height: var(--multi-level-menu-height);
 
     @include screen(lg) {
         position: fixed;
@@ -288,6 +303,7 @@
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
+        height: 100%;
     }
 
     @include screen(sm) {
@@ -312,12 +328,6 @@
     }
 
 }
-
-
-
-.header-topic__item {}
-
-
 
 
 .header-left {
