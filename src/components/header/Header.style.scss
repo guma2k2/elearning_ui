@@ -351,8 +351,8 @@
 .header-language__icon {
     font-size: 1.8rem;
     display: block;
-    color: var(--text-color);
-    opacity: 0.7;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(11%) saturate(179%) hue-rotate(230deg) brightness(110%) contrast(103%);
+    // opacity: 0.7;
 }
 
 
@@ -387,27 +387,50 @@
 }
 
 
+.header-form__wrapper:has(:not(.show)) .header-form__cancel {
+    display: none;
+}
+
+.header-form__wrapper {
+    @include screen(md) {
+        margin-left: auto;
+    }
+
+    &.show {
+        position: fixed;
+        inset: 0;
+        padding: 5px;
+        background-color: #fff;
+        z-index: 11;
+
+        .header-form {
+            display: inline-flex;
+            align-items: center;
+            width: 100%;
+            position: relative;
+
+            &__cancel {
+                display: inline-block;
+                font-size: 1.4rem;
+                height: 30px;
+            }
+        }
+    }
+}
+
+
+
+
 .header-form {
     display: flex;
     height: 45px;
-    width: 630px;
+    width: var(--header-form-width);
 
     border: 2px solid var(--header-form-border-color);
     border-radius: 20px;
     transition: border-color 0.2s ease-in-out;
 
-    @include screen(xl) {
-        width: 412px;
-    }
 
-    @include screen(lg) {
-        width: 300px;
-    }
-
-    @include screen(md) {
-        width: 263px;
-        margin-left: 20px;
-    }
 
     @include screen(sm) {
         display: none;
@@ -417,6 +440,9 @@
     &__input {
         flex: 1;
 
+        &::placeholder {
+            font-size: 1.4rem;
+        }
     }
 
     &__icon {
