@@ -11,7 +11,7 @@ import {
 import "./Header.style.scss";
 import Button from "../button";
 import { CiSearch } from "react-icons/ci";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, useTransition } from "react";
 import PopperWrapper from "../popper/PopperWrapper";
 import fakeAvatar from "../../assets/img/150.jpg";
 import { Tooltip, TooltipRefProps } from "react-tooltip";
@@ -26,19 +26,20 @@ import PopoverSearch from "../popover-search";
 import { getCartsByUser } from "../../redux/slices/CartSlice";
 import { getLearningCourse } from "../../redux/slices/LearningCourseSlice";
 import { CourseGetType } from "../../types/CourseType";
-import { getCourseByMultiQuery } from "../../services/CourseService";
+import { getCourseByMultiQuery, getSuggestions } from "../../services/CourseService";
 import { getTopicsByCategoryId } from "../../services/TopicService";
 import { TopicType } from "../../pages/admin/topic/TopicType";
 import Logo from "../logo";
 import { GrLanguage } from "react-icons/gr";
 import clsx from "clsx";
 import { FaTimes } from "react-icons/fa";
+import { LangCode } from "../../types/LanguageType";
+import PopoverLanguage from "../popover-language";
 function Header() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { categoryParents } = useAppSelector((state: RootState) => state.categories);
     const { auth, isLoggin } = useAppSelector((state: RootState) => state.auth);
-    const [results, setResults] = useState<string[]>([]);
     const { carts } = useAppSelector((state: RootState) => state.carts);
     const cartTotal = carts ? carts.length : 0;
     const [toggleNavbar, setToggleNavbar] = useState<boolean>(false);
@@ -46,12 +47,22 @@ function Header() {
     const [openSearch, setOpenSearch] = useState<boolean>(false);
     const [openProfile, setOpenProfile] = useState<boolean>(false);
     const [openLearning, setOpenLearning] = useState<boolean>(false);
+    const [openLanguage, setOpenLanguage] = useState(false);
+    const [openFilter, setOpenFilter] = useState(true);
+    const [suggestions, setSuggestions] = useState<string[]>();
+
     const [keyword, setKeyword] = useState<string>("");
-    const [courses, setCourses] = useState<CourseGetType[]>();
-
+    const [deferredKeyword, setDeferredKeyword] = useState<string>("");
+    const [isPending, startTransition] = useTransition();
+    const [topics, setTopics] = useState<TopicType[]>([]);
     const [activeParentId, setActiveParentId] = useState<number | null>(null);
-
     const [activeChildId, setActiveChildId] = useState<number | null>(null);
+    const [lang, setLang] = useState<LangCode>("vi");
+
+    const handleChangeLang = (code: LangCode) => {
+        setLang(code);
+        setOpenLanguage(false);
+    };
 
     const handleOpenSubmenu = (parentId: number) => (e: any) => {
         e.preventDefault();
@@ -76,22 +87,18 @@ function Header() {
 
     const backToChild = () => setActiveChildId(null);
 
+    const isOpen = openSearch && keyword.trim() !== "";
+
     const handleChangeKeyword = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const newKeyword = e.target.value;
-        setOpenSearch(true);
-        if (newKeyword && newKeyword != "") {
-            const params = `keyword=${newKeyword}`;
-            const res = await getCourseByMultiQuery(params);
-            if (res.status == 200) {
-                const data = res.data as CourseGetType[];
-                const result = data.length > 10 ? data.slice(0, 10) : data;
-                setCourses(result);
-            }
-        } else {
-            setCourses([]);
-        }
+        console.log(newKeyword);
         setKeyword(newKeyword);
+        startTransition(() => {
+            setDeferredKeyword(newKeyword);
+            setOpenSearch(true);
+        });
     };
+
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             if (keyword && keyword.length > 0) {
@@ -101,6 +108,7 @@ function Header() {
             }
         }
     };
+
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);
     };
@@ -111,21 +119,14 @@ function Header() {
         setOpenLearning(newOpen);
     };
 
-    const handleOpenSearch = (newOpen: boolean) => {
-        setOpenSearch(newOpen);
+    const handleShowFilter = () => {
+        setOpenFilter((prev) => !prev);
     };
 
     const handleHideCart = () => {
         setOpen(false);
     };
 
-    const handleRedirectToLogin = () => {
-        navigate("/login");
-    };
-
-    const handleRedirectToRegister = () => {
-        navigate("/register");
-    };
     const getCartTotal = (): string => {
         if (cartTotal > 9) {
             return 9 + "+";
@@ -133,78 +134,14 @@ function Header() {
         return cartTotal + "";
     };
 
-    const parents: CategoryListGetType[] = [
-        {
-            id: 1,
-            name: "Parent 1",
-            isPublish: true,
-            childrens: [
-                {
-                    id: 2,
-                    name: "Child 1",
-                    isPublish: true,
-                },
-                {
-                    id: 3,
-                    name: "Child 2",
-                    isPublish: true,
-                },
-                {
-                    id: 4,
-                    name: "Child 3",
-                    isPublish: true,
-                },
-            ],
-        },
-        {
-            id: 5,
-            name: "Parent 2",
-            isPublish: true,
-            childrens: [],
-        },
-        {
-            id: 6,
-            name: "Parent 3",
-            isPublish: true,
-            childrens: [],
-        },
-        {
-            id: 7,
-            name: "Parent 4",
-            isPublish: true,
-            childrens: [],
-        },
-    ];
-
-    const getTopicsByCategory = (_catId: number) => {
-        const topics = [
-            {
-                id: 1,
-                name: "topic 1",
-                isPublish: true,
-                createdAt: "",
-                updatedAt: "",
-            },
-            {
-                id: 2,
-                name: "topic 1",
-                isPublish: true,
-                createdAt: "",
-                updatedAt: "",
-            },
-            {
-                id: 3,
-                name: "topic 1",
-                isPublish: true,
-                createdAt: "",
-                updatedAt: "",
-            },
-        ] as TopicType[];
-
-        if (_catId != 2) {
-            return [];
+    const getTopicsByCategory = async (catId: number) => {
+        const res = await getTopicsByCategoryId(catId);
+        if (res.status == 200) {
+            const topics = res.data as TopicType[];
+            setTopics(topics);
+        } else {
+            setTopics([]);
         }
-        return topics;
     };
 
     const handleToggleNav = () => {
@@ -212,10 +149,6 @@ function Header() {
         setActiveParentId(null);
         setActiveChildId(null);
     };
-    useEffect(() => {
-        if (results.length > 0) {
-        }
-    }, [results]);
 
     useEffect(() => {
         dispatch(fetchCategoryParents());
@@ -224,6 +157,18 @@ function Header() {
             dispatch(getLearningCourse());
         }
     }, [auth]);
+
+    const getSuggestionsByKeyword = async () => {
+        const res = await getSuggestions(deferredKeyword);
+        if (res.status === 200) {
+            const data = res.data as string[];
+            setSuggestions(data);
+        }
+    };
+    useEffect(() => {
+        getSuggestionsByKeyword();
+    }, [deferredKeyword]);
+
     return (
         <header className="header">
             <div className="container">
@@ -242,104 +187,106 @@ function Header() {
                                     <div className="dropdown__inner">
                                         <div className="header-submenu__heading">All categories</div>
                                         <ul className="header-category__list">
-                                            {parents.map((parent) => {
-                                                return (
-                                                    <li
-                                                        className={clsx("header-category__item", {
-                                                            "is-open": activeParentId === parent.id, // mở panel con cho parent này
-                                                        })}
-                                                        key={`parent-${parent.id}`}
-                                                    >
-                                                        <a
-                                                            href="#!"
-                                                            className="header-category__link header__link"
-                                                            onClick={handleOpenSubmenu(parent.id)}
+                                            {categoryParents &&
+                                                categoryParents.map((parent) => {
+                                                    return (
+                                                        <li
+                                                            className={clsx("header-category__item", {
+                                                                "is-open": activeParentId === parent.id, // mở panel con cho parent này
+                                                            })}
+                                                            key={`parent-${parent.id}`}
                                                         >
-                                                            <span className="header__link-text">{parent.name}</span>
-                                                            <MdKeyboardArrowRight className="icon" />
-                                                        </a>
-                                                        {parent.childrens && parent.childrens.length > 0 && (
-                                                            <div className="header-category__submenu">
-                                                                <div
-                                                                    className="header__submenu-top d-none d-lg-flex"
-                                                                    onClick={backToRoot}
-                                                                >
-                                                                    <MdKeyboardArrowLeft />
-                                                                    <span>Menu</span>
-                                                                </div>
-                                                                <ul className="header-category__submenu-list">
-                                                                    {parent.childrens.map((cat) => {
-                                                                        return (
-                                                                            <li
-                                                                                className={clsx("header-category__submenu-item", {
-                                                                                    "is-open": activeChildId === cat.id, // mở panel con cho parent này
-                                                                                })}
-                                                                                key={`cat-${cat.id}`}
-                                                                            >
-                                                                                <a
-                                                                                    onClick={handleOpenSubmenuTopic(cat.id)}
-                                                                                    href="#!"
-                                                                                    className="header-category__submenu-link header__link"
-                                                                                >
-                                                                                    <span className="header__link-text">
-                                                                                        {cat.name}
-                                                                                    </span>
-                                                                                    <MdKeyboardArrowRight className="icon" />
-                                                                                </a>
-                                                                                {getTopicsByCategory(cat.id) &&
-                                                                                    getTopicsByCategory(cat.id).length > 0 && (
-                                                                                        <div className="header-topic__submenu">
-                                                                                            <div
-                                                                                                className="header__submenu-top d-none d-lg-flex"
-                                                                                                onClick={backToRoot}
-                                                                                            >
-                                                                                                <MdKeyboardArrowLeft />
-                                                                                                <span>All Categories</span>
-                                                                                            </div>
-                                                                                            <div
-                                                                                                className="header__submenu-top d-none d-lg-flex"
-                                                                                                onClick={backToChild}
-                                                                                            >
-                                                                                                <MdKeyboardArrowLeft />
-                                                                                                <span>Menu</span>
-                                                                                            </div>
-                                                                                            <div className="header-submenu__heading">
-                                                                                                Popular Topics
-                                                                                            </div>
-                                                                                            <ul className="header-topic__submenu-list">
-                                                                                                {getTopicsByCategory(cat.id).map(
-                                                                                                    (topic) => {
-                                                                                                        return (
-                                                                                                            <li
-                                                                                                                className="header-topic__item"
-                                                                                                                key={`topic-${topic.id}`}
-                                                                                                            >
-                                                                                                                <a
-                                                                                                                    href="#!"
-                                                                                                                    className="header-topic__link header__link"
-                                                                                                                >
-                                                                                                                    <span className="header__link-text">
-                                                                                                                        {
-                                                                                                                            topic.name
-                                                                                                                        }
-                                                                                                                    </span>
-                                                                                                                </a>
-                                                                                                            </li>
-                                                                                                        );
-                                                                                                    }
-                                                                                                )}
-                                                                                            </ul>
-                                                                                        </div>
+                                                            <a
+                                                                href="#!"
+                                                                className="header-category__link header__link"
+                                                                onClick={handleOpenSubmenu(parent.id)}
+                                                            >
+                                                                <span className="header__link-text">{parent.name}</span>
+                                                                <MdKeyboardArrowRight className="icon" />
+                                                            </a>
+                                                            {parent.childrens && parent.childrens.length > 0 && (
+                                                                <div className="header-category__submenu">
+                                                                    <div
+                                                                        className="header__submenu-top d-none d-lg-flex"
+                                                                        onClick={backToRoot}
+                                                                    >
+                                                                        <MdKeyboardArrowLeft />
+                                                                        <span>Menu</span>
+                                                                    </div>
+                                                                    <ul className="header-category__submenu-list">
+                                                                        {parent.childrens.map((cat) => {
+                                                                            return (
+                                                                                <li
+                                                                                    className={clsx(
+                                                                                        "header-category__submenu-item",
+                                                                                        {
+                                                                                            "is-open": activeChildId === cat.id, // mở panel con cho parent này
+                                                                                        }
                                                                                     )}
-                                                                            </li>
-                                                                        );
-                                                                    })}
-                                                                </ul>
-                                                            </div>
-                                                        )}
-                                                    </li>
-                                                );
-                                            })}
+                                                                                    key={`cat-${cat.id}`}
+                                                                                    onMouseEnter={() =>
+                                                                                        getTopicsByCategory(cat.id)
+                                                                                    }
+                                                                                >
+                                                                                    <a
+                                                                                        onClick={handleOpenSubmenuTopic(cat.id)}
+                                                                                        href="#!"
+                                                                                        className="header-category__submenu-link header__link"
+                                                                                    >
+                                                                                        <span className="header__link-text">
+                                                                                            {cat.name}
+                                                                                        </span>
+                                                                                        <MdKeyboardArrowRight className="icon" />
+                                                                                    </a>
+                                                                                    <div className="header-topic__submenu">
+                                                                                        <div
+                                                                                            className="header__submenu-top d-none d-lg-flex"
+                                                                                            onClick={backToRoot}
+                                                                                        >
+                                                                                            <MdKeyboardArrowLeft />
+                                                                                            <span>All Categories</span>
+                                                                                        </div>
+                                                                                        <div
+                                                                                            className="header__submenu-top d-none d-lg-flex"
+                                                                                            onClick={backToChild}
+                                                                                        >
+                                                                                            <MdKeyboardArrowLeft />
+                                                                                            <span>Menu</span>
+                                                                                        </div>
+                                                                                        <div className="header-submenu__heading">
+                                                                                            Popular Topics
+                                                                                        </div>
+                                                                                        <ul className="header-topic__submenu-list">
+                                                                                            {topics.length > 0
+                                                                                                ? topics.map((topic) => {
+                                                                                                      return (
+                                                                                                          <li
+                                                                                                              className="header-topic__item"
+                                                                                                              key={`topic-${topic.id}`}
+                                                                                                          >
+                                                                                                              <a
+                                                                                                                  href="#!"
+                                                                                                                  className="header-topic__link header__link"
+                                                                                                              >
+                                                                                                                  <span className="header__link-text">
+                                                                                                                      {topic.name}
+                                                                                                                  </span>
+                                                                                                              </a>
+                                                                                                          </li>
+                                                                                                      );
+                                                                                                  })
+                                                                                                : ""}
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </li>
+                                                                            );
+                                                                        })}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                        </li>
+                                                    );
+                                                })}
                                         </ul>
                                     </div>
                                 </div>
@@ -350,14 +297,35 @@ function Header() {
                         </Button>
                         <div className="navbar__overlay" aria-label="Close menu" onClick={handleToggleNav}></div>
                     </div>
-                    <form action="" className="header-form">
-                        <div className="header-form__btn">
-                            <CiSearch className="header-form__icon icon" />
-                        </div>
-                        <input type="text" placeholder="Search for anything" className="header-form__input" />
-                    </form>
+                    <div className={clsx("header-form__wrapper", { show: openFilter })}>
+                        <Popover
+                            placement="bottom"
+                            content={() => <PopoverSearch suggestions={suggestions} deferredKeyword={deferredKeyword} />}
+                            rootClassName={clsx("popover-search", { "popover-search--full": openFilter })}
+                            open={isOpen}
+                            trigger="click"
+                            arrow={openFilter ? false : true}
+                            onOpenChange={setOpenSearch}
+                        >
+                            <div className="header-form">
+                                <div className="header-form__btn">
+                                    <CiSearch className="header-form__icon icon" />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Search for anything"
+                                    className="header-form__input"
+                                    onChange={handleChangeKeyword}
+                                />
+                                <Button variant="text" className="header-form__cancel" onClick={handleShowFilter}>
+                                    Cancel
+                                </Button>
+                            </div>
+                        </Popover>
+                    </div>
+
                     <div className="header-action">
-                        <Button variant="text" className="d-none d-sm-flex header-action__search-btn">
+                        <Button variant="text" className="d-none d-sm-flex header-action__search-btn" onClick={handleShowFilter}>
                             <CiSearch className="header-action__search-icon icon" />
                         </Button>
                         <Link to={"/sign-up"} className="d-md-none">
@@ -368,9 +336,19 @@ function Header() {
                                 Log In
                             </Button>
                         </Link>
-                        <Button variant="outline" className="header-language__btn d-lg-none">
-                            <GrLanguage className="header-language__icon" />
-                        </Button>
+
+                        <Popover
+                            open={openLanguage}
+                            onOpenChange={setOpenLanguage}
+                            placement="bottomRight"
+                            trigger="click"
+                            overlayClassName="popover-language"
+                            content={<PopoverLanguage currentLang={lang} onChangeLang={handleChangeLang} />}
+                        >
+                            <Button className="header-language__btn d-lg-none" aria-label="Change language">
+                                <GrLanguage className="header-language__icon" />
+                            </Button>
+                        </Popover>
                     </div>
                     {/* 
                     <div className="header-action">
@@ -401,66 +379,7 @@ function Header() {
 export default Header;
 
 // <div className="navbar-top-container" >
-//                 <div className="left">
-//                     <Link to={"/"} className="logo" >
-//                         <img src={Logo} alt="Logo image" />
-//                     </Link>
-//                     <div className="categories"
-//                         data-tooltip-id="category-tooltip"
-//                         ref={categoryRef}
-//                         onClick={() => setCategoryOpen(true)}
 
-//                     >Thể loại</div>
-//                     <Tooltip id="category-tooltip"
-//                         place="bottom-end"
-//                         className="category-tooltip"
-//                         disableStyleInjection
-//                         imperativeModeOnly
-//                         clickable
-//                         offset={18}
-//                         isOpen={categoryOpen}
-//                     >
-//                         <PopperWrapper >
-//                             {categoryParents?.map((item, index) => {
-//                                 return <div key={item.id} className="category-item"
-//                                     data-tooltip-id="category-child-tooltip"
-//                                     onMouseEnter={() => handleShowCategoryChildTooltip(index)}
-//                                 >
-//                                     <span>{item.name}</span>
-//                                     <MdOutlineKeyboardArrowRight />
-//                                 </div>
-//                             })}
-//                         </PopperWrapper>
-//                     </Tooltip>
-//                     <Tooltip
-//                         className="category-child-tooltip"
-//                         id="category-child-tooltip"
-//                         isOpen={categoryOpen}
-//                         offset={18}
-//                         imperativeModeOnly
-//                         disableStyleInjection
-//                         ref={childCategoryTooltipRef}
-//                         clickable
-//                         afterShow={() => handleShowCategoryChildTooltip(0)}
-//                     />
-//                     <Tooltip
-//                         className="topic-tooltip"
-//                         id="topic-tooltip"
-//                         ref={topicTooltipRef}
-//                         offset={18}
-//                         imperativeModeOnly
-//                         disableStyleInjection
-//                         clickable
-//                         afterHide={() => setCategoryOpen(false)}
-//                     />
-
-//                     <Popover
-//                         placement="bottom"
-//                         content={() => <PopoverSearch courses={courses} keyword={keyword} />}
-//                         rootClassName="popover-search"
-//                         open={openSearch}
-//                         onOpenChange={handleOpenSearch}
-//                     >
 //                         <div className="search" >
 //                             <div className="button"><MdSearch className="icon" /></div>
 //                             <input onKeyDown={handleKeyPress} type="text" placeholder="Tìm kiếm khóa học" value={keyword} onChange={handleChangeKeyword} />
@@ -469,16 +388,7 @@ export default Header;
 //                 </div>
 //                 <div className="right">
 //                     {isLoggin == true && <>
-//                         <Popover
-//                             placement="bottomRight"
-//                             content={PopoverLearning}
-//                             rootClassName="popover-learnings"
-//                             trigger="click"
-//                             open={openLearning}
-//                             onOpenChange={handleOpenLearning}
-//                         >
-//                             <div className="learnings">Khóa học của tôi</div>
-//                         </Popover>
+
 //                     </>}
 
 //                     <div className="cart" >
