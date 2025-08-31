@@ -48,7 +48,7 @@ function Header() {
     const [openProfile, setOpenProfile] = useState<boolean>(false);
     const [openLearning, setOpenLearning] = useState<boolean>(false);
     const [openLanguage, setOpenLanguage] = useState(false);
-    const [openFilter, setOpenFilter] = useState(true);
+    const [openFilter, setOpenFilter] = useState(false);
     const [suggestions, setSuggestions] = useState<string[]>();
 
     const [keyword, setKeyword] = useState<string>("");
@@ -323,53 +323,81 @@ function Header() {
                             </div>
                         </Popover>
                     </div>
-
                     <div className="header-action">
                         <Button variant="text" className="d-none d-sm-flex header-action__search-btn" onClick={handleShowFilter}>
                             <CiSearch className="header-action__search-icon icon" />
                         </Button>
-                        <Link to={"/sign-up"} className="d-md-none">
-                            <Button variant="text">Sign up</Button>
-                        </Link>
-                        <Link to={"/login"} className="header-action d-md-none">
-                            <Button variant="primary" className="header-action__login">
-                                Log In
-                            </Button>
-                        </Link>
+                        {isLoggin ? (
+                            <>
+                                <Popover
+                                    placement="bottomRight"
+                                    content={() => <PopoverLearning />}
+                                    rootClassName="popover-learnings"
+                                    trigger="click"
+                                    open={openLearning}
+                                    onOpenChange={handleOpenLearning}
+                                >
+                                    <Button variant="text" className="d-lg-none">
+                                        My Learning
+                                    </Button>
+                                </Popover>
 
-                        <Popover
-                            open={openLanguage}
-                            onOpenChange={setOpenLanguage}
-                            placement="bottomRight"
-                            trigger="click"
-                            overlayClassName="popover-language"
-                            content={<PopoverLanguage currentLang={lang} onChangeLang={handleChangeLang} />}
-                        >
-                            <Button className="header-language__btn d-lg-none" aria-label="Change language">
-                                <GrLanguage className="header-language__icon" />
-                            </Button>
-                        </Popover>
+                                <Popover
+                                    placement="bottomRight"
+                                    content={() => <PopoverCart setOpen={setOpen} />}
+                                    rootClassName="popover-carts"
+                                    trigger="click"
+                                    open={open}
+                                    onOpenChange={handleOpenChange}
+                                >
+                                    <Button variant="text" className="d-md-none">
+                                        <FiShoppingCart className="header-action__icon icon" />
+                                    </Button>
+                                </Popover>
+
+                                <Popover
+                                    content={PopoverUserProfile}
+                                    rootClassName="popover-profiles"
+                                    trigger="click"
+                                    open={openProfile}
+                                    placement="bottomLeft"
+                                    onOpenChange={handleOpenProfileChange}
+                                >
+                                    <div className="header-avatar">
+                                        <img
+                                            src={auth?.user.photoURL ? auth?.user.photoURL : fakeAvatar}
+                                            alt=""
+                                            className="header-avatar__img"
+                                        />
+                                    </div>
+                                </Popover>
+                            </>
+                        ) : (
+                            <>
+                                <Link to={"/sign-up"} className="d-md-none">
+                                    <Button variant="text">Sign up</Button>
+                                </Link>
+                                <Link to={"/login"} className="header-action d-md-none">
+                                    <Button variant="primary" className="header-action__login">
+                                        Log In
+                                    </Button>
+                                </Link>
+
+                                <Popover
+                                    open={openLanguage}
+                                    onOpenChange={setOpenLanguage}
+                                    placement="bottomRight"
+                                    trigger="click"
+                                    overlayClassName="popover-language"
+                                    content={<PopoverLanguage currentLang={lang} onChangeLang={handleChangeLang} />}
+                                >
+                                    <Button className="header-language__btn d-lg-none" aria-label="Change language">
+                                        <GrLanguage className="header-language__icon" />
+                                    </Button>
+                                </Popover>
+                            </>
+                        )}
                     </div>
-                    {/* 
-                    <div className="header-action">
-                        <Button variant="text" className="d-none d-sm-flex header-action__search-btn">
-                            <CiSearch className="header-action__search-icon icon" />
-                        </Button>
-                        <Link to={"/my-learning"} className="d-lg-none">
-                            <Button variant="text">My Learning</Button>
-                        </Link>
-                        <Link to={"/cart"}>
-                            <Button variant="text" className="d-md-none">
-                                <FiShoppingCart className="header-action__icon" />
-                            </Button>
-                        </Link>
-
-                        <Link to={"/profile"}>
-                            <div className="header-avatar">
-                                <img src={fakeAvatar} alt="" className="header-avatar__img" />
-                            </div>
-                        </Link>
-                    </div> */}
                 </div>
             </div>
         </header>
@@ -392,17 +420,10 @@ export default Header;
 //                     </>}
 
 //                     <div className="cart" >
-//                         {isLoggin == true && <> <Popover
-//                             placement="bottomRight"
-//                             content={() => <PopoverCart setOpen={setOpen} />}
-//                             rootClassName="popover-carts"
-//                             trigger="click"
-//                             open={open}
-//                             onOpenChange={handleOpenChange}
-//                         >
-//                             <PiShoppingCartLight className="icon-cart"></PiShoppingCartLight>
-//                         </Popover>
-//                             {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}</>}
+
+{
+    /* {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}</>} */
+}
 
 //                     </div>
 
