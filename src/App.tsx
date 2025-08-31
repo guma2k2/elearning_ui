@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/home";
 import AdminPage from "./pages/admin";
 import Dashboard from "./pages/admin/dashboard";
@@ -18,7 +15,7 @@ import Cart from "./pages/cart";
 import CourseDetail from "./pages/course";
 import Learning from "./pages/learning";
 import Filter from "./pages/filter";
-import './styles/index.scss'
+import "./styles/index.scss";
 import MyLearning from "./pages/my-learning";
 import ProtectedRoute from "./components/protected-route";
 import NotFound from "./components/not-found";
@@ -44,192 +41,244 @@ import Verify from "./pages/verify";
 import PromotionManagement from "./pages/admin/promotion";
 import AssignCourse from "./pages/admin/promotion/AssignCourse";
 import QuestionContentUser from "./pages/admin/course/questionContent/QuestionContentUser";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import ToastNotifier from "./components/toast/ToastNotifier";
 import ExerciseDetail from "./pages/classroom/exerciseDetail";
+import { ThemeProvider } from "./components/theme";
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      errorElement: <NotFound />,
-      element: <Home />,
-      children: [
+    const router = createBrowserRouter([
         {
-          path: "/",
-          element: <Courses />,
+            path: "/",
+            errorElement: <NotFound />,
+            element: <Home />,
+            children: [
+                {
+                    path: "/",
+                    element: <Courses />,
+                },
+                {
+                    path: "/purchase-history",
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <OrderHistory />
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "/login",
+                    element: <Login />,
+                },
+                {
+                    path: "/verify/:email/:type",
+                    element: <Verify />,
+                },
+                {
+                    path: "/profile",
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <Profile />
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "/user/:id",
+                    element: <InstructorProfile />,
+                },
+                {
+                    path: "/my-learning",
+                    element: (
+                        <ProtectedRoute>
+                            <MyLearning />
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "/register",
+                    element: <Register />,
+                },
+                {
+                    path: "/forgotpassword",
+                    element: <ForgotPassword />,
+                },
+                {
+                    path: "/password-confirm",
+                    element: <UpdatePassword />,
+                },
+                {
+                    path: "/cart",
+                    element: (
+                        <ProtectedRoute>
+                            <Cart />{" "}
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "/classroom/detail",
+                    element: <ClassroomDetail></ClassroomDetail>,
+                },
+                {
+                    path: "/courses/:courseId",
+                    element: <CourseDetail />,
+                },
+                {
+                    path: "/courses/search",
+                    element: <Filter />,
+                },
+                {
+                    path: "/authenticate",
+                    element: <Authenticate />,
+                },
+                {
+                    path: "/vn-pay-callback",
+                    element: <VnPayCallback />,
+                },
+                {
+                    path: "/payment/checkout/",
+                    element: (
+                        <ProtectedRoute>
+                            <Payment />
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "/payment/checkout/course/:id",
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <PaymentCourse />
+                        </ProtectedRoute>
+                    ),
+                },
+            ],
         },
         {
-          path: "/purchase-history",
-          element: <ProtectedRoute> <OrderHistory /></ProtectedRoute>,
+            path: "/admin",
+            errorElement: <NotFound />,
+            element: (
+                <ProtectedRoute>
+                    <AdminPage />{" "}
+                </ProtectedRoute>
+            ),
+            // element: <AdminPage />,
+            children: [
+                {
+                    index: true,
+                    element: <Dashboard />,
+                },
+                {
+                    path: "/admin/users",
+                    element: <User />,
+                },
+                {
+                    path: "/admin/categories",
+                    element: <Category />,
+                },
+                {
+                    path: "/admin/profile",
+                    element: <ProfileAdmin />,
+                },
+                {
+                    path: "/admin/topics",
+                    element: <Topic />,
+                },
+                {
+                    path: "/admin/courses",
+                    element: <Course />,
+                },
+                {
+                    path: "/admin/courses/edit/:id",
+                    element: <CourseEdit />,
+                },
+                {
+                    path: "/admin/promotions/edit/:id",
+                    element: <AssignCourse />,
+                },
+                {
+                    path: "/admin/courses/question/:id",
+                    element: <QuestionContentUser />,
+                },
+                {
+                    path: "/admin/coupons",
+                    element: <CouponManagement />,
+                },
+                {
+                    path: "/admin/orders",
+                    element: <OrderManagement />,
+                },
+                {
+                    path: "/admin/reviews",
+                    element: <ReviewManagement />,
+                },
+                {
+                    path: "/admin/students",
+                    element: <StudentManagement />,
+                },
+                {
+                    path: "/admin/promotions",
+                    element: <PromotionManagement />,
+                },
+            ],
         },
         {
-          path: "/login",
-          element: <Login />,
+            path: "/course/:slug/learning",
+            errorElement: <NotFound />,
+            element: (
+                <ProtectedRoute>
+                    <Learning />
+                </ProtectedRoute>
+            ),
         },
         {
-          path: "/verify/:email/:type",
-          element: <Verify />,
+            path: "/meeting/:meetingId",
+            element: (
+                <ProtectedRoute>
+                    <Meeting />
+                </ProtectedRoute>
+            ),
         },
         {
-          path: "/profile",
-          element: <ProtectedRoute> <Profile /></ProtectedRoute>,
+            path: "/classrooms/course/:courseId",
+            element: (
+                <ProtectedRoute>
+                    {" "}
+                    <Classroom />
+                </ProtectedRoute>
+            ),
         },
         {
-          path: "/user/:id",
-          element: <InstructorProfile />,
+            path: "/classrooms/:id/c/:courseId",
+            element: (
+                <ProtectedRoute>
+                    <ClassroomDetail />
+                </ProtectedRoute>
+            ),
         },
         {
-          path: "/my-learning",
-          element: <ProtectedRoute><MyLearning /></ProtectedRoute>,
+            path: "/exercise/:id/detail/c/:courseId",
+            element: (
+                <ProtectedRoute>
+                    <ExerciseDetail />
+                </ProtectedRoute>
+            ),
         },
         {
-          path: "/register",
-          element: <Register />,
+            path: "/whiteboard",
+            element: <WhiteBoard></WhiteBoard>,
         },
         {
-          path: "/forgotpassword",
-          element: <ForgotPassword />,
+            path: "/chat/:roomId",
+            element: <TestChatApp></TestChatApp>,
         },
-        {
-          path: "/password-confirm",
-          element: <UpdatePassword />,
-        },
-        {
-          path: "/cart",
-          element: <ProtectedRoute><Cart /> </ProtectedRoute>,
-        },
-        {
-          path: "/classroom/detail",
-          element: <ClassroomDetail></ClassroomDetail>,
-        },
-        {
-          path: "/courses/:courseId",
-          element: <CourseDetail />,
-        },
-        {
-          path: "/courses/search",
-          element: <Filter />,
-        },
-        {
-          path: "/authenticate",
-          element: <Authenticate />,
-        },
-        {
-          path: "/vn-pay-callback",
-          element: <VnPayCallback />,
-        },
-        {
-          path: "/payment/checkout/",
-          element: <ProtectedRoute><Payment /></ProtectedRoute>,
-        }, {
-          path: "/payment/checkout/course/:id",
-          element: <ProtectedRoute> <PaymentCourse /></ProtectedRoute>,
-        },
-      ]
-    },
-    {
-      path: "/admin",
-      errorElement: <NotFound />,
-      element: <ProtectedRoute><AdminPage /> </ProtectedRoute>,
-      // element: <AdminPage />,
-      children: [
-        {
-          index: true,
-          element: <Dashboard />
-        },
-        {
-          path: "/admin/users",
-          element: <User />
-        },
-        {
-          path: "/admin/categories",
-          element: <Category />
-        },
-        {
-          path: "/admin/profile",
-          element: <ProfileAdmin />
-        },
-        {
-          path: "/admin/topics",
-          element: <Topic />
-        },
-        {
-          path: "/admin/courses",
-          element: <Course />,
-        },
-        {
-          path: "/admin/courses/edit/:id",
-          element: <CourseEdit />
-        },
-        {
-          path: "/admin/promotions/edit/:id",
-          element: <AssignCourse />
-        },
-        {
-          path: "/admin/courses/question/:id",
-          element: <QuestionContentUser />
-        },
-        {
-          path: "/admin/coupons",
-          element: <CouponManagement />
-        },
-        {
-          path: "/admin/orders",
-          element: <OrderManagement />
-        },
-        {
-          path: "/admin/reviews",
-          element: <ReviewManagement />
-        },
-        {
-          path: "/admin/students",
-          element: <StudentManagement />
-        },
-        {
-          path: "/admin/promotions",
-          element: <PromotionManagement />
-        },
-      ]
-    },
-    {
-      path: "/course/:slug/learning",
-      errorElement: <NotFound />,
-      element: <ProtectedRoute><Learning /></ProtectedRoute>
-    },
-    {
-      path: "/meeting/:meetingId",
-      element: <ProtectedRoute><Meeting /></ProtectedRoute>
-    },
-    {
-      path: "/classrooms/course/:courseId",
-      element: <ProtectedRoute> <Classroom /></ProtectedRoute>,
-    },
-    {
-      path: "/classrooms/:id/c/:courseId",
-      element: <ProtectedRoute><ClassroomDetail /></ProtectedRoute>,
-    },
-    {
-      path: "/exercise/:id/detail/c/:courseId",
-      element: <ProtectedRoute><ExerciseDetail /></ProtectedRoute>,
-    },
-    {
-      path: "/whiteboard",
-      element: <WhiteBoard></WhiteBoard>,
-    }, {
-      path: "/chat/:roomId",
-      element: <TestChatApp></TestChatApp>,
-    },
-  ]);
+    ]);
 
-
-  return (
-    <>
-      <RouterProvider router={router} ></RouterProvider>
-      <ToastNotifier />
-    </>
-  )
-
-
+    return (
+        <ThemeProvider>
+            <RouterProvider router={router}></RouterProvider>
+            <ToastNotifier />
+        </ThemeProvider>
+    );
 }
 
-export default App
+export default App;
