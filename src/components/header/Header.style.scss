@@ -165,6 +165,7 @@
     padding-top: 15px;
     transition: opacity visibility;
     transition-duration: 0.25s;
+    z-index: 7;
 
     &__inner {
         background-color: var(--header-bg);

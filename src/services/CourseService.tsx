@@ -22,7 +22,7 @@ export const deleteCourse = async (courseId: number) => {
     return res;
 };
 
-export const getCourseByCategory = async (catId: number) => {
+export const getCourseByCategory = async (catId: string) => {
     const url = `/courses/category/${catId}`;
     const res = await instance.get(url);
     return res;
