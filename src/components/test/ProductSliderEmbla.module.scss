@@ -1,0 +1,128 @@
+@use "../../styles/mixins" as *;
+
+.slider {
+    position: relative;
+}
+
+.viewport {
+    position: relative;
+    --gap: 12px;
+    --duration: 300ms;
+}
+
+.mask {
+    overflow: hidden;
+    padding-top: 5px;
+}
+
+.track {
+    display: flex;
+    gap: var(--gap);
+    will-change: transform;
+    transition: transform var(--duration) ease;
+}
+
+.slide {
+    flex: 0 0 auto;
+}
+
+/* Card không còn chiều cao cố định */
+.card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        /* nổi lên */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, .12);
+    }
+}
+
+.thumb {
+    position: relative;
+    width: 100%;
+
+    &::before {
+        content: "";
+        display: block;
+        padding-top: 100%; // vuông
+    }
+
+    img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+}
+
+/* Meta tự cao theo nội dung */
+.meta {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 14px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.price {
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(0, 0, 0, .6);
+    color: #fff;
+    font-size: 20px;
+    line-height: 36px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.left {
+        left: -20px;
+    }
+
+    &.right {
+        right: -20px;
+    }
+
+    &:disabled {
+        opacity: .4;
+        cursor: not-allowed;
+    }
+
+    @include screen(md) {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+}
