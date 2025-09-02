@@ -1,0 +1,176 @@
+@use "../../styles/mixins" as *;
+
+.wrapper {}
+
+.courses__item {
+    padding-top: 50px;
+}
+
+.courses__item:last-child {
+    padding-bottom: 50px;
+}
+
+.courses__heading {
+    font-size: 2rem;
+    line-height: 150%;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.banner {
+    background-color: var(--header-bg);
+}
+
+.banner__wrapper {
+    display: flex;
+    padding: 70px 0;
+    gap: 200px;
+
+    @include screen(xxl) {
+        gap: 100px;
+    }
+
+    @include screen(xl) {
+        padding: 30px 0;
+    }
+
+    @include screen(lg) {
+        flex-direction: column;
+        gap: 50px;
+        align-items: center; // centers children on the cross axis
+        justify-content: center;
+    }
+
+    @include screen(sm) {
+        gap: 20px;
+    }
+}
+
+.banner__info {
+    width: 41.6%;
+
+    @include screen(lg) {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.banner__heading {
+    font-size: 7rem;
+    font-weight: 800;
+    line-height: 114.286%;
+
+    @include screen(xl) {
+        font-size: 6rem;
+    }
+
+    @include screen(lg) {
+        font-size: 4rem;
+    }
+
+    @include screen(lg) {
+        font-size: 3rem;
+    }
+
+}
+
+.banner__desc {
+    font-size: 1.8rem;
+    line-height: 166.667%;
+    margin: 20px 0;
+
+    @include screen(xl) {
+        font-size: 1.6rem;
+    }
+
+    @include screen(sm) {
+        font-size: 1.4rem;
+    }
+}
+
+.banner__desc_small {
+    font-size: 1.8rem;
+    line-height: 166.667%;
+
+    @include screen(xl) {
+        font-size: 1.6rem;
+    }
+
+    @include screen(sm) {
+        font-size: 1.4rem;
+    }
+}
+
+.banner_image__wrapper {
+    position: relative;
+    max-width: 100%;
+    padding-right: 50px;
+
+    @include screen(lg) {
+        padding-right: 0; // stop the left shift
+        width: 100%;
+        display: flex; // create a centering context
+        justify-content: center; // center the image horizontally
+    }
+}
+
+.banner__img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+
+    @include screen(lg) {
+        max-width: 480px; // constrain so centering is visible
+        width: 100%;
+        display: block;
+        margin: 0 auto; // extra safety
+    }
+}
+
+.banner__icon {
+    position: absolute;
+    top: 50%;
+    left: -50px;
+    transform: translateY(-50%);
+    z-index: 1;
+    width: calc(100% + 40px);
+
+    @include screen(lg) {
+        width: 100%;
+        left: 0;
+
+    }
+}
+
+.cta {
+    background-color: var(--body-bg-second);
+}
+
+
+.cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 70px;
+    padding: 72px 0;
+    flex-wrap: wrap;
+
+    @include screen(lg) {
+        padding: 30px 0;
+    }
+
+    @include screen(md) {
+        gap: 30px;
+    }
+
+}
+
+.cta__img {
+    height: 48px;
+
+    @include screen(md) {
+        height: 30px;
+    }
+}

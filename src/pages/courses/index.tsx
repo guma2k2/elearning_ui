@@ -1,21 +1,25 @@
 import { Fragment, useEffect, useState } from "react";
-import "./Courses.style.scss";
+import styles from "./Courses.module.scss";
 import { CourseListGetType, CourseType } from "../../types/CourseType";
 import { getCourseByCategory } from "../../services/CourseService";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Banner from "../../components/banner";
-import Card from "../../components/card";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { getBestSellerCourse } from "../../services/OrderService";
 import CourseSlider from "../../components/CourseSlider";
+import BannerImage from "../../assets/img/banner.png";
+import CircleImage from "../../assets/img/Circle.png";
+import AmazonIcon from "../../assets/Amazon.svg";
+import SlackIcon from "../../assets/Slack.svg";
+import GoogleIcon from "../../assets/Google.svg";
+import GustoIcon from "../../assets/Gusto.svg";
+import HubSpotIcon from "../../assets/HubSpot.svg";
+import clsx from "clsx";
 
 function Courses() {
     const navigate = useNavigate();
     const [courses, setCourses] = useState<CourseListGetType[]>([]);
+    const [recommendCourses, setRecommendCourses] = useState<CourseListGetType[]>([]);
     const [bestSellerCoures, setBestSellerCoures] = useState<CourseListGetType[]>([]);
     const { categoryParents } = useAppSelector((state: RootState) => state.categories);
     const { learningCourses } = useAppSelector((state: RootState) => state.learningCourses);
@@ -34,6 +38,17 @@ function Courses() {
                 setCourses(data);
             }
         };
+
+        const fetchCourses2 = async () => {
+            let cat: string = "Web Development";
+            const res = await getCourseByCategory(cat);
+            console.log(res);
+
+            if (res && res.status === 200) {
+                const data = res.data as CourseListGetType[];
+                setRecommendCourses(data);
+            }
+        };
         const fetchBestSellerCourses = async () => {
             const res = await getBestSellerCourse();
             console.log(res);
@@ -43,19 +58,59 @@ function Courses() {
             }
         };
         fetchCourses();
+        fetchCourses2();
         fetchBestSellerCourses();
     }, []);
 
     return (
-        <div className="container">
-            <h2 style={{ marginBottom: 12 }}>Gợi ý hôm nay</h2>
-            <CourseSlider
-                courses={courses}
-                perView={5} // cố định (desktop-first)
-                gap={10}
-                duration={300}
-                step={1} // muốn nhảy theo “trang”: set = perView
-            />
+        <div className={styles.wrapper}>
+            <div className={styles.banner}>
+                <div className="container">
+                    <div className={styles.banner__wrapper}>
+                        <div className={styles.banner__info}>
+                            <h1 className={styles.banner__heading}>We share knowledge with the world</h1>
+                            <p className={styles.banner__desc}>
+                                Circuit is the trusted market leader in talent transformation. We change lives, businesses, and
+                                nations through digital upskilling, developing the edge you need to conquer what’s next.
+                            </p>
+                            <p className={styles.banner__desc_small}>
+                                We envision a world where anyone, anywhere has the power to transform their life through learning.
+                            </p>
+                        </div>
+                        <div className={styles.banner_image__wrapper}>
+                            <img src={BannerImage} alt="" className={styles.banner__img} />
+                            <img src={CircleImage} alt="" className={styles.banner__icon} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* CTA */}
+            <div className={styles.cta}>
+                <div className="container">
+                    <div className={styles.cta__inner}>
+                        <img src={GoogleIcon} alt="" className={clsx(styles.cta__img, "icon")} />
+                        <img src={SlackIcon} alt="" className={clsx(styles.cta__img, "icon")} />
+                        <img src={AmazonIcon} alt="" className={clsx(styles.cta__img, "icon")} />
+                        <img src={HubSpotIcon} alt="" className={clsx(styles.cta__img, "icon")} />
+                        <img src={GustoIcon} alt="" className={clsx(styles.cta__img, "icon")} />
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.courses__item}>
+                <div className="container">
+                    <h2 className={styles.courses__heading}>Recommended for you</h2>
+                    <CourseSlider courses={recommendCourses} perView={5} gap={10} duration={300} step={1} />
+                </div>
+            </div>
+
+            <div className={styles.courses__item}>
+                <div className="container">
+                    <h2 className={styles.courses__heading}>New and Notable Courses in Yoga</h2>
+                    <CourseSlider courses={courses} perView={5} gap={10} duration={300} step={1} />
+                </div>
+            </div>
         </div>
     );
 }

@@ -4,6 +4,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    cursor: pointer;
 
     @include screen(sm) {
         position: absolute;

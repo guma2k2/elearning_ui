@@ -157,6 +157,8 @@
 
 }
 
+
+
 .dropdown {
     opacity: 0;
     visibility: hidden;
@@ -166,6 +168,8 @@
     transition: opacity visibility;
     transition-duration: 0.25s;
     z-index: 7;
+
+
 
     &__inner {
         background-color: var(--header-bg);
@@ -179,7 +183,19 @@
             height: 100vh;
             overflow-y: auto;
         }
+
+        .dropdown__action {
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .dropdown__btn {
+            min-width: 100%;
+            justify-content: flex-start;
+            padding-left: 15px;
+        }
     }
+
+
 }
 
 .header-category {

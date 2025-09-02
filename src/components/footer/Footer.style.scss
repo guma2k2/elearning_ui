@@ -1,0 +1,104 @@
+@use "../../styles/mixins" as *;
+
+.footer {
+    background-color: var(--body-bg-second);
+}
+
+.footer__top {
+    padding: 92px 0px 50px;
+
+    @include screen(lg) {
+        padding: 50px 0px 30px;
+    }
+
+    border-bottom: 1px solid var(--border-color);
+
+    .heading {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 150%;
+        margin-bottom: 15px;
+    }
+
+    .link {
+        font-size: 1.6rem;
+        line-height: 175%;
+        padding: 12px 0;
+
+        &:hover {
+            color: var(--primary-color);
+        }
+    }
+
+    .heading__small {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 162.5%;
+        margin-bottom: 15px;
+    }
+
+    .desc {
+        font-size: 2rem;
+        font-weight: 500;
+        line-height: 150%;
+    }
+
+    .socials {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px; // add spacing between items
+
+        .social {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%; // round button
+            background-color: var(--body-bg-second); // default background
+            transition: all 0.3s ease;
+            cursor: pointer;
+
+            .icon {
+                font-size: 18px;
+                color: #555; // default icon color
+                transition: color 0.3s ease;
+            }
+
+            &:hover {
+                background-color: var(--primary-color); // highlight on hover
+                transform: translateY(-2px); // subtle lift
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+
+            }
+        }
+    }
+
+}
+
+.footer__bottom {
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+
+    @include screen(lg) {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .copyright {
+        font-size: 1.6rem;
+        line-height: 162.5%;
+    }
+
+
+    @include screen(sm) {
+        .logo {
+            position: static;
+            margin-left: 84px;
+        }
+    }
+
+}

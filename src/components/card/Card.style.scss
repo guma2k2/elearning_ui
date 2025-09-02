@@ -1,15 +1,14 @@
 /* Card tổng quát (dùng tốt trong track flex) */
 .card-container {
     --radius: 12px;
-    --shadow: 0 2px 8px rgba(0, 0, 0, .06);
-    --shadow-hover: 0 8px 24px rgba(0, 0, 0, .12);
+
 
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: #fff;
+    background: var(--card-bg);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--card-shadow);
     text-decoration: none;
     color: inherit;
     overflow: hidden;
@@ -17,7 +16,7 @@
 
     &:hover {
         transform: translateY(-3px);
-        box-shadow: var(--shadow-hover);
+        box-shadow: var(--card-shadow-hover);
     }
 
     &:focus-visible {
@@ -108,7 +107,6 @@
     >span:first-child {
         font-size: 1.6rem;
         font-weight: 700;
-        color: #111827;
     }
 
     .course-discountPrice {
