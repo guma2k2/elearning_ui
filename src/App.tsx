@@ -60,7 +60,6 @@ function App() {
                     path: "/purchase-history",
                     element: (
                         <ProtectedRoute>
-                            {" "}
                             <OrderHistory />
                         </ProtectedRoute>
                     ),
@@ -77,7 +76,6 @@ function App() {
                     path: "/profile",
                     element: (
                         <ProtectedRoute>
-                            {" "}
                             <Profile />
                         </ProtectedRoute>
                     ),
@@ -110,7 +108,7 @@ function App() {
                     path: "/cart",
                     element: (
                         <ProtectedRoute>
-                            <Cart />{" "}
+                            <Cart />
                         </ProtectedRoute>
                     ),
                 },
@@ -146,7 +144,6 @@ function App() {
                     path: "/payment/checkout/course/:id",
                     element: (
                         <ProtectedRoute>
-                            {" "}
                             <PaymentCourse />
                         </ProtectedRoute>
                     ),
@@ -242,7 +239,6 @@ function App() {
             path: "/classrooms/course/:courseId",
             element: (
                 <ProtectedRoute>
-                    {" "}
                     <Classroom />
                 </ProtectedRoute>
             ),

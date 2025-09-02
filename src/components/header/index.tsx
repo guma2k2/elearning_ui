@@ -185,6 +185,18 @@ function Header() {
                                 </Button>
                                 <div className="dropdown">
                                     <div className="dropdown__inner">
+                                        {isLoggin === false ? (
+                                            <div className="dropdown__action">
+                                                <Button variant="text" className="d-none d-md-flex dropdown__btn">
+                                                    Sign in
+                                                </Button>
+                                                <Button variant="text" className="d-none d-md-flex dropdown__btn">
+                                                    Sign up
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <></>
+                                        )}
                                         <div className="header-submenu__heading">All categories</div>
                                         <ul className="header-category__list">
                                             {categoryParents &&
