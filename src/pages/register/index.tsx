@@ -1,167 +1,172 @@
-
-import { Button, Form, FormProps, Input } from "antd";
 import { AuthType, RegisterRequest } from "../../types/AuthType";
 import { Link, useNavigate } from "react-router-dom";
-import './index.style.scss'
+import "./index.style.scss";
 import { registerUser } from "../../services/AuthService";
 import { AxiosError } from "axios";
 import { ErrorType } from "../../types/ErrorType";
-import { useForm } from "antd/es/form/Form";
 import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import Button from "../../components/button";
+import CancelIcon from "../../assets/cancel.svg";
+
 function Register() {
-    const [form] = Form.useForm();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<RegisterRequest>();
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const onFinish: FormProps<RegisterRequest>['onFinish'] = async (values) => {
+    const onSubmit: SubmitHandler<RegisterRequest> = async (values) => {
+        setLoading(true);
         try {
             setLoading(true);
             const res = await registerUser(values);
             if (res.status == 200) {
-                alert("Vui lòng kiểm tra mail để hoàn tất đăng ký")
-                form.resetFields();
-                setLoading(false)
-                navigate(`/verify/${values.email}/register`)
+                alert("Vui lòng kiểm tra mail để hoàn tất đăng ký");
+                reset();
+                setLoading(false);
+                navigate(`/verify/${values.email}/register`);
             }
         } catch (error: AxiosError | any) {
             if (error.response) {
                 console.log(error.response);
                 if (error.response.status == 400) {
-                    form.resetFields();
+                    reset();
                     console.log(error.response);
-                    const message = error.response.data.details
-                    alert(message)
-                    setLoading(false)
+                    const message = error.response.data.details;
+                    alert(message);
+                    setLoading(false);
 
-                    navigate(`/verify/${values.email}/register`)
+                    navigate(`/verify/${values.email}/register`);
                 } else {
                     console.log(error.response.data);
                     const data = error.response.data as ErrorType;
                     const message = data.details;
-                    setLoading(false)
-                    alert(message)
+                    setLoading(false);
+                    alert(message);
                 }
             }
-
+            setLoading(false);
         }
-
     };
-    const onFinishFailed = () => {
-        console.log('Failed:');
-    };
-    return <div className="register-container">
-        <div className="left">
-            <img src="https://frontends.udemycdn.com/components/auth/desktop-illustration-step-1-x2.webp" alt="image-background" />
-        </div>
-        <div className="right">
-            <h2 className="header">
-                Đăng ký và bắt đầu học
-            </h2>
-            <div className="form">
-                <Form
-                    disabled={loading}
-                    form={form}
-                    layout='vertical'
-                    name="basic"
-                    labelCol={{
-                        span: 8,
-                    }}
-                    wrapperCol={{
-                        span: 16,
-                    }}
-                    style={{
-                        maxWidth: "100%",
-                    }}
-                    initialValues={{
-                        remember: true,
-                    }}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    autoComplete="off"
-                >
-                    <Form.Item<RegisterRequest>
-                        label="Họ"
-                        name="firstName"
-                        style={{ width: "100%" }}
-                        wrapperCol={{
-                            span: 24,
-                        }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your firstName!',
-                            },
-                        ]}
-                    >
-                        <Input style={{ width: "100%", height: "50px" }} />
-                    </Form.Item>
-                    <Form.Item<RegisterRequest>
-                        label="Tên"
-                        name="lastName"
-                        style={{ width: "100%" }}
-                        wrapperCol={{
-                            span: 24,
-                        }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your lastName!',
-                            },
-                        ]}
-                    >
-                        <Input style={{ width: "100%", height: "50px" }} />
-                    </Form.Item>
-                    <Form.Item<RegisterRequest>
-                        label="Email"
-                        name="email"
-                        style={{ width: "100%" }}
-                        wrapperCol={{
-                            span: 24,
-                        }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your email!',
-                            },
-                        ]}
-                    >
-                        <Input style={{ width: "100%", height: "50px" }} />
-                    </Form.Item>
 
-                    <Form.Item<RegisterRequest>
-                        label="Mật khẩu"
-                        name="password"
-                        style={{ width: "100%" }}
-                        wrapperCol={{
-                            span: 24,
-                        }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your password!',
-                            },
-                        ]}
-                    >
-                        <Input.Password style={{ width: "100%", height: "50px" }} />
-                    </Form.Item>
-                    <Form.Item
-                        wrapperCol={{
-                            span: 24,
-                        }}
-                    >
-                        <Button type="primary" htmlType="submit" style={{ width: "100%", height: "48px", borderRadius: "0", fontSize: "16px" }}>
-                            Đăng ký
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </div>
-            <div className="bottom">
-                <div className="register">
-                    <span>Bạn đã có tài khoản? <Link to={"/login"}>Đăng nhập</Link></span>
+    return (
+        <div className="register">
+            <div className="row">
+                <div className="col-6 d-lg-none">
+                    <div className="register-left">
+                        <div className="register-left__inner">
+                            <h1 className="heading">Welcome Back to the online learning Circuit</h1>
+                            <p className="desc">Sign up to learn something new and shine to your future career</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-6 col-lg-12">
+                    <div className="register-right">
+                        <div className="register-right__inner">
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                                <div className="form-group">
+                                    <label htmlFor="firstName" className="form__label">
+                                        First name
+                                    </label>
+                                    <input
+                                        placeholder="First name"
+                                        className="form__input"
+                                        id="firstName"
+                                        {...register("firstName", {
+                                            required: {
+                                                value: true,
+                                                message: "First name is required",
+                                            },
+                                        })}
+                                    />
+                                    {errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="lastName" className="form__label">
+                                        Last name
+                                    </label>
+                                    <input
+                                        placeholder="Last name"
+                                        className="form__input"
+                                        id="lastName"
+                                        type=""
+                                        {...register("lastName", {
+                                            required: {
+                                                value: true,
+                                                message: "Last name is required",
+                                            },
+                                        })}
+                                    />
+                                    {errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="email" className="form__label">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        placeholder="Email address"
+                                        className="form__input"
+                                        id="email"
+                                        {...register("email", {
+                                            required: {
+                                                value: true,
+                                                message: "Email is required",
+                                            },
+                                            pattern: {
+                                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                                message: "Email is not valid",
+                                            },
+                                        })}
+                                    />
+                                    {errors.email && <span className="form-error">{errors.email.message}</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="password" className="form__label">
+                                        Password
+                                    </label>
+                                    <input
+                                        placeholder="Password"
+                                        className="form__input"
+                                        id="password"
+                                        type="password"
+                                        {...register("password", {
+                                            required: true,
+                                            minLength: {
+                                                value: 6,
+                                                message: "The password need at least 6 characters",
+                                            },
+                                        })}
+                                    />
+                                    {errors.password && <span className="form-error">{errors.password.message}</span>}
+                                </div>
+                                <Link to={"/forgotpassword"} className="forgot-password">
+                                    Forgot Password ?
+                                </Link>
+                                <Button variant="primary" type="submit" className="form__btn" loading={loading}>
+                                    Sign Up
+                                </Button>
+                            </form>
+                            <div className="action">
+                                <span>
+                                    Have an account? &nbsp;
+                                    <Link to={"/login"} className="action__btn">
+                                        Log In
+                                    </Link>
+                                </span>
+                            </div>
+                            <Link to={"/"}>
+                                <img src={CancelIcon} alt="" className="form__cancel" />
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    );
 }
 
 export default Register;

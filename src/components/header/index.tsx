@@ -386,7 +386,7 @@ function Header() {
                             </>
                         ) : (
                             <>
-                                <Link to={"/sign-up"} className="d-md-none">
+                                <Link to={"/register"} className="d-md-none">
                                     <Button variant="text">Sign up</Button>
                                 </Link>
                                 <Link to={"/login"} className="header-action d-md-none">
