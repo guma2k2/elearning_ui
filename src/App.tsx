@@ -65,10 +65,6 @@ function App() {
                     ),
                 },
                 {
-                    path: "/login",
-                    element: <Login />,
-                },
-                {
                     path: "/verify/:email/:type",
                     element: <Verify />,
                 },
@@ -92,18 +88,7 @@ function App() {
                         </ProtectedRoute>
                     ),
                 },
-                {
-                    path: "/register",
-                    element: <Register />,
-                },
-                {
-                    path: "/forgotpassword",
-                    element: <ForgotPassword />,
-                },
-                {
-                    path: "/password-confirm",
-                    element: <UpdatePassword />,
-                },
+
                 {
                     path: "/cart",
                     element: (
@@ -217,6 +202,22 @@ function App() {
                     element: <PromotionManagement />,
                 },
             ],
+        },
+        {
+            path: "/register",
+            element: <Register />,
+        },
+        {
+            path: "/login",
+            element: <Login />,
+        },
+        {
+            path: "/forgotpassword",
+            element: <ForgotPassword />,
+        },
+        {
+            path: "/password-confirm",
+            element: <UpdatePassword />,
         },
         {
             path: "/course/:slug/learning",

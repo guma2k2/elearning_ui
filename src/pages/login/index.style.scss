@@ -1,108 +1,192 @@
-.login-container {
-    width: 1292px;
-    padding: 40px 60px;
+@use "../../styles/mixins" as *;
+
+.login {}
+
+.login-left {
+    background: #04704E;
+    height: 100vh;
     display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__inner {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        gap: 20px;
+        padding: 0 135px;
+
+        @include screen (xl) {
+            padding: 0 80px;
+        }
+
+        .heading {
+            color: #FFF;
+            font-size: 4.2rem;
+            font-weight: 800;
+            line-height: 123.81%;
+            position: relative;
+
+            @include screen (lg) {
+                font-size: 3rem;
+            }
 
 
-    .left {
-        width: 638px;
 
-        img {
-            width: 100%;
-            height: 726px;
-            object-fit: cover;
+            &::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                top: -20px;
+                left: 0;
+                width: 170px;
+                height: 4px;
+                border-radius: 12px;
+                background: #B5ED3D;
+            }
+        }
+
+        .desc {
+            color: #FFF;
+            font-size: 1.8rem;
+            line-height: 166.667%;
+
+            @include screen (lg) {
+                font-size: 1.6rem;
+            }
         }
     }
+}
 
-    .right {
-        padding: 40px;
+
+.login-right {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E0EAE5;
+
+    &__inner {
+        position: relative;
+        background-color: #fff;
         display: flex;
-        align-items: center;
+        justify-content: center;
         flex-direction: column;
-        flex: 1;
+        padding: 38px 28px;
+        min-width: calc(100% - 230px);
 
-        h2 {
-            font-size: 30px;
-            align-items: center;
+        @include screen (md) {
+            min-width: calc(100% - 100px);
         }
 
-        .form {
-            width: 100%;
+        .form__cancel {
+            position: absolute;
+            right: 0;
+            top: -40px;
+            width: 20px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+
+
+            .form__label {
+                font-size: 1.6rem;
+                font-weight: 600;
+                line-height: 175%;
+                margin-bottom: 10px;
+            }
+
+            .form__input {
+                width: 100%;
+                height: 55px;
+                padding: 17px;
+                border-radius: 6px;
+                border: 1px solid #D4DDDD;
+                line-height: 175%;
+                margin-bottom: 10px;
+
+                &::placeholder {
+                    color: #4F5A5A;
+                    font-size: 1.6rem;
+                    line-height: 175%;
+                }
+            }
+
+
+
+            .form-error {
+                font-size: 1.6rem;
+                color: rgb(244, 58, 58);
+            }
+        }
+
+        .form__btn {
+            min-width: 100%;
+            height: 55px;
+            font-weight: 600;
+            margin-top: 50px;
+        }
+
+        .forgot-password {
+            font-size: 1.4rem;
+            line-height: 142.857%;
+            cursor: pointer;
+
+            &:hover {
+                text-decoration: underline;
+                color: var(--primary-color);
+            }
+        }
+
+        .form-group+.form-group {
             margin-top: 10px;
         }
 
-        .bottom {
-            .forgot-password-form {
-                margin-bottom: 16px;
+        .separate {
+            line-height: 175%;
+            height: 1px;
+            width: 100%;
+            background: #D4DDDD;
+            position: relative;
+            margin: 30px 0;
 
-                .forgot-password {
-                    text-align: center;
+            &::after {
+                position: absolute;
+                content: "OR";
+                top: 50%;
+                left: 50%;
+                translate: -50% -50%;
+                background-color: #fff;
+                padding: 0 23px;
+            }
+        }
 
-                    span {
-                        a {
-                            text-decoration: underline;
-                            text-underline-offset: 4px;
-                            text-decoration-color: var(--color-violet);
-                            font-weight: 700;
-                            color: var(--color-violet);
-                        }
-                    }
+        .form-social__btn {
+            min-width: 255px;
+            height: 50px;
+            border-radius: 6px;
+
+            .social__icon {
+                display: inline-block;
+            }
+        }
+
+        .action {
+            line-height: 175%;
+            margin-top: 18px;
+
+            .action__btn {
+                font-weight: 700;
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: underline;
                 }
             }
         }
-
-        .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-
-            margin-bottom: 16px;
-
-            &::after {
-                content: '';
-                flex: 1;
-                border-bottom: 1px solid var(--color-gray-200);
-                width: 200px;
-            }
-
-            &::before {
-                content: '';
-                flex: 1;
-                border-bottom: 1px solid var(--color-gray-200);
-            }
-
-        }
-
-        .option {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-
-            .button {
-                cursor: pointer;
-                width: 48px;
-                height: 48px;
-                border: 1px solid var(--color-gray-600);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-
-        .register {
-            width: 100%;
-            background-color: var(--color-gray-100);
-            text-align: center;
-            padding-top: 16px;
-            padding-bottom: 16px;
-
-            a {
-                color: var(--color-violet);
-                text-decoration: underline;
-                font-weight: 700;
-            }
-        }
-
     }
 }
