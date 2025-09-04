@@ -31,8 +31,8 @@ function Login() {
 
     const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
         setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        // dispatch(login(data));
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
+        dispatch(login(data));
         setLoading(false);
     };
 
@@ -44,8 +44,6 @@ function Login() {
         const targetUrl = `${authUrl}?redirect_uri=${encodeURIComponent(
             callbackUrl
         )}&response_type=code&client_id=${googleClientId}&scope=openid%20email%20profile`;
-
-        console.log(targetUrl);
 
         window.location.href = targetUrl;
     };

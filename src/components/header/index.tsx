@@ -386,7 +386,7 @@ function Header() {
                             </>
                         ) : (
                             <>
-                                <Link to={"/register"} className="d-md-none">
+                                <Link to={"/sign-up"} className="d-md-none">
                                     <Button variant="text">Sign up</Button>
                                 </Link>
                                 <Link to={"/login"} className="header-action d-md-none">
@@ -417,48 +417,3 @@ function Header() {
 }
 
 export default Header;
-
-// <div className="navbar-top-container" >
-
-//                         <div className="search" >
-//                             <div className="button"><MdSearch className="icon" /></div>
-//                             <input onKeyDown={handleKeyPress} type="text" placeholder="Tìm kiếm khóa học" value={keyword} onChange={handleChangeKeyword} />
-//                         </div>
-//                     </Popover>
-//                 </div>
-//                 <div className="right">
-//                     {isLoggin == true && <>
-
-//                     </>}
-
-//                     <div className="cart" >
-
-{
-    /* {cartTotal > 0 && <span className="cart-number">{getCartTotal()}</span>}</>} */
-}
-
-//                     </div>
-
-//                     {isLoggin == true && <>
-//                         {/* <div className="notification"><MdOutlineNotifications className="icon" /></div> */}
-//                         <Popover
-//                             content={PopoverUserProfile}
-//                             rootClassName="popover-profiles"
-//                             trigger="click"
-//                             open={openProfile}
-//                             placement="bottomLeft"
-//                             onOpenChange={handleOpenProfileChange}
-//                         >
-//                             <img src={auth?.user.photoURL ? auth?.user.photoURL : UserPhoto} alt="Photo" className="profile" />
-//                         </Popover>
-//                     </>
-//                     }
-//                     {
-//                         isLoggin == false && <>
-//                             <Button onClick={handleRedirectToLogin} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "700", border: "1px solid #2d2f31" }}>Đăng nhập</Button>
-//                             <Button onClick={handleRedirectToRegister} style={{ borderRadius: "0", height: "40px", padding: "0 12px", fontSize: "14px", fontWeight: "700", border: "1px solid #2d2f31", color: "#fff", backgroundColor: "#2d2f31" }}>Đăng ký</Button>
-//                         </>
-//                     }
-
-//                 </div>
-//             </div>
