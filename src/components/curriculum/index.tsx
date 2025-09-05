@@ -7,7 +7,7 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { MdModeEdit } from "react-icons/md"
 import { FaTrash } from "react-icons/fa"
 import { ChangeEvent, Fragment, useRef, useState } from "react"
-import ReactQuill from "react-quill"
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import InputFile from "../inputFile"
 import { LiaTimesSolid } from "react-icons/lia"

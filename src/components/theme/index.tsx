@@ -4,7 +4,6 @@ import { RootState } from "../../redux/store";
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const theme = useSelector((state: RootState) => state.theme.type);
-
     useEffect(() => {
         const html = document.documentElement;
 

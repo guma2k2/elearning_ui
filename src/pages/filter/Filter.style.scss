@@ -1,127 +1,169 @@
+@use "../../styles/mixins" as *;
+
 .filter-container {
-    display: flex;
-    padding: 40px 0;
-    gap: 15px;
+  display: flex;
+  padding: 50px 0;
+  gap: 30px;
 
-    .filter-left {
-        flex: 2;
+  .filter__dismiss {
+    position: absolute;
+    top: 12px;
+    left: calc(min(80%, 400px) + 12px);
+    z-index: 21;
+    cursor: pointer;
+  }
 
-        .filter-form {
-            min-width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: start;
-            padding-right: 40px;
-            gap: 15px;
+  .filter-dismiss__btn {
+    min-width: 44px;
+    height: 44px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    @include screen(md) {
+      min-width: 30px !important;
+      height: 30px;
+    }
+  }
 
-            .filter-btn {
-                display: flex;
-                gap: 10px;
-                margin: 0;
-                min-width: 100%;
+  .filter__overlay {
+    opacity: 0;
+    visibility: hidden;
 
-                .filter-btn-reset {
-                    color: var(--color-gray-500);
-                    background-color: transparent;
-                    border: 1px solid #2d2f31;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                    border-radius: 0;
+    @include screen(lg) {
+      position: fixed;
+      inset: 0;
+      z-index: 8;
+      transition: opacity, visibility;
+      transition-duration: 0.5s;
+      background: rgba($color: #000000, $alpha: 0.4);
+    }
+  }
 
-                    span {
-                        font-size: 16px;
-                        font-weight: 700;
-                    }
-                }
+  .filter-left {
+    flex: 4;
 
-                .filter-select-sort {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    flex-direction: column;
+    @include screen(lg) {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 80%;
+      max-width: 400px;
+      background: var(--body-bg);
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1),
+        6px 0 20px rgba(0, 0, 0, 0.12);
+      z-index: 20;
+      overflow-y: auto;
 
-                    .filter-label-sort {
-                        font-size: 16px;
-                    }
+      transform: translateX(-100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
 
-                    .filer-selection {
-                        border-radius: 0;
-                        width: 300px;
-                    }
-                }
-            }
+      &.open {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
 
-            .filter-form-item {
-                display: flex;
-                flex-direction: column;
-                min-width: 400px;
+      &.open ~ .filter__overlay {
+        opacity: 1;
+        visibility: visible;
+      }
 
-                .filter-form-devider {
-                    width: 200px !important;
-                    margin: 0;
-                    background-color: #d1d7dd;
-                }
-
-                .filter-form-header {
-                    color: #2d2f31;
-                    text-align: left;
-                    white-space: normal;
-                    font-size: 19px;
-                    margin-top: 10px;
-                }
-
-                .filter-form-content {
-                    margin-top: 15px;
-                    font-size: 12px;
-
-                    .filter-form-content-category {
-                        display: flex;
-                        align-items: center;
-
-                        .radio-cat-name {
-                            width: 200px;
-                        }
-                    }
-
-                    .filter-form-content-checkbox {
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-
-                        .filter-form-content-rating {
-                            font-size: 12px;
-                        }
-
-                    }
-
-                }
-            }
-        }
+      .filter-form__wrapper {
+        padding: 20px;
+      }
     }
 
-    .filter-right {
-        flex: 7;
-        margin-top: 50px;
+    .filter-form__wrapper {
+      min-width: 100%;
+    }
+
+    .filter-form {
+      .filter-btn-reset {
+        min-width: 90px;
+        margin-bottom: 30px;
+      }
+
+      .filter-form-item {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        min-width: 100%;
 
-        .filter-right-container {
-            display: flex;
-            flex-direction: column;
-
-
-
-            .filter-right-course-devider {
-                background-color: #d1d7dd;
-                width: 100%;
-            }
+        .filter-form-devider {
+          //   width: 200px !important;
+          margin: 0;
+          background-color: #d1d7dd;
         }
 
+        .filter-form-header {
+          text-align: left;
+          white-space: normal;
+          font-size: 19px;
+          margin-top: 10px;
+          color: var(--text-color);
+        }
 
+        .filter-form-content {
+          margin-top: 15px;
+          font-size: 12px;
 
+          .filter-form-content-category {
+            display: flex;
+            align-items: center;
 
+            .radio-cat-name {
+              width: 200px;
+            }
+          }
+
+          .filter-form-content-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .filter-form-content-rating {
+              font-size: 12px;
+              margin-right: 5px;
+            }
+
+            .filter-form-content-text {
+              font-size: 1.6rem;
+              color: var(--text-color);
+              @include screen(md) {
+                font-size: 1.4rem;
+              }
+            }
+          }
+        }
+      }
     }
+  }
+
+  .filter-right {
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .filter-right__btn {
+      width: 120px;
+
+      @include screen(md) {
+        font-size: 1.4rem;
+        width: 100px;
+        height: 30px;
+      }
+    }
+
+    .filter-right-container {
+      display: flex;
+      flex-direction: column;
+
+      .filter-right-course-devider {
+        background-color: #d1d7dd;
+        width: 100%;
+      }
+    }
+  }
 }

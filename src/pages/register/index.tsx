@@ -18,7 +18,6 @@ function Register() {
     } = useForm<RegisterRequest>();
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(false);
-
     const onSubmit: SubmitHandler<RegisterRequest> = async (values) => {
         setLoading(true);
         try {

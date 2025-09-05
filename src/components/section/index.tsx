@@ -3,7 +3,6 @@ import './Section.style.scss'
 import { MdModeEdit } from "react-icons/md"
 import { FaTrash } from "react-icons/fa"
 import { useRef, useState } from "react"
-import 'react-quill/dist/quill.snow.css';
 import Curriculum from "../curriculum"
 import SectionForm from "../sectionForm"
 import CurriculumForm from "../curriculumForm"
@@ -123,3 +122,5 @@ function Section(props: Probs) {
 }
 
 export default Section
+
+// import 'react-quill/dist/quill.snow.css';

@@ -23,22 +23,28 @@
   --bg-color-white: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
 }
 
 html {
   font-size: 62.5%;
-  --primary-color: #FF6934;
-  --bg-primary-color: #FFB499;
-  --primary-icon-color: brightness(0) saturate(100%) invert(75%) sepia(53%) saturate(7082%) hue-rotate(337deg) brightness(100%) contrast(103%);
+  --primary-color: #ff6934;
+  --bg-primary-color: #ffb499;
+  --primary-icon-color: brightness(0) saturate(100%) invert(75%) sepia(53%)
+    saturate(7082%) hue-rotate(337deg) brightness(100%) contrast(103%);
   --header-bg: #fff;
   --header-menu-top: #eee;
-  --header-shadow-bg: rgba(237, 237, 246, 0.20);
-  --text-color: #032E32;
-  --body-bg: #FFF;
+  --header-shadow-bg: rgba(237, 237, 246, 0.2);
+  --text-color: #032e32;
+  --body-bg: #fff;
   --body-bg-second: #f5f5f5;
 
-  --icon-color: brightness(0) saturate(100%) invert(8%) sepia(10%) saturate(4042%) hue-rotate(212deg) brightness(90%) contrast(95%);
+  --icon-color: brightness(0) saturate(100%) invert(8%) sepia(10%)
+    saturate(4042%) hue-rotate(212deg) brightness(90%) contrast(95%);
+
+  // Rating
+  .rating .ant-rate-star-zero .ant-rate-star-second {
+    color: #e8e8e8; // mặc định light
+  }
 
   // Header
   --header-search-border-color: #444;
@@ -54,25 +60,23 @@ html {
   }
 
   @include screen(md) {
-    --header-form-width: 250px;
+    --header-form-width: 270px;
   }
 
-
-  // Language 
+  // Language
   --lang-hover-bg: #f5f5f5;
   --lang-active-color: #1677ff;
   --lang-active-bg: #e6f4ff;
   --popover-bg: #fff;
   --popover-arrow-color: #fff;
 
-
-  // Popover search 
+  // Popover search
   --search-form-w: 420px; // Đặt cùng giá trị width form để 2 bên khớp nhau
   --popover-radius: 12px;
   --popover-bg: #fff;
   --popover-border: #eaecef;
-  --popover-shadow: 0 12px 28px rgba(0, 0, 0, .12),
-  0 2px 8px rgba(0, 0, 0, .06);
+  --popover-shadow: 0 12px 28px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06);
   --text-1: #1f2328;
   --text-2: #57606a;
   --item-hover-bg: #f6f8fa;
@@ -88,29 +92,37 @@ html {
 
   // Card
   --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, .12);
+  --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
   --card-bg: #f0f2f5;
 }
 
 html.dark {
-  --header-bg: #171C28;
-  --header-menu-top: #171C28;
-  --header-shadow-bg: rgba(0, 0, 0, 0.20);
-  --icon-color: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7482%) hue-rotate(72deg) brightness(99%) contrast(99%);
+  --header-bg: #171c28;
+  --header-menu-top: #171c28;
+  --header-shadow-bg: rgba(0, 0, 0, 0.2);
+  --icon-color: brightness(0) saturate(100%) invert(100%) sepia(0%)
+    saturate(7482%) hue-rotate(72deg) brightness(99%) contrast(99%);
   --text-color: #fff;
   --body-bg: #0f1115;
   --body-bg-second: #272a31;
   --header-search-border-color: rgb(232, 232, 232);
   --header-form-border-color: rgb(249, 249, 251, 0.2);
 
-  // Language 
+  // Rating
+  .rating {
+    .ant-rate-star-zero .ant-rate-star-second {
+      color: #4a4a4a;
+    }
+  }
+
+  // Language
   --lang-hover-bg: #2a2a2a;
   --lang-active-color: #4e9eff;
   --lang-active-bg: #1a1a1a;
   --popover-bg: #1f1f1f;
   --popover-arrow-color: #080606;
 
-  // Popover search 
+  // Popover search
   --popover-bg: #1f2328;
   --popover-border: #2d333b;
   --text-1: #e6edf3;
@@ -123,26 +135,62 @@ html.dark {
     box-shadow: none;
   }
 
-
-  // Popover user profile 
+  // Popover user profile
   --popover-hover: #3a4050;
   --popover-divider: #454c61;
-
 
   // Card
 
   --card-bg: #15171a;
   /* sáng hơn nền trang ~6–8% để tách lớp */
   --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
-  0 2px 8px rgba(0, 0, 0, 0.45);
+    0 2px 8px rgba(0, 0, 0, 0.45);
 
   --card-shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset,
-  0 8px 24px rgba(0, 0, 0, 0.6);
+    0 8px 24px rgba(0, 0, 0, 0.6);
+
+  // Pagination
+  .ant-pagination {
+    .ant-pagination-item {
+      border: 1px solid #434343;
+      background-color: transparent;
+
+      a {
+        color: #bfbfbf;
+      }
+
+      &:hover {
+        border-color: #1677ff;
+        a {
+          color: #1677ff;
+        }
+      }
+    }
+
+    .ant-pagination-item-active {
+      border-color: #1677ff;
+      background-color: #1677ff;
+
+      a {
+        color: #fff;
+      }
+    }
+
+    .ant-pagination-prev,
+    .ant-pagination-next {
+      .ant-pagination-item-link {
+        border: 1px solid #434343;
+        background-color: transparent;
+        color: #bfbfbf;
+
+        &:hover {
+          border-color: #1677ff;
+          color: #1677ff;
+        }
+      }
+    }
+  }
 }
-
-
-
-
 
 body {
   font-size: 1.6rem;
@@ -150,8 +198,6 @@ body {
   color: var(--text-color);
   background: var(--body-bg);
 }
-
-
 
 a {
   color: inherit;
@@ -166,6 +212,10 @@ li {
 .icon {
   filter: var(--icon-color);
   display: block;
+
+  @include screen(sm) {
+    font-size: 1.4rem;
+  }
 }
 
 a,
@@ -187,7 +237,6 @@ textarea {
   background: transparent;
   font-size: inherit;
 }
-
 
 .popover-language__list {
   padding: 4px;
@@ -272,7 +321,9 @@ textarea {
   .ant-modal-content {
     min-width: 600px;
     margin: 16px 24px;
-    font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, "Segoe UI",
+      Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol";
 
     .ant-modal-body {
       display: flex;
@@ -298,7 +349,9 @@ textarea {
 
 .review-course-modal {
   .ant-modal-content {
-    font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-family: Arial, -apple-system, BlinkMacSystemFont, Roboto, "Segoe UI",
+      Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol";
 
     .ant-modal-body {
       display: flex;
@@ -324,7 +377,6 @@ textarea {
 
         .review-filter-left {
           flex: 3;
-
 
           .review-filter-left-item {
             display: flex;
@@ -355,10 +407,6 @@ textarea {
               span {
                 text-align: center;
               }
-
-
-
-
             }
 
             .review-cancel-filter {
@@ -369,12 +417,9 @@ textarea {
             }
 
             &.active {
-              opacity: .25;
+              opacity: 0.25;
             }
-
           }
-
-
         }
 
         .review-filter-right {
@@ -383,8 +428,6 @@ textarea {
           flex-direction: column;
           width: 100%;
           gap: 10px;
-
-
         }
       }
     }
@@ -415,7 +458,6 @@ textarea {
           display: flex;
           align-items: flex-start;
           gap: 5px;
-
 
           .popover-carts-item-left {
             flex: 3;
@@ -478,7 +520,6 @@ textarea {
   }
 }
 
-
 .popover-carts.ant-popover {
   .ant-popover-inner {
     padding: 15px;
@@ -525,8 +566,6 @@ textarea {
   @include screen(sm) {
     width: 200px;
   }
-
-
 
   .popover-user-profile-top {
     display: flex;
@@ -666,7 +705,6 @@ textarea {
     width: 390px;
     color: var(--text-color);
 
-
     .popover-learning-header {
       display: flex;
       align-items: center;
@@ -717,7 +755,7 @@ textarea {
 
           .popover-learning-course-title {
             font-weight: 550;
-            font-size: 1.4rem
+            font-size: 1.4rem;
           }
 
           .popover-learning-course-time {
@@ -754,7 +792,6 @@ textarea {
     box-shadow: 1px 1px 0 0 var(--popover-border);
   }
 }
-
 
 .popover-search-container {
   font-family: inherit;
@@ -836,7 +873,7 @@ textarea {
     background: var(--popover-bg);
     border: 1px solid var(--popover-border);
     box-shadow: var(--popover-shadow);
-    width: var(--header-form-width)
+    width: var(--header-form-width);
   }
 
   .ant-popover-inner-content {
