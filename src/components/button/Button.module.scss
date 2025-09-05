@@ -1,100 +1,96 @@
 .btn {
-    min-width: 40px;
-    height: 40px;
-    display: inline-flex;
+  min-width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #032e32;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 175%;
+  cursor: pointer;
+  transition: background color;
+  transition-duration: 0.25s;
+  gap: 10px;
+  position: relative;
+
+  &.disabled {
+    opacity: 0.5;
+    user-select: none;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .icon {
+    display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
-    background: #032E32;
-    text-align: center;
-    font-size: 1.6rem;
-    font-weight: 500;
-    line-height: 175%;
-    cursor: pointer;
-    transition: background color;
-    transition-duration: 0.25s;
-    gap: 10px;
-    position: relative;
 
-
-
-
-    &.disabled {
-        opacity: 0.5;
-        user-select: none;
-        pointer-events: none;
-        cursor: not-allowed;
+    img {
+      width: 22px;
+      height: 22px;
+      object-fit: cover;
     }
+  }
 
-    .icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+  &.primary {
+    background: #ff6934;
+    color: #fff;
 
-        img {
-            width: 22px;
-            height: 22px;
-            object-fit: cover;
-        }
+    &:hover {
+      background: #ff4401;
     }
+  }
 
+  &.outline {
+    background: transparent;
+    border: 1px solid #ff6934;
+    color: #ff6934;
 
-    &.primary {
-        background: #FF6934;
-        color: #fff;
-
-        &:hover {
-            background: #FF4401;
-        }
+    &:hover {
+      background: rgb(255, 180, 153, 0.3);
     }
+  }
 
-    &.outline {
-        background: transparent;
-        border: 1px solid #FF6934;
-        color: #FF6934;
+  &.text {
+    background: transparent;
+    font-weight: normal;
+    padding: 0 15px;
 
-        &:hover {
-            background: rgb(255, 180, 153, 0.3)
-        }
+    &:hover {
+      color: #ff6934;
+      background: #ffb499;
     }
+  }
 
-    &.text {
-        background: transparent;
-        font-weight: normal;
-        padding: 0 15px;
+  &.circle {
+    background: var(--header-bg);
+    border-radius: 50%;
+    border: none;
 
-        &:hover {
-            color: #FF6934;
-            background: #FFB499;
-        }
+    &:hover {
+      background: #ffb499;
     }
-
-    &.circle {
-        background: var(--header-bg);
-        border-radius: 50%;
-        border: none;
-
-        &:hover {
-            background: #FFB499;
-        }
-    }
+  }
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(0, 0, 0, 0.1); // vòng ngoài mờ
-    border-top: 4px solid #3498db; // phần trên có màu chính
-    border-radius: 50%;
-    animation: spin 1s linear infinite; // xoay liên tục
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1); // vòng ngoài mờ
+  border-top: 4px solid #3498db; // phần trên có màu chính
+  border-radius: 50%;
+  animation: spin 1s linear infinite; // xoay liên tục
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }

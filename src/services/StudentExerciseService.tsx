@@ -9,7 +9,7 @@ export const createStudentExercise = async (request: StudentExercisePostType) =>
 
 
 export const updateStudentExercise = async (request: StudentExercisePostType, id: number) => {
-    const url = `/student-exercises/${id}`
+    const url = `/student-exercises/${id}`;
     const res = await instance.put(url, request);
     return res;
 }

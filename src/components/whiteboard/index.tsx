@@ -26,9 +26,7 @@ const Whiteboard: React.FC = () => {
     const [isDrawing, setIsDrawing] = useState(false);
     const [color, setColor] = useState<string>('#000000');
     const [brushSize, setBrushSize] = useState<number>(5);
-
     const whiteboardCollection = collection(db, 'whiteboardData');
-
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
