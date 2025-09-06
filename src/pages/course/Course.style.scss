@@ -1,351 +1,390 @@
-.course-container {
-    .header {
-        background-color: black;
-        width: 100%;
-        padding: 0 216px;
-        padding-bottom: 30px;
-        display: flex;
-        gap: 48px;
+/* Hero section */
+.course-hero {
+  background: #0f172a;
+  color: #fff;
+  padding: 32px 0;
 
-        .left {
-            color: white;
-            flex: 7;
+  &__title {
+    font-size: clamp(24px, 3vw, 40px);
+    font-weight: 800;
+  }
 
+  &__sub {
+    opacity: 0.9;
+    margin-top: 8px;
+  }
 
-            .breadcrumb {
-                display: flex;
-                align-items: center;
-                color: #c0c4fc;
-                font-size: 14px;
-                font-weight: 700;
-                line-height: 16.8px;
-                padding-top: 24px;
-            }
-
-            .title {
-                padding-top: 24px;
-                font-size: 32px;
-                font-weight: 700;
-            }
-
-            .headline {
-                padding-top: 24px;
-                font-size: 19px;
-                line-height: 26.6px;
-            }
-
-            .review {
-                font-size: 12px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-
-                .rating {
-                    font-size: 14px;
-                }
-
-            }
-
-            .instructor-name {
-                padding-top: 24px;
-            }
-        }
-
-        .right {
-            flex: 3;
-
-
-        }
-    }
-
-    .content {
-        padding: 20px 216px;
-        display: flex;
-        gap: 48px;
-
-        .left {
-            flex: 7;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-
-            .lessons-content {
-                width: 100%;
-                border: 1px solid var(--color-gray-200);
-                padding: 24px 16px;
-
-                .lesson-header {
-                    font-size: 24px;
-                    font-weight: 700;
-                    margin-bottom: 20px;
-                }
-
-                .lesson-content {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 20px;
-
-                    .lesson {
-                        width: calc(50% - 10px);
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                    }
-                }
-
-            }
-
-            .course-content {
-                padding-bottom: 50px;
-
-                .course-content-header-wrapper {
-                    .sub-head-wrapper {
-                        display: flex;
-                        font-size: 14px;
-                        align-items: center;
-                        justify-content: space-between;
-
-                        .sub-head-left {
-                            display: flex;
-                            align-items: center;
-                            gap: 10px;
-                            font-size: 14px;
-                        }
-
-                        .sub-head-right {}
-                    }
-                }
-
-                .lessons-container {
-                    margin-top: 24px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 15px;
-                }
-
-                .requirement-container {
-                    margin-top: 40px;
-
-                    ul,
-                    li {
-                        list-style: disc;
-                    }
-
-                    .requirement-header {
-                        margin-bottom: 10px;
-                        font-size: 24px;
-                    }
-
-                    .requirement-item {
-                        padding-left: 20px;
-                        font-size: 14px;
-                    }
-                }
-
-                .desc-container {
-                    margin-top: 30px;
-                }
-
-                .intructor-course-container {
-                    margin-top: 40px;
-
-                    .instructor-course-wrapper {
-                        display: flex;
-                        align-items: center;
-                        gap: 20px;
-
-                        img {
-                            width: 112px;
-                            height: 112px;
-                            object-fit: cover;
-                            border-radius: 50%;
-                        }
-
-                        .instructor-course-right {
-                            display: flex;
-                            flex-direction: column;
-
-                            .intructor-course-right-item {
-                                display: flex;
-                                align-items: center;
-                                gap: 5px;
-                            }
-                        }
-                    }
-
-                }
-
-                .review-course-container {
-                    margin-top: 50px;
-                    width: 100%;
-                    display: flex;
-                    flex-direction: column;
-
-                    .review-header {
-                        display: flex;
-                        align-items: center;
-                        font-size: 24px;
-                        font-weight: bold;
-                        margin-top: 40px;
-                        gap: 10px;
-                        margin-bottom: 40px;
-                    }
-
-                    .review-wrapper {
-                        display: flex;
-                        flex-wrap: wrap;
-                        width: 100%;
-                        gap: 15px;
-                    }
-
-                    .btn-review-showmore {
-                        margin-top: 20px;
-                        border-radius: 0;
-                        height: 40px;
-                        width: fit-content;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
-                }
-            }
-        }
-
-        .right {
-            flex: 3;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .16);
-            height: fit-content;
-
-            .course-media {
-                max-width: 100%;
-
-                img {
-                    width: 100%;
-                    object-fit: cover;
-                }
-            }
-
-            .course-detail {
-                padding: 20px;
-                max-width: 100%;
-
-                .course-detail-action {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-
-                    .course-action-price {
-                        font-size: 32px;
-                        line-height: 1;
-                        font-weight: 700;
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-
-                        .course-discountPrice {
-                            text-decoration: line-through;
-                            color: gray;
-                            font-size: 24px;
-                        }
-                    }
-
-                    .btn-add-to-cart {
-                        max-width: 100%;
-                        height: 48px;
-                        background-color: var(--color-violet);
-                        color: white;
-                        font-weight: 700;
-                        border-radius: 0;
-                    }
-
-                    .btn-buy-now {
-                        max-width: 100%;
-                        height: 48px;
-                        background-color: white;
-                        border: 1px solid black;
-                        font-weight: 700;
-                        border-radius: 0;
-                    }
-                }
-
-                .course-info {
-                    margin-top: 10px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    font-size: 14px;
-
-                    .course-info-level,
-                    .course-info-total-lesson,
-                    .course-info-total-time,
-                    .course-info-benefit {
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                    }
-
-                    .course-coupon-container {
-                        .coupon-header {
-                            text-align: center;
-                            margin: 20px 0;
-                        }
-
-                        .coupon-used {
-                            border: 1px dashed #d1d7dc;
-                            padding: 15px 10px;
-                            width: 100%;
-                            height: 48px;
-                            display: flex;
-                            align-items: center;
-                            margin-bottom: 10px;
-
-                            .coupon-used-left {
-                                flex: 1;
-                                font-size: 12px;
-                                color: var(--color-gray-300);
-                            }
-
-                            .coupon-used-right {
-                                width: 45px;
-                                height: 48px;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-
-                                &:hover {
-                                    cursor: pointer;
-                                }
-                            }
-                        }
-
-                        .coupon-error {
-                            color: red;
-                            font-size: 12px;
-                        }
-
-                        .coupon-input {
-                            display: flex;
-                            align-items: center;
-
-                            .coupon-input {
-                                flex: 8;
-                                border-radius: 0;
-                                padding: 10px 15px;
-                                height: 34px;
-                            }
-
-                            .coupon-btn {
-                                flex: 2;
-                                border-radius: 0;
-                                height: 34px;
-                                background-color: #a435f0;
-                                color: white;
-                                font-weight: 700;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+  &__meta {
+    margin-top: 10px;
+    font-weight: 600;
+  }
 }
+
+/* Main */
+.course-main {
+  padding: 24px 0 80px; /* chừa đáy cho mobile bar */
+}
+
+/* Grid layout */
+.course-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+
+  @media (max-width: 1023px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.course-content {
+}
+
+// .course-container {
+//     .header {
+//         background-color: black;
+//         width: 100%;
+//         padding: 0 216px;
+//         padding-bottom: 30px;
+//         display: flex;
+//         gap: 48px;
+
+//         .left {
+//             color: white;
+//             flex: 7;
+
+//             .breadcrumb {
+//                 display: flex;
+//                 align-items: center;
+//                 color: #c0c4fc;
+//                 font-size: 14px;
+//                 font-weight: 700;
+//                 line-height: 16.8px;
+//                 padding-top: 24px;
+//             }
+
+//             .title {
+//                 padding-top: 24px;
+//                 font-size: 32px;
+//                 font-weight: 700;
+//             }
+
+//             .headline {
+//                 padding-top: 24px;
+//                 font-size: 19px;
+//                 line-height: 26.6px;
+//             }
+
+//             .review {
+//                 font-size: 12px;
+//                 display: flex;
+//                 align-items: center;
+//                 gap: 10px;
+
+//                 .rating {
+//                     font-size: 14px;
+//                 }
+
+//             }
+
+//             .instructor-name {
+//                 padding-top: 24px;
+//             }
+//         }
+
+//         .right {
+//             flex: 3;
+
+//         }
+//     }
+
+//     .content {
+//         padding: 20px 216px;
+//         display: flex;
+//         gap: 48px;
+
+//         .left {
+//             flex: 7;
+//             display: flex;
+//             flex-direction: column;
+//             gap: 20px;
+
+//             .lessons-content {
+//                 width: 100%;
+//                 border: 1px solid var(--color-gray-200);
+//                 padding: 24px 16px;
+
+//                 .lesson-header {
+//                     font-size: 24px;
+//                     font-weight: 700;
+//                     margin-bottom: 20px;
+//                 }
+
+//                 .lesson-content {
+//                     display: flex;
+//                     flex-wrap: wrap;
+//                     gap: 20px;
+
+//                     .lesson {
+//                         width: calc(50% - 10px);
+//                         display: flex;
+//                         align-items: center;
+//                         gap: 10px;
+//                     }
+//                 }
+
+//             }
+
+//             .course-content {
+//                 padding-bottom: 50px;
+
+//                 .course-content-header-wrapper {
+//                     .sub-head-wrapper {
+//                         display: flex;
+//                         font-size: 14px;
+//                         align-items: center;
+//                         justify-content: space-between;
+
+//                         .sub-head-left {
+//                             display: flex;
+//                             align-items: center;
+//                             gap: 10px;
+//                             font-size: 14px;
+//                         }
+
+//                         .sub-head-right {}
+//                     }
+//                 }
+
+//                 .lessons-container {
+//                     margin-top: 24px;
+//                     display: flex;
+//                     flex-direction: column;
+//                     gap: 15px;
+//                 }
+
+//                 .requirement-container {
+//                     margin-top: 40px;
+
+//                     ul,
+//                     li {
+//                         list-style: disc;
+//                     }
+
+//                     .requirement-header {
+//                         margin-bottom: 10px;
+//                         font-size: 24px;
+//                     }
+
+//                     .requirement-item {
+//                         padding-left: 20px;
+//                         font-size: 14px;
+//                     }
+//                 }
+
+//                 .desc-container {
+//                     margin-top: 30px;
+//                 }
+
+//                 .intructor-course-container {
+//                     margin-top: 40px;
+
+//                     .instructor-course-wrapper {
+//                         display: flex;
+//                         align-items: center;
+//                         gap: 20px;
+
+//                         img {
+//                             width: 112px;
+//                             height: 112px;
+//                             object-fit: cover;
+//                             border-radius: 50%;
+//                         }
+
+//                         .instructor-course-right {
+//                             display: flex;
+//                             flex-direction: column;
+
+//                             .intructor-course-right-item {
+//                                 display: flex;
+//                                 align-items: center;
+//                                 gap: 5px;
+//                             }
+//                         }
+//                     }
+
+//                 }
+
+//                 .review-course-container {
+//                     margin-top: 50px;
+//                     width: 100%;
+//                     display: flex;
+//                     flex-direction: column;
+
+//                     .review-header {
+//                         display: flex;
+//                         align-items: center;
+//                         font-size: 24px;
+//                         font-weight: bold;
+//                         margin-top: 40px;
+//                         gap: 10px;
+//                         margin-bottom: 40px;
+//                     }
+
+//                     .review-wrapper {
+//                         display: flex;
+//                         flex-wrap: wrap;
+//                         width: 100%;
+//                         gap: 15px;
+//                     }
+
+//                     .btn-review-showmore {
+//                         margin-top: 20px;
+//                         border-radius: 0;
+//                         height: 40px;
+//                         width: fit-content;
+//                         display: flex;
+//                         align-items: center;
+//                         justify-content: center;
+//                     }
+//                 }
+//             }
+//         }
+
+//         .right {
+//             flex: 3;
+//             box-shadow: 0 2px 4px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .16);
+//             height: fit-content;
+
+//             .course-media {
+//                 max-width: 100%;
+
+//                 img {
+//                     width: 100%;
+//                     object-fit: cover;
+//                 }
+//             }
+
+//             .course-detail {
+//                 padding: 20px;
+//                 max-width: 100%;
+
+//                 .course-detail-action {
+//                     display: flex;
+//                     flex-direction: column;
+//                     gap: 8px;
+
+//                     .course-action-price {
+//                         font-size: 32px;
+//                         line-height: 1;
+//                         font-weight: 700;
+//                         display: flex;
+//                         align-items: center;
+//                         gap: 10px;
+
+//                         .course-discountPrice {
+//                             text-decoration: line-through;
+//                             color: gray;
+//                             font-size: 24px;
+//                         }
+//                     }
+
+//                     .btn-add-to-cart {
+//                         max-width: 100%;
+//                         height: 48px;
+//                         background-color: var(--color-violet);
+//                         color: white;
+//                         font-weight: 700;
+//                         border-radius: 0;
+//                     }
+
+//                     .btn-buy-now {
+//                         max-width: 100%;
+//                         height: 48px;
+//                         background-color: white;
+//                         border: 1px solid black;
+//                         font-weight: 700;
+//                         border-radius: 0;
+//                     }
+//                 }
+
+//                 .course-info {
+//                     margin-top: 10px;
+//                     display: flex;
+//                     flex-direction: column;
+//                     gap: 10px;
+//                     font-size: 14px;
+
+//                     .course-info-level,
+//                     .course-info-total-lesson,
+//                     .course-info-total-time,
+//                     .course-info-benefit {
+//                         display: flex;
+//                         align-items: center;
+//                         gap: 10px;
+//                     }
+
+//                     .course-coupon-container {
+//                         .coupon-header {
+//                             text-align: center;
+//                             margin: 20px 0;
+//                         }
+
+//                         .coupon-used {
+//                             border: 1px dashed #d1d7dc;
+//                             padding: 15px 10px;
+//                             width: 100%;
+//                             height: 48px;
+//                             display: flex;
+//                             align-items: center;
+//                             margin-bottom: 10px;
+
+//                             .coupon-used-left {
+//                                 flex: 1;
+//                                 font-size: 12px;
+//                                 color: var(--color-gray-300);
+//                             }
+
+//                             .coupon-used-right {
+//                                 width: 45px;
+//                                 height: 48px;
+//                                 display: flex;
+//                                 align-items: center;
+//                                 justify-content: center;
+
+//                                 &:hover {
+//                                     cursor: pointer;
+//                                 }
+//                             }
+//                         }
+
+//                         .coupon-error {
+//                             color: red;
+//                             font-size: 12px;
+//                         }
+
+//                         .coupon-input {
+//                             display: flex;
+//                             align-items: center;
+
+//                             .coupon-input {
+//                                 flex: 8;
+//                                 border-radius: 0;
+//                                 padding: 10px 15px;
+//                                 height: 34px;
+//                             }
+
+//                             .coupon-btn {
+//                                 flex: 2;
+//                                 border-radius: 0;
+//                                 height: 34px;
+//                                 background-color: #a435f0;
+//                                 color: white;
+//                                 font-weight: 700;
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
